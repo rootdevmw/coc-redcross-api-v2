@@ -1,0 +1,382 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+//////////////////////////////////////////////////////
+// AUTH & USERS
+//////////////////////////////////////////////////////
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  roles     UserRole[]
+  member    Member?
+}
+
+model Role {
+  id    String @id @default(uuid())
+  name  String @unique
+
+  users UserRole[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+//////////////////////////////////////////////////////
+// MEMBERS
+//////////////////////////////////////////////////////
+
+model Member {
+  id           String   @id @default(uuid())
+  userId       String?  @unique
+  firstName    String
+  lastName     String
+  phone        String?
+  status       String   // Visitor, Member, Baptized
+  baptismDate  DateTime?
+  location     String?
+  createdAt    DateTime @default(now())
+  homecellId   String?
+  user         User? @relation(fields: [userId], references: [id])
+  ministries   MemberMinistry[]
+  programItems ProgramItem[]
+  contents Content[]
+  homecell     Homecell? @relation("HomecellMembers", fields: [homecellId], references: [id])
+  leadingHomecells Homecell[] @relation("HomecellLeader")
+  leadingMinistries Ministry[] @relation("MinistryLeader")
+
+
+  homecells Homecell[] @relation("HomecellOverseer")
+
+  overseeingMinistries Ministry[] @relation("MinistryOverseer")
+}
+
+model MemberMinistry {
+  memberId   String
+  ministryId String
+
+  member   Member   @relation(fields: [memberId], references: [id])
+  ministry Ministry @relation(fields: [ministryId], references: [id])
+
+  @@id([memberId, ministryId])
+}
+
+//////////////////////////////////////////////////////
+// HOMECELLS
+//////////////////////////////////////////////////////
+
+model Homecell {
+  id        String   @id @default(uuid())
+  name      String
+  location  String?
+  leaderId  String?
+  overseerId String?
+  createdAt DateTime @default(now())
+
+  leader    Member?  @relation("HomecellLeader", fields: [leaderId], references: [id])
+  overseer  Member?  @relation("HomecellOverseer", fields: [overseerId], references: [id])
+  members   Member[] @relation("HomecellMembers")
+
+  programs  Program[]
+}
+
+//////////////////////////////////////////////////////
+// MINISTRIES
+//////////////////////////////////////////////////////
+
+model Ministry {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  leaderId    String?
+  overseerId  String?
+  slug        String?  @unique
+  createdAt   DateTime @default(now())
+
+  leader   Member? @relation("MinistryLeader", fields: [leaderId], references: [id])
+  overseer Member? @relation("MinistryOverseer", fields: [overseerId], references: [id])
+  members  MemberMinistry[]
+
+  events EventMinistry[]
+}
+//////////////////////////////////////////////////////
+// CONTENT SYSTEM
+//////////////////////////////////////////////////////
+
+model ContentType {
+  id   String @id @default(uuid())
+  name String @unique
+
+  contents Content[]
+}
+
+model Content {
+  id          String   @id @default(uuid())
+  title       String
+  body        String
+  typeId      String
+  authorId    String?
+  status      String   // Draft, Review, Published, Archived
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+
+  type     ContentType @relation(fields: [typeId], references: [id])
+  author   Member?     @relation(fields: [authorId], references: [id])
+
+  tags         ContentTag[]
+  scriptures   ScriptureRef[]
+  seriesId     String?
+  series       Series? @relation(fields: [seriesId], references: [id])
+
+  @@index([typeId])
+  @@index([status])
+  contentMedia ContentMedia[]
+}
+
+model Media {
+  id        String @id @default(uuid())
+  url       String
+  type      String // image, video, audio
+
+  events Event[]
+
+  contentMedia ContentMedia[]
+
+  eventMedia EventMedia[]
+}
+
+model ContentMedia {
+  contentId String
+  mediaId   String
+
+  content Content @relation(fields: [contentId], references: [id])
+  media   Media   @relation(fields: [mediaId], references: [id])
+
+  @@id([contentId, mediaId])
+}
+
+model EventMedia {
+  eventId String
+  mediaId String
+
+  event Event @relation(fields: [eventId], references: [id])
+  media Media @relation(fields: [mediaId], references: [id])
+
+  @@id([eventId, mediaId])
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  contents ContentTag[]
+}
+
+model ContentTag {
+  contentId String
+  tagId     String
+
+  content Content @relation(fields: [contentId], references: [id])
+  tag     Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([contentId, tagId])
+}
+
+model Series {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  slug        String?  @unique
+  createdAt   DateTime @default(now())
+
+  contents Content[]
+}
+
+//////////////////////////////////////////////////////
+// SCRIPTURE SYSTEM
+//////////////////////////////////////////////////////
+
+model ScriptureRef {
+  id         String @id @default(uuid())
+  contentId  String
+
+  book       String
+  chapter    Int
+  verseFrom  Int
+  verseTo    Int?
+  version    String? // NIV, KJV, etc.
+
+  content Content @relation(fields: [contentId], references: [id])
+
+  @@index([book, chapter])
+}
+
+//////////////////////////////////////////////////////
+// ANNOUNCEMENTS (FLEXIBLE TARGETING)
+//////////////////////////////////////////////////////
+
+model Announcement {
+  id          String   @id @default(uuid())
+  title       String
+  body        String
+  priority    Int
+  expiryDate  DateTime?
+  createdAt   DateTime @default(now())
+
+  targets AnnouncementTarget[]
+}
+
+model AnnouncementTarget {
+  id             String @id @default(uuid())
+  announcementId String
+
+  targetType String // MINISTRY | HOMECELL | ROLE
+  targetId   String
+
+  announcement Announcement @relation(fields: [announcementId], references: [id])
+
+  @@index([targetType, targetId])
+}
+
+//////////////////////////////////////////////////////
+// EVENTS
+//////////////////////////////////////////////////////
+
+model EventType {
+  id   String @id @default(uuid())
+  name String @unique
+
+  events Event[]
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  location    String?
+  slug        String?  @unique
+  isCritical  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  typeId     String
+
+  type     EventType @relation(fields: [typeId], references: [id])
+  media Media[]
+
+  @@index([startTime, endTime])
+  ministries EventMinistry[]
+  eventMedia EventMedia[]
+}
+
+model EventMinistry {
+  eventId    String
+  ministryId String
+
+  event      Event    @relation(fields: [eventId], references: [id])
+  ministry   Ministry @relation(fields: [ministryId], references: [id])
+
+  @@id([eventId, ministryId])
+}
+
+//////////////////////////////////////////////////////
+// PROGRAMS
+//////////////////////////////////////////////////////
+
+model ProgramType {
+  id   String @id @default(uuid())
+  name String @unique
+
+  programs Program[]
+}
+
+model Program {
+  id          String   @id @default(uuid())
+  date        DateTime
+  typeId      String
+  homecellId  String?
+  createdAt   DateTime @default(now())
+
+  type     ProgramType @relation(fields: [typeId], references: [id])
+  homecell Homecell?   @relation(fields: [homecellId], references: [id])
+
+  items ProgramItem[]
+}
+
+model ProgramItem {
+  id          String   @id @default(uuid())
+  programId   String
+  title       String
+  description String?
+  time        String?  // e.g. "10:00 AM" or "00:30" for duration-based
+  sequence       Int
+  responsibleId String?
+
+  program     Program @relation(fields: [programId], references: [id])
+  responsible Member? @relation(fields: [responsibleId], references: [id])
+
+  @@index([programId, sequence])
+}
+
+//////////////////////////////////////////////////////
+// STREAMING
+//////////////////////////////////////////////////////
+
+model Stream {
+  id        String   @id @default(uuid())
+  title     String
+  isLive    Boolean  @default(false)
+  startsAt  DateTime?
+  createdAt DateTime @default(now())
+
+  platforms StreamPlatform[]
+}
+
+model Platform {
+  id   String @id @default(uuid())
+  name String @unique
+  url       String
+
+  streamPlatforms StreamPlatform[]
+}
+
+
+model StreamPlatform {
+  streamId   String
+  platformId String
+
+  stream   Stream   @relation(fields: [streamId], references: [id])
+  platform Platform @relation(fields: [platformId], references: [id])
+
+  @@id([streamId, platformId])
+}
+
+//////////////////////////////////////////////////////
+// NEWSLETTER
+//////////////////////////////////////////////////////
+
+model Newsletter {
+  id          String   @id @default(uuid())
+  title       String
+  fileUrl     String
+  description String?
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+}

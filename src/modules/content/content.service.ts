@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { QueryContentDto } from './dto/query-content.dto';
+import { toBigInt } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class ContentService {
@@ -17,8 +18,8 @@ export class ContentService {
       data: {
         title: dto.title,
         body: dto.body,
-        typeId: dto.typeId,
-        authorId: dto.authorId,
+        typeId: toBigInt(dto.typeId),
+        authorId: toBigInt(dto.authorId),
         status: 'Draft',
 
         tags: dto.tags
@@ -68,8 +69,15 @@ export class ContentService {
         orderBy: { createdAt: 'desc' },
         include: {
           author: true,
-          tags: { include: { tag: true } },
-          scriptures: true,
+          tags: {
+            where: {
+              tag: { deletedAt: null },
+            },
+            include: { tag: true },
+          },
+          scriptures: {
+            where: { deletedAt: null },
+          },
           contentMedia: true,
         },
       }),
@@ -84,12 +92,19 @@ export class ContentService {
   }
 
   async findOne(id: string) {
-    const content = await this.prisma.content.findUnique({
-      where: { id },
+    const content = await this.prisma.content.findFirst({
+      where: { id: toBigInt(id) },
       include: {
         author: true,
-        tags: { include: { tag: true } },
-        scriptures: true,
+        tags: {
+          where: {
+            tag: { deletedAt: null },
+          },
+          include: { tag: true },
+        },
+        scriptures: {
+          where: { deletedAt: null },
+        },
         contentMedia: true,
       },
     });
@@ -104,22 +119,30 @@ export class ContentService {
     this.logger.log(`Updating content: ${id}`);
 
     const content = await this.prisma.content.update({
-      where: { id },
+      where: { id: toBigInt(id) },
       data: {
         title: dto.title,
         body: dto.body,
-        typeId: dto.typeId,
+        typeId: toBigInt(dto.typeId!),
       },
     });
 
     return { success: true, data: content, meta: {} };
   }
 
+  async remove(id: string) {
+    await this.prisma.content.delete({
+      where: { id: toBigInt(id) },
+    });
+
+    return { success: true, data: {}, meta: {} };
+  }
+
   async publish(id: string, status: string) {
     this.logger.log(`Publishing content ${id} → ${status}`);
 
     const content = await this.prisma.content.update({
-      where: { id },
+      where: { id: toBigInt(id) },
       data: {
         status,
         publishedAt: status === 'Published' ? new Date() : null,

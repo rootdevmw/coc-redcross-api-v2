@@ -20,18 +20,30 @@ export type StreamPlatformModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateStreamPlatform = {
   _count: StreamPlatformCountAggregateOutputType | null
+  _avg: StreamPlatformAvgAggregateOutputType | null
+  _sum: StreamPlatformSumAggregateOutputType | null
   _min: StreamPlatformMinAggregateOutputType | null
   _max: StreamPlatformMaxAggregateOutputType | null
 }
 
+export type StreamPlatformAvgAggregateOutputType = {
+  streamId: number | null
+  platformId: number | null
+}
+
+export type StreamPlatformSumAggregateOutputType = {
+  streamId: bigint | null
+  platformId: bigint | null
+}
+
 export type StreamPlatformMinAggregateOutputType = {
-  streamId: string | null
-  platformId: string | null
+  streamId: bigint | null
+  platformId: bigint | null
 }
 
 export type StreamPlatformMaxAggregateOutputType = {
-  streamId: string | null
-  platformId: string | null
+  streamId: bigint | null
+  platformId: bigint | null
 }
 
 export type StreamPlatformCountAggregateOutputType = {
@@ -40,6 +52,16 @@ export type StreamPlatformCountAggregateOutputType = {
   _all: number
 }
 
+
+export type StreamPlatformAvgAggregateInputType = {
+  streamId?: true
+  platformId?: true
+}
+
+export type StreamPlatformSumAggregateInputType = {
+  streamId?: true
+  platformId?: true
+}
 
 export type StreamPlatformMinAggregateInputType = {
   streamId?: true
@@ -95,6 +117,18 @@ export type StreamPlatformAggregateArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: StreamPlatformAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: StreamPlatformSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: StreamPlatformMinAggregateInputType
@@ -125,14 +159,18 @@ export type StreamPlatformGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: StreamPlatformCountAggregateInputType | true
+  _avg?: StreamPlatformAvgAggregateInputType
+  _sum?: StreamPlatformSumAggregateInputType
   _min?: StreamPlatformMinAggregateInputType
   _max?: StreamPlatformMaxAggregateInputType
 }
 
 export type StreamPlatformGroupByOutputType = {
-  streamId: string
-  platformId: string
+  streamId: bigint
+  platformId: bigint
   _count: StreamPlatformCountAggregateOutputType | null
+  _avg: StreamPlatformAvgAggregateOutputType | null
+  _sum: StreamPlatformSumAggregateOutputType | null
   _min: StreamPlatformMinAggregateOutputType | null
   _max: StreamPlatformMaxAggregateOutputType | null
 }
@@ -156,8 +194,8 @@ export type StreamPlatformWhereInput = {
   AND?: Prisma.StreamPlatformWhereInput | Prisma.StreamPlatformWhereInput[]
   OR?: Prisma.StreamPlatformWhereInput[]
   NOT?: Prisma.StreamPlatformWhereInput | Prisma.StreamPlatformWhereInput[]
-  streamId?: Prisma.StringFilter<"StreamPlatform"> | string
-  platformId?: Prisma.StringFilter<"StreamPlatform"> | string
+  streamId?: Prisma.BigIntFilter<"StreamPlatform"> | bigint | number
+  platformId?: Prisma.BigIntFilter<"StreamPlatform"> | bigint | number
   stream?: Prisma.XOR<Prisma.StreamScalarRelationFilter, Prisma.StreamWhereInput>
   platform?: Prisma.XOR<Prisma.PlatformScalarRelationFilter, Prisma.PlatformWhereInput>
 }
@@ -167,7 +205,6 @@ export type StreamPlatformOrderByWithRelationInput = {
   platformId?: Prisma.SortOrder
   stream?: Prisma.StreamOrderByWithRelationInput
   platform?: Prisma.PlatformOrderByWithRelationInput
-  _relevance?: Prisma.StreamPlatformOrderByRelevanceInput
 }
 
 export type StreamPlatformWhereUniqueInput = Prisma.AtLeast<{
@@ -175,8 +212,8 @@ export type StreamPlatformWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.StreamPlatformWhereInput | Prisma.StreamPlatformWhereInput[]
   OR?: Prisma.StreamPlatformWhereInput[]
   NOT?: Prisma.StreamPlatformWhereInput | Prisma.StreamPlatformWhereInput[]
-  streamId?: Prisma.StringFilter<"StreamPlatform"> | string
-  platformId?: Prisma.StringFilter<"StreamPlatform"> | string
+  streamId?: Prisma.BigIntFilter<"StreamPlatform"> | bigint | number
+  platformId?: Prisma.BigIntFilter<"StreamPlatform"> | bigint | number
   stream?: Prisma.XOR<Prisma.StreamScalarRelationFilter, Prisma.StreamWhereInput>
   platform?: Prisma.XOR<Prisma.PlatformScalarRelationFilter, Prisma.PlatformWhereInput>
 }, "streamId_platformId">
@@ -185,16 +222,18 @@ export type StreamPlatformOrderByWithAggregationInput = {
   streamId?: Prisma.SortOrder
   platformId?: Prisma.SortOrder
   _count?: Prisma.StreamPlatformCountOrderByAggregateInput
+  _avg?: Prisma.StreamPlatformAvgOrderByAggregateInput
   _max?: Prisma.StreamPlatformMaxOrderByAggregateInput
   _min?: Prisma.StreamPlatformMinOrderByAggregateInput
+  _sum?: Prisma.StreamPlatformSumOrderByAggregateInput
 }
 
 export type StreamPlatformScalarWhereWithAggregatesInput = {
   AND?: Prisma.StreamPlatformScalarWhereWithAggregatesInput | Prisma.StreamPlatformScalarWhereWithAggregatesInput[]
   OR?: Prisma.StreamPlatformScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StreamPlatformScalarWhereWithAggregatesInput | Prisma.StreamPlatformScalarWhereWithAggregatesInput[]
-  streamId?: Prisma.StringWithAggregatesFilter<"StreamPlatform"> | string
-  platformId?: Prisma.StringWithAggregatesFilter<"StreamPlatform"> | string
+  streamId?: Prisma.BigIntWithAggregatesFilter<"StreamPlatform"> | bigint | number
+  platformId?: Prisma.BigIntWithAggregatesFilter<"StreamPlatform"> | bigint | number
 }
 
 export type StreamPlatformCreateInput = {
@@ -203,8 +242,8 @@ export type StreamPlatformCreateInput = {
 }
 
 export type StreamPlatformUncheckedCreateInput = {
-  streamId: string
-  platformId: string
+  streamId: bigint | number
+  platformId: bigint | number
 }
 
 export type StreamPlatformUpdateInput = {
@@ -213,13 +252,13 @@ export type StreamPlatformUpdateInput = {
 }
 
 export type StreamPlatformUncheckedUpdateInput = {
-  streamId?: Prisma.StringFieldUpdateOperationsInput | string
-  platformId?: Prisma.StringFieldUpdateOperationsInput | string
+  streamId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  platformId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type StreamPlatformCreateManyInput = {
-  streamId: string
-  platformId: string
+  streamId: bigint | number
+  platformId: bigint | number
 }
 
 export type StreamPlatformUpdateManyMutationInput = {
@@ -227,8 +266,8 @@ export type StreamPlatformUpdateManyMutationInput = {
 }
 
 export type StreamPlatformUncheckedUpdateManyInput = {
-  streamId?: Prisma.StringFieldUpdateOperationsInput | string
-  platformId?: Prisma.StringFieldUpdateOperationsInput | string
+  streamId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  platformId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type StreamPlatformListRelationFilter = {
@@ -241,18 +280,17 @@ export type StreamPlatformOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type StreamPlatformOrderByRelevanceInput = {
-  fields: Prisma.StreamPlatformOrderByRelevanceFieldEnum | Prisma.StreamPlatformOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type StreamPlatformStreamIdPlatformIdCompoundUniqueInput = {
-  streamId: string
-  platformId: string
+  streamId: bigint | number
+  platformId: bigint | number
 }
 
 export type StreamPlatformCountOrderByAggregateInput = {
+  streamId?: Prisma.SortOrder
+  platformId?: Prisma.SortOrder
+}
+
+export type StreamPlatformAvgOrderByAggregateInput = {
   streamId?: Prisma.SortOrder
   platformId?: Prisma.SortOrder
 }
@@ -263,6 +301,11 @@ export type StreamPlatformMaxOrderByAggregateInput = {
 }
 
 export type StreamPlatformMinOrderByAggregateInput = {
+  streamId?: Prisma.SortOrder
+  platformId?: Prisma.SortOrder
+}
+
+export type StreamPlatformSumOrderByAggregateInput = {
   streamId?: Prisma.SortOrder
   platformId?: Prisma.SortOrder
 }
@@ -356,7 +399,7 @@ export type StreamPlatformCreateWithoutStreamInput = {
 }
 
 export type StreamPlatformUncheckedCreateWithoutStreamInput = {
-  platformId: string
+  platformId: bigint | number
 }
 
 export type StreamPlatformCreateOrConnectWithoutStreamInput = {
@@ -389,8 +432,8 @@ export type StreamPlatformScalarWhereInput = {
   AND?: Prisma.StreamPlatformScalarWhereInput | Prisma.StreamPlatformScalarWhereInput[]
   OR?: Prisma.StreamPlatformScalarWhereInput[]
   NOT?: Prisma.StreamPlatformScalarWhereInput | Prisma.StreamPlatformScalarWhereInput[]
-  streamId?: Prisma.StringFilter<"StreamPlatform"> | string
-  platformId?: Prisma.StringFilter<"StreamPlatform"> | string
+  streamId?: Prisma.BigIntFilter<"StreamPlatform"> | bigint | number
+  platformId?: Prisma.BigIntFilter<"StreamPlatform"> | bigint | number
 }
 
 export type StreamPlatformCreateWithoutPlatformInput = {
@@ -398,7 +441,7 @@ export type StreamPlatformCreateWithoutPlatformInput = {
 }
 
 export type StreamPlatformUncheckedCreateWithoutPlatformInput = {
-  streamId: string
+  streamId: bigint | number
 }
 
 export type StreamPlatformCreateOrConnectWithoutPlatformInput = {
@@ -428,7 +471,7 @@ export type StreamPlatformUpdateManyWithWhereWithoutPlatformInput = {
 }
 
 export type StreamPlatformCreateManyStreamInput = {
-  platformId: string
+  platformId: bigint | number
 }
 
 export type StreamPlatformUpdateWithoutStreamInput = {
@@ -436,15 +479,15 @@ export type StreamPlatformUpdateWithoutStreamInput = {
 }
 
 export type StreamPlatformUncheckedUpdateWithoutStreamInput = {
-  platformId?: Prisma.StringFieldUpdateOperationsInput | string
+  platformId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type StreamPlatformUncheckedUpdateManyWithoutStreamInput = {
-  platformId?: Prisma.StringFieldUpdateOperationsInput | string
+  platformId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type StreamPlatformCreateManyPlatformInput = {
-  streamId: string
+  streamId: bigint | number
 }
 
 export type StreamPlatformUpdateWithoutPlatformInput = {
@@ -452,11 +495,11 @@ export type StreamPlatformUpdateWithoutPlatformInput = {
 }
 
 export type StreamPlatformUncheckedUpdateWithoutPlatformInput = {
-  streamId?: Prisma.StringFieldUpdateOperationsInput | string
+  streamId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type StreamPlatformUncheckedUpdateManyWithoutPlatformInput = {
-  streamId?: Prisma.StringFieldUpdateOperationsInput | string
+  streamId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -488,8 +531,8 @@ export type $StreamPlatformPayload<ExtArgs extends runtime.Types.Extensions.Inte
     platform: Prisma.$PlatformPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    streamId: string
-    platformId: string
+    streamId: bigint
+    platformId: bigint
   }, ExtArgs["result"]["streamPlatform"]>
   composites: {}
 }
@@ -861,8 +904,8 @@ export interface Prisma__StreamPlatformClient<T, Null = never, ExtArgs extends r
  * Fields of the StreamPlatform model
  */
 export interface StreamPlatformFieldRefs {
-  readonly streamId: Prisma.FieldRef<"StreamPlatform", 'String'>
-  readonly platformId: Prisma.FieldRef<"StreamPlatform", 'String'>
+  readonly streamId: Prisma.FieldRef<"StreamPlatform", 'BigInt'>
+  readonly platformId: Prisma.FieldRef<"StreamPlatform", 'BigInt'>
 }
     
 

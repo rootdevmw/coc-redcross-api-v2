@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from 'src/generated/prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+import { softDeleteExtension } from './extensions/soft-delete.extension';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
@@ -13,6 +14,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
       adapter,
       log: ['info'],
     });
+
+    return this.$extends(softDeleteExtension(this)) as this;
   }
 
   async onModuleInit() {

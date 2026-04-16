@@ -37,6 +37,11 @@ export class MinistriesController {
     return this.service.update(id, dto);
   }
 
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+
   @Get(':id/members')
   getMembers(@Param('id') id: string) {
     return this.service.getMembers(id);

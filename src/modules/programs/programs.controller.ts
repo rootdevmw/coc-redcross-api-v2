@@ -6,8 +6,10 @@ import {
   Param,
   Body,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { ProgramsService } from './programs.service';
+import { CreateProgramFromTemplateDto } from './dto/create-from-template.dto';
 
 @Controller('programs')
 export class ProgramsController {
@@ -24,6 +26,10 @@ export class ProgramsController {
     return this.service.getTypes();
   }
 
+  @Post('from-template')
+  createFromTemplate(@Body() dto: CreateProgramFromTemplateDto) {
+    return this.service.createFromTemplate(dto);
+  }
   // -------------------------
 
   @Post()
@@ -44,5 +50,10 @@ export class ProgramsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: any) {
     return this.service.update(id, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

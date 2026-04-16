@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { verifySoftDelete } from './soft-delete-check';
 
 const API = 'http://localhost:3000';
 
@@ -91,6 +92,7 @@ async function run() {
       '🔄 Platform replacement:',
       updated.data.data.platforms.length === 1 ? 'PASSED' : 'FAILED',
     );
+    await verifySoftDelete(axios, `${API}/streams`, streamId);
 
     console.log('\n🎉 ALL STREAM TESTS PASSED');
   } catch (error: any) {

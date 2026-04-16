@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
+import { toBigIntOptional } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class NewslettersService {
@@ -70,8 +71,8 @@ export class NewslettersService {
   // FIND ONE (OPTIONAL BUT GOOD)
   // -----------------------------
   async findOne(id: string) {
-    const newsletter = await this.prisma.newsletter.findUnique({
-      where: { id },
+    const newsletter = await this.prisma.newsletter.findFirst({
+      where: { id: toBigIntOptional(id) },
     });
 
     if (!newsletter) {
@@ -98,7 +99,7 @@ export class NewslettersService {
     }
 
     const newsletter = await this.prisma.newsletter.update({
-      where: { id },
+      where: { id: toBigIntOptional(id) },
       data: {
         title: dto.title,
         description: dto.description,
@@ -110,6 +111,18 @@ export class NewslettersService {
     return {
       success: true,
       data: newsletter,
+      meta: {},
+    };
+  }
+
+  async remove(id: string) {
+    await this.prisma.newsletter.delete({
+      where: { id: toBigIntOptional(id) },
+    });
+
+    return {
+      success: true,
+      data: {},
       meta: {},
     };
   }

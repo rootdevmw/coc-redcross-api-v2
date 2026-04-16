@@ -27,31 +27,39 @@ export type AggregateProgramItem = {
 }
 
 export type ProgramItemAvgAggregateOutputType = {
+  id: number | null
+  programId: number | null
   sequence: number | null
+  responsibleId: number | null
 }
 
 export type ProgramItemSumAggregateOutputType = {
+  id: bigint | null
+  programId: bigint | null
   sequence: number | null
+  responsibleId: bigint | null
 }
 
 export type ProgramItemMinAggregateOutputType = {
-  id: string | null
-  programId: string | null
+  id: bigint | null
+  programId: bigint | null
   title: string | null
   description: string | null
   time: string | null
   sequence: number | null
-  responsibleId: string | null
+  responsibleId: bigint | null
+  deletedAt: Date | null
 }
 
 export type ProgramItemMaxAggregateOutputType = {
-  id: string | null
-  programId: string | null
+  id: bigint | null
+  programId: bigint | null
   title: string | null
   description: string | null
   time: string | null
   sequence: number | null
-  responsibleId: string | null
+  responsibleId: bigint | null
+  deletedAt: Date | null
 }
 
 export type ProgramItemCountAggregateOutputType = {
@@ -62,16 +70,23 @@ export type ProgramItemCountAggregateOutputType = {
   time: number
   sequence: number
   responsibleId: number
+  deletedAt: number
   _all: number
 }
 
 
 export type ProgramItemAvgAggregateInputType = {
+  id?: true
+  programId?: true
   sequence?: true
+  responsibleId?: true
 }
 
 export type ProgramItemSumAggregateInputType = {
+  id?: true
+  programId?: true
   sequence?: true
+  responsibleId?: true
 }
 
 export type ProgramItemMinAggregateInputType = {
@@ -82,6 +97,7 @@ export type ProgramItemMinAggregateInputType = {
   time?: true
   sequence?: true
   responsibleId?: true
+  deletedAt?: true
 }
 
 export type ProgramItemMaxAggregateInputType = {
@@ -92,6 +108,7 @@ export type ProgramItemMaxAggregateInputType = {
   time?: true
   sequence?: true
   responsibleId?: true
+  deletedAt?: true
 }
 
 export type ProgramItemCountAggregateInputType = {
@@ -102,6 +119,7 @@ export type ProgramItemCountAggregateInputType = {
   time?: true
   sequence?: true
   responsibleId?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -192,13 +210,14 @@ export type ProgramItemGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 export type ProgramItemGroupByOutputType = {
-  id: string
-  programId: string
+  id: bigint
+  programId: bigint
   title: string
   description: string | null
   time: string | null
   sequence: number
-  responsibleId: string | null
+  responsibleId: bigint | null
+  deletedAt: Date | null
   _count: ProgramItemCountAggregateOutputType | null
   _avg: ProgramItemAvgAggregateOutputType | null
   _sum: ProgramItemSumAggregateOutputType | null
@@ -225,13 +244,14 @@ export type ProgramItemWhereInput = {
   AND?: Prisma.ProgramItemWhereInput | Prisma.ProgramItemWhereInput[]
   OR?: Prisma.ProgramItemWhereInput[]
   NOT?: Prisma.ProgramItemWhereInput | Prisma.ProgramItemWhereInput[]
-  id?: Prisma.StringFilter<"ProgramItem"> | string
-  programId?: Prisma.StringFilter<"ProgramItem"> | string
+  id?: Prisma.BigIntFilter<"ProgramItem"> | bigint | number
+  programId?: Prisma.BigIntFilter<"ProgramItem"> | bigint | number
   title?: Prisma.StringFilter<"ProgramItem"> | string
   description?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
   time?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
   sequence?: Prisma.IntFilter<"ProgramItem"> | number
-  responsibleId?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
+  responsibleId?: Prisma.BigIntNullableFilter<"ProgramItem"> | bigint | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"ProgramItem"> | Date | string | null
   program?: Prisma.XOR<Prisma.ProgramScalarRelationFilter, Prisma.ProgramWhereInput>
   responsible?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }
@@ -244,22 +264,24 @@ export type ProgramItemOrderByWithRelationInput = {
   time?: Prisma.SortOrderInput | Prisma.SortOrder
   sequence?: Prisma.SortOrder
   responsibleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   program?: Prisma.ProgramOrderByWithRelationInput
   responsible?: Prisma.MemberOrderByWithRelationInput
   _relevance?: Prisma.ProgramItemOrderByRelevanceInput
 }
 
 export type ProgramItemWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.ProgramItemWhereInput | Prisma.ProgramItemWhereInput[]
   OR?: Prisma.ProgramItemWhereInput[]
   NOT?: Prisma.ProgramItemWhereInput | Prisma.ProgramItemWhereInput[]
-  programId?: Prisma.StringFilter<"ProgramItem"> | string
+  programId?: Prisma.BigIntFilter<"ProgramItem"> | bigint | number
   title?: Prisma.StringFilter<"ProgramItem"> | string
   description?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
   time?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
   sequence?: Prisma.IntFilter<"ProgramItem"> | number
-  responsibleId?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
+  responsibleId?: Prisma.BigIntNullableFilter<"ProgramItem"> | bigint | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"ProgramItem"> | Date | string | null
   program?: Prisma.XOR<Prisma.ProgramScalarRelationFilter, Prisma.ProgramWhereInput>
   responsible?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
 }, "id">
@@ -272,6 +294,7 @@ export type ProgramItemOrderByWithAggregationInput = {
   time?: Prisma.SortOrderInput | Prisma.SortOrder
   sequence?: Prisma.SortOrder
   responsibleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProgramItemCountOrderByAggregateInput
   _avg?: Prisma.ProgramItemAvgOrderByAggregateInput
   _max?: Prisma.ProgramItemMaxOrderByAggregateInput
@@ -283,81 +306,89 @@ export type ProgramItemScalarWhereWithAggregatesInput = {
   AND?: Prisma.ProgramItemScalarWhereWithAggregatesInput | Prisma.ProgramItemScalarWhereWithAggregatesInput[]
   OR?: Prisma.ProgramItemScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProgramItemScalarWhereWithAggregatesInput | Prisma.ProgramItemScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"ProgramItem"> | string
-  programId?: Prisma.StringWithAggregatesFilter<"ProgramItem"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"ProgramItem"> | bigint | number
+  programId?: Prisma.BigIntWithAggregatesFilter<"ProgramItem"> | bigint | number
   title?: Prisma.StringWithAggregatesFilter<"ProgramItem"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"ProgramItem"> | string | null
   time?: Prisma.StringNullableWithAggregatesFilter<"ProgramItem"> | string | null
   sequence?: Prisma.IntWithAggregatesFilter<"ProgramItem"> | number
-  responsibleId?: Prisma.StringNullableWithAggregatesFilter<"ProgramItem"> | string | null
+  responsibleId?: Prisma.BigIntNullableWithAggregatesFilter<"ProgramItem"> | bigint | number | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProgramItem"> | Date | string | null
 }
 
 export type ProgramItemCreateInput = {
-  id?: string
+  id?: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
+  deletedAt?: Date | string | null
   program: Prisma.ProgramCreateNestedOneWithoutItemsInput
   responsible?: Prisma.MemberCreateNestedOneWithoutProgramItemsInput
 }
 
 export type ProgramItemUncheckedCreateInput = {
-  id?: string
-  programId: string
+  id?: bigint | number
+  programId: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
-  responsibleId?: string | null
+  responsibleId?: bigint | number | null
+  deletedAt?: Date | string | null
 }
 
 export type ProgramItemUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   program?: Prisma.ProgramUpdateOneRequiredWithoutItemsNestedInput
   responsible?: Prisma.MemberUpdateOneWithoutProgramItemsNestedInput
 }
 
 export type ProgramItemUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  programId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  programId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibleId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramItemCreateManyInput = {
-  id?: string
-  programId: string
+  id?: bigint | number
+  programId: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
-  responsibleId?: string | null
+  responsibleId?: bigint | number | null
+  deletedAt?: Date | string | null
 }
 
 export type ProgramItemUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramItemUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  programId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  programId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibleId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramItemListRelationFilter = {
@@ -384,10 +415,14 @@ export type ProgramItemCountOrderByAggregateInput = {
   time?: Prisma.SortOrder
   sequence?: Prisma.SortOrder
   responsibleId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ProgramItemAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  programId?: Prisma.SortOrder
   sequence?: Prisma.SortOrder
+  responsibleId?: Prisma.SortOrder
 }
 
 export type ProgramItemMaxOrderByAggregateInput = {
@@ -398,6 +433,7 @@ export type ProgramItemMaxOrderByAggregateInput = {
   time?: Prisma.SortOrder
   sequence?: Prisma.SortOrder
   responsibleId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ProgramItemMinOrderByAggregateInput = {
@@ -408,10 +444,14 @@ export type ProgramItemMinOrderByAggregateInput = {
   time?: Prisma.SortOrder
   sequence?: Prisma.SortOrder
   responsibleId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ProgramItemSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  programId?: Prisma.SortOrder
   sequence?: Prisma.SortOrder
+  responsibleId?: Prisma.SortOrder
 }
 
 export type ProgramItemCreateNestedManyWithoutResponsibleInput = {
@@ -499,21 +539,23 @@ export type ProgramItemUncheckedUpdateManyWithoutProgramNestedInput = {
 }
 
 export type ProgramItemCreateWithoutResponsibleInput = {
-  id?: string
+  id?: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
+  deletedAt?: Date | string | null
   program: Prisma.ProgramCreateNestedOneWithoutItemsInput
 }
 
 export type ProgramItemUncheckedCreateWithoutResponsibleInput = {
-  id?: string
-  programId: string
+  id?: bigint | number
+  programId: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
+  deletedAt?: Date | string | null
 }
 
 export type ProgramItemCreateOrConnectWithoutResponsibleInput = {
@@ -546,31 +588,34 @@ export type ProgramItemScalarWhereInput = {
   AND?: Prisma.ProgramItemScalarWhereInput | Prisma.ProgramItemScalarWhereInput[]
   OR?: Prisma.ProgramItemScalarWhereInput[]
   NOT?: Prisma.ProgramItemScalarWhereInput | Prisma.ProgramItemScalarWhereInput[]
-  id?: Prisma.StringFilter<"ProgramItem"> | string
-  programId?: Prisma.StringFilter<"ProgramItem"> | string
+  id?: Prisma.BigIntFilter<"ProgramItem"> | bigint | number
+  programId?: Prisma.BigIntFilter<"ProgramItem"> | bigint | number
   title?: Prisma.StringFilter<"ProgramItem"> | string
   description?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
   time?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
   sequence?: Prisma.IntFilter<"ProgramItem"> | number
-  responsibleId?: Prisma.StringNullableFilter<"ProgramItem"> | string | null
+  responsibleId?: Prisma.BigIntNullableFilter<"ProgramItem"> | bigint | number | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"ProgramItem"> | Date | string | null
 }
 
 export type ProgramItemCreateWithoutProgramInput = {
-  id?: string
+  id?: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
+  deletedAt?: Date | string | null
   responsible?: Prisma.MemberCreateNestedOneWithoutProgramItemsInput
 }
 
 export type ProgramItemUncheckedCreateWithoutProgramInput = {
-  id?: string
+  id?: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
-  responsibleId?: string | null
+  responsibleId?: bigint | number | null
+  deletedAt?: Date | string | null
 }
 
 export type ProgramItemCreateOrConnectWithoutProgramInput = {
@@ -600,75 +645,83 @@ export type ProgramItemUpdateManyWithWhereWithoutProgramInput = {
 }
 
 export type ProgramItemCreateManyResponsibleInput = {
-  id?: string
-  programId: string
+  id?: bigint | number
+  programId: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
+  deletedAt?: Date | string | null
 }
 
 export type ProgramItemUpdateWithoutResponsibleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   program?: Prisma.ProgramUpdateOneRequiredWithoutItemsNestedInput
 }
 
 export type ProgramItemUncheckedUpdateWithoutResponsibleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  programId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  programId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramItemUncheckedUpdateManyWithoutResponsibleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  programId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  programId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramItemCreateManyProgramInput = {
-  id?: string
+  id?: bigint | number
   title: string
   description?: string | null
   time?: string | null
   sequence: number
-  responsibleId?: string | null
+  responsibleId?: bigint | number | null
+  deletedAt?: Date | string | null
 }
 
 export type ProgramItemUpdateWithoutProgramInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   responsible?: Prisma.MemberUpdateOneWithoutProgramItemsNestedInput
 }
 
 export type ProgramItemUncheckedUpdateWithoutProgramInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibleId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramItemUncheckedUpdateManyWithoutProgramInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   time?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequence?: Prisma.IntFieldUpdateOperationsInput | number
-  responsibleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  responsibleId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -681,6 +734,7 @@ export type ProgramItemSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   time?: boolean
   sequence?: boolean
   responsibleId?: boolean
+  deletedAt?: boolean
   program?: boolean | Prisma.ProgramDefaultArgs<ExtArgs>
   responsible?: boolean | Prisma.ProgramItem$responsibleArgs<ExtArgs>
 }, ExtArgs["result"]["programItem"]>
@@ -695,9 +749,10 @@ export type ProgramItemSelectScalar = {
   time?: boolean
   sequence?: boolean
   responsibleId?: boolean
+  deletedAt?: boolean
 }
 
-export type ProgramItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "programId" | "title" | "description" | "time" | "sequence" | "responsibleId", ExtArgs["result"]["programItem"]>
+export type ProgramItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "programId" | "title" | "description" | "time" | "sequence" | "responsibleId" | "deletedAt", ExtArgs["result"]["programItem"]>
 export type ProgramItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   program?: boolean | Prisma.ProgramDefaultArgs<ExtArgs>
   responsible?: boolean | Prisma.ProgramItem$responsibleArgs<ExtArgs>
@@ -710,13 +765,14 @@ export type $ProgramItemPayload<ExtArgs extends runtime.Types.Extensions.Interna
     responsible: Prisma.$MemberPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
-    programId: string
+    id: bigint
+    programId: bigint
     title: string
     description: string | null
     time: string | null
     sequence: number
-    responsibleId: string | null
+    responsibleId: bigint | null
+    deletedAt: Date | null
   }, ExtArgs["result"]["programItem"]>
   composites: {}
 }
@@ -1088,13 +1144,14 @@ export interface Prisma__ProgramItemClient<T, Null = never, ExtArgs extends runt
  * Fields of the ProgramItem model
  */
 export interface ProgramItemFieldRefs {
-  readonly id: Prisma.FieldRef<"ProgramItem", 'String'>
-  readonly programId: Prisma.FieldRef<"ProgramItem", 'String'>
+  readonly id: Prisma.FieldRef<"ProgramItem", 'BigInt'>
+  readonly programId: Prisma.FieldRef<"ProgramItem", 'BigInt'>
   readonly title: Prisma.FieldRef<"ProgramItem", 'String'>
   readonly description: Prisma.FieldRef<"ProgramItem", 'String'>
   readonly time: Prisma.FieldRef<"ProgramItem", 'String'>
   readonly sequence: Prisma.FieldRef<"ProgramItem", 'Int'>
-  readonly responsibleId: Prisma.FieldRef<"ProgramItem", 'String'>
+  readonly responsibleId: Prisma.FieldRef<"ProgramItem", 'BigInt'>
+  readonly deletedAt: Prisma.FieldRef<"ProgramItem", 'DateTime'>
 }
     
 

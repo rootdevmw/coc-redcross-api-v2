@@ -37,6 +37,11 @@ export class MembersController {
     return this.service.update(id, dto);
   }
 
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+
   @Post(':id/ministries')
   assignMinistry(
     @Param('id') memberId: string,

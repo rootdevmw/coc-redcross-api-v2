@@ -20,22 +20,36 @@ export type AnnouncementTargetModel = runtime.Types.Result.DefaultSelection<Pris
 
 export type AggregateAnnouncementTarget = {
   _count: AnnouncementTargetCountAggregateOutputType | null
+  _avg: AnnouncementTargetAvgAggregateOutputType | null
+  _sum: AnnouncementTargetSumAggregateOutputType | null
   _min: AnnouncementTargetMinAggregateOutputType | null
   _max: AnnouncementTargetMaxAggregateOutputType | null
 }
 
+export type AnnouncementTargetAvgAggregateOutputType = {
+  id: number | null
+  announcementId: number | null
+  targetId: number | null
+}
+
+export type AnnouncementTargetSumAggregateOutputType = {
+  id: bigint | null
+  announcementId: bigint | null
+  targetId: bigint | null
+}
+
 export type AnnouncementTargetMinAggregateOutputType = {
-  id: string | null
-  announcementId: string | null
+  id: bigint | null
+  announcementId: bigint | null
   targetType: string | null
-  targetId: string | null
+  targetId: bigint | null
 }
 
 export type AnnouncementTargetMaxAggregateOutputType = {
-  id: string | null
-  announcementId: string | null
+  id: bigint | null
+  announcementId: bigint | null
   targetType: string | null
-  targetId: string | null
+  targetId: bigint | null
 }
 
 export type AnnouncementTargetCountAggregateOutputType = {
@@ -46,6 +60,18 @@ export type AnnouncementTargetCountAggregateOutputType = {
   _all: number
 }
 
+
+export type AnnouncementTargetAvgAggregateInputType = {
+  id?: true
+  announcementId?: true
+  targetId?: true
+}
+
+export type AnnouncementTargetSumAggregateInputType = {
+  id?: true
+  announcementId?: true
+  targetId?: true
+}
 
 export type AnnouncementTargetMinAggregateInputType = {
   id?: true
@@ -107,6 +133,18 @@ export type AnnouncementTargetAggregateArgs<ExtArgs extends runtime.Types.Extens
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: AnnouncementTargetAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: AnnouncementTargetSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: AnnouncementTargetMinAggregateInputType
@@ -137,16 +175,20 @@ export type AnnouncementTargetGroupByArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   _count?: AnnouncementTargetCountAggregateInputType | true
+  _avg?: AnnouncementTargetAvgAggregateInputType
+  _sum?: AnnouncementTargetSumAggregateInputType
   _min?: AnnouncementTargetMinAggregateInputType
   _max?: AnnouncementTargetMaxAggregateInputType
 }
 
 export type AnnouncementTargetGroupByOutputType = {
-  id: string
-  announcementId: string
+  id: bigint
+  announcementId: bigint
   targetType: string
-  targetId: string
+  targetId: bigint
   _count: AnnouncementTargetCountAggregateOutputType | null
+  _avg: AnnouncementTargetAvgAggregateOutputType | null
+  _sum: AnnouncementTargetSumAggregateOutputType | null
   _min: AnnouncementTargetMinAggregateOutputType | null
   _max: AnnouncementTargetMaxAggregateOutputType | null
 }
@@ -170,10 +212,10 @@ export type AnnouncementTargetWhereInput = {
   AND?: Prisma.AnnouncementTargetWhereInput | Prisma.AnnouncementTargetWhereInput[]
   OR?: Prisma.AnnouncementTargetWhereInput[]
   NOT?: Prisma.AnnouncementTargetWhereInput | Prisma.AnnouncementTargetWhereInput[]
-  id?: Prisma.StringFilter<"AnnouncementTarget"> | string
-  announcementId?: Prisma.StringFilter<"AnnouncementTarget"> | string
+  id?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
+  announcementId?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
   targetType?: Prisma.StringFilter<"AnnouncementTarget"> | string
-  targetId?: Prisma.StringFilter<"AnnouncementTarget"> | string
+  targetId?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
   announcement?: Prisma.XOR<Prisma.AnnouncementScalarRelationFilter, Prisma.AnnouncementWhereInput>
 }
 
@@ -187,13 +229,13 @@ export type AnnouncementTargetOrderByWithRelationInput = {
 }
 
 export type AnnouncementTargetWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.AnnouncementTargetWhereInput | Prisma.AnnouncementTargetWhereInput[]
   OR?: Prisma.AnnouncementTargetWhereInput[]
   NOT?: Prisma.AnnouncementTargetWhereInput | Prisma.AnnouncementTargetWhereInput[]
-  announcementId?: Prisma.StringFilter<"AnnouncementTarget"> | string
+  announcementId?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
   targetType?: Prisma.StringFilter<"AnnouncementTarget"> | string
-  targetId?: Prisma.StringFilter<"AnnouncementTarget"> | string
+  targetId?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
   announcement?: Prisma.XOR<Prisma.AnnouncementScalarRelationFilter, Prisma.AnnouncementWhereInput>
 }, "id">
 
@@ -203,66 +245,68 @@ export type AnnouncementTargetOrderByWithAggregationInput = {
   targetType?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
   _count?: Prisma.AnnouncementTargetCountOrderByAggregateInput
+  _avg?: Prisma.AnnouncementTargetAvgOrderByAggregateInput
   _max?: Prisma.AnnouncementTargetMaxOrderByAggregateInput
   _min?: Prisma.AnnouncementTargetMinOrderByAggregateInput
+  _sum?: Prisma.AnnouncementTargetSumOrderByAggregateInput
 }
 
 export type AnnouncementTargetScalarWhereWithAggregatesInput = {
   AND?: Prisma.AnnouncementTargetScalarWhereWithAggregatesInput | Prisma.AnnouncementTargetScalarWhereWithAggregatesInput[]
   OR?: Prisma.AnnouncementTargetScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AnnouncementTargetScalarWhereWithAggregatesInput | Prisma.AnnouncementTargetScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"AnnouncementTarget"> | string
-  announcementId?: Prisma.StringWithAggregatesFilter<"AnnouncementTarget"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"AnnouncementTarget"> | bigint | number
+  announcementId?: Prisma.BigIntWithAggregatesFilter<"AnnouncementTarget"> | bigint | number
   targetType?: Prisma.StringWithAggregatesFilter<"AnnouncementTarget"> | string
-  targetId?: Prisma.StringWithAggregatesFilter<"AnnouncementTarget"> | string
+  targetId?: Prisma.BigIntWithAggregatesFilter<"AnnouncementTarget"> | bigint | number
 }
 
 export type AnnouncementTargetCreateInput = {
-  id?: string
+  id?: bigint | number
   targetType: string
-  targetId: string
+  targetId: bigint | number
   announcement: Prisma.AnnouncementCreateNestedOneWithoutTargetsInput
 }
 
 export type AnnouncementTargetUncheckedCreateInput = {
-  id?: string
-  announcementId: string
+  id?: bigint | number
+  announcementId: bigint | number
   targetType: string
-  targetId: string
+  targetId: bigint | number
 }
 
 export type AnnouncementTargetUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   announcement?: Prisma.AnnouncementUpdateOneRequiredWithoutTargetsNestedInput
 }
 
 export type AnnouncementTargetUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  announcementId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  announcementId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type AnnouncementTargetCreateManyInput = {
-  id?: string
-  announcementId: string
+  id?: bigint | number
+  announcementId: bigint | number
   targetType: string
-  targetId: string
+  targetId: bigint | number
 }
 
 export type AnnouncementTargetUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type AnnouncementTargetUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  announcementId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  announcementId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type AnnouncementTargetListRelationFilter = {
@@ -288,6 +332,12 @@ export type AnnouncementTargetCountOrderByAggregateInput = {
   targetId?: Prisma.SortOrder
 }
 
+export type AnnouncementTargetAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  announcementId?: Prisma.SortOrder
+  targetId?: Prisma.SortOrder
+}
+
 export type AnnouncementTargetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   announcementId?: Prisma.SortOrder
@@ -299,6 +349,12 @@ export type AnnouncementTargetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   announcementId?: Prisma.SortOrder
   targetType?: Prisma.SortOrder
+  targetId?: Prisma.SortOrder
+}
+
+export type AnnouncementTargetSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  announcementId?: Prisma.SortOrder
   targetId?: Prisma.SortOrder
 }
 
@@ -345,15 +401,15 @@ export type AnnouncementTargetUncheckedUpdateManyWithoutAnnouncementNestedInput 
 }
 
 export type AnnouncementTargetCreateWithoutAnnouncementInput = {
-  id?: string
+  id?: bigint | number
   targetType: string
-  targetId: string
+  targetId: bigint | number
 }
 
 export type AnnouncementTargetUncheckedCreateWithoutAnnouncementInput = {
-  id?: string
+  id?: bigint | number
   targetType: string
-  targetId: string
+  targetId: bigint | number
 }
 
 export type AnnouncementTargetCreateOrConnectWithoutAnnouncementInput = {
@@ -386,34 +442,34 @@ export type AnnouncementTargetScalarWhereInput = {
   AND?: Prisma.AnnouncementTargetScalarWhereInput | Prisma.AnnouncementTargetScalarWhereInput[]
   OR?: Prisma.AnnouncementTargetScalarWhereInput[]
   NOT?: Prisma.AnnouncementTargetScalarWhereInput | Prisma.AnnouncementTargetScalarWhereInput[]
-  id?: Prisma.StringFilter<"AnnouncementTarget"> | string
-  announcementId?: Prisma.StringFilter<"AnnouncementTarget"> | string
+  id?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
+  announcementId?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
   targetType?: Prisma.StringFilter<"AnnouncementTarget"> | string
-  targetId?: Prisma.StringFilter<"AnnouncementTarget"> | string
+  targetId?: Prisma.BigIntFilter<"AnnouncementTarget"> | bigint | number
 }
 
 export type AnnouncementTargetCreateManyAnnouncementInput = {
-  id?: string
+  id?: bigint | number
   targetType: string
-  targetId: string
+  targetId: bigint | number
 }
 
 export type AnnouncementTargetUpdateWithoutAnnouncementInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type AnnouncementTargetUncheckedUpdateWithoutAnnouncementInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type AnnouncementTargetUncheckedUpdateManyWithoutAnnouncementInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   targetType?: Prisma.StringFieldUpdateOperationsInput | string
-  targetId?: Prisma.StringFieldUpdateOperationsInput | string
+  targetId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -446,10 +502,10 @@ export type $AnnouncementTargetPayload<ExtArgs extends runtime.Types.Extensions.
     announcement: Prisma.$AnnouncementPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
-    announcementId: string
+    id: bigint
+    announcementId: bigint
     targetType: string
-    targetId: string
+    targetId: bigint
   }, ExtArgs["result"]["announcementTarget"]>
   composites: {}
 }
@@ -820,10 +876,10 @@ export interface Prisma__AnnouncementTargetClient<T, Null = never, ExtArgs exten
  * Fields of the AnnouncementTarget model
  */
 export interface AnnouncementTargetFieldRefs {
-  readonly id: Prisma.FieldRef<"AnnouncementTarget", 'String'>
-  readonly announcementId: Prisma.FieldRef<"AnnouncementTarget", 'String'>
+  readonly id: Prisma.FieldRef<"AnnouncementTarget", 'BigInt'>
+  readonly announcementId: Prisma.FieldRef<"AnnouncementTarget", 'BigInt'>
   readonly targetType: Prisma.FieldRef<"AnnouncementTarget", 'String'>
-  readonly targetId: Prisma.FieldRef<"AnnouncementTarget", 'String'>
+  readonly targetId: Prisma.FieldRef<"AnnouncementTarget", 'BigInt'>
 }
     
 

@@ -12,7 +12,7 @@ export class CreateContentDto {
 
   @IsOptional()
   @IsString()
-  authorId?: string;
+  authorId!: string;
 
   @IsOptional()
   @IsArray()

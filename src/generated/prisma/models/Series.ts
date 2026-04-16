@@ -20,24 +20,36 @@ export type SeriesModel = runtime.Types.Result.DefaultSelection<Prisma.$SeriesPa
 
 export type AggregateSeries = {
   _count: SeriesCountAggregateOutputType | null
+  _avg: SeriesAvgAggregateOutputType | null
+  _sum: SeriesSumAggregateOutputType | null
   _min: SeriesMinAggregateOutputType | null
   _max: SeriesMaxAggregateOutputType | null
 }
 
+export type SeriesAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type SeriesSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type SeriesMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   description: string | null
   slug: string | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type SeriesMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   description: string | null
   slug: string | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type SeriesCountAggregateOutputType = {
@@ -46,9 +58,18 @@ export type SeriesCountAggregateOutputType = {
   description: number
   slug: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
+
+export type SeriesAvgAggregateInputType = {
+  id?: true
+}
+
+export type SeriesSumAggregateInputType = {
+  id?: true
+}
 
 export type SeriesMinAggregateInputType = {
   id?: true
@@ -56,6 +77,7 @@ export type SeriesMinAggregateInputType = {
   description?: true
   slug?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type SeriesMaxAggregateInputType = {
@@ -64,6 +86,7 @@ export type SeriesMaxAggregateInputType = {
   description?: true
   slug?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type SeriesCountAggregateInputType = {
@@ -72,6 +95,7 @@ export type SeriesCountAggregateInputType = {
   description?: true
   slug?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -113,6 +137,18 @@ export type SeriesAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: SeriesAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: SeriesSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: SeriesMinAggregateInputType
@@ -143,17 +179,22 @@ export type SeriesGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: SeriesCountAggregateInputType | true
+  _avg?: SeriesAvgAggregateInputType
+  _sum?: SeriesSumAggregateInputType
   _min?: SeriesMinAggregateInputType
   _max?: SeriesMaxAggregateInputType
 }
 
 export type SeriesGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
   description: string | null
   slug: string | null
   createdAt: Date
+  deletedAt: Date | null
   _count: SeriesCountAggregateOutputType | null
+  _avg: SeriesAvgAggregateOutputType | null
+  _sum: SeriesSumAggregateOutputType | null
   _min: SeriesMinAggregateOutputType | null
   _max: SeriesMaxAggregateOutputType | null
 }
@@ -177,11 +218,12 @@ export type SeriesWhereInput = {
   AND?: Prisma.SeriesWhereInput | Prisma.SeriesWhereInput[]
   OR?: Prisma.SeriesWhereInput[]
   NOT?: Prisma.SeriesWhereInput | Prisma.SeriesWhereInput[]
-  id?: Prisma.StringFilter<"Series"> | string
+  id?: Prisma.BigIntFilter<"Series"> | bigint | number
   name?: Prisma.StringFilter<"Series"> | string
   description?: Prisma.StringNullableFilter<"Series"> | string | null
   slug?: Prisma.StringNullableFilter<"Series"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Series"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Series"> | Date | string | null
   contents?: Prisma.ContentListRelationFilter
 }
 
@@ -191,12 +233,13 @@ export type SeriesOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   contents?: Prisma.ContentOrderByRelationAggregateInput
   _relevance?: Prisma.SeriesOrderByRelevanceInput
 }
 
 export type SeriesWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   slug?: string
   AND?: Prisma.SeriesWhereInput | Prisma.SeriesWhereInput[]
   OR?: Prisma.SeriesWhereInput[]
@@ -204,6 +247,7 @@ export type SeriesWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Series"> | string
   description?: Prisma.StringNullableFilter<"Series"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Series"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Series"> | Date | string | null
   contents?: Prisma.ContentListRelationFilter
 }, "id" | "slug">
 
@@ -213,80 +257,91 @@ export type SeriesOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SeriesCountOrderByAggregateInput
+  _avg?: Prisma.SeriesAvgOrderByAggregateInput
   _max?: Prisma.SeriesMaxOrderByAggregateInput
   _min?: Prisma.SeriesMinOrderByAggregateInput
+  _sum?: Prisma.SeriesSumOrderByAggregateInput
 }
 
 export type SeriesScalarWhereWithAggregatesInput = {
   AND?: Prisma.SeriesScalarWhereWithAggregatesInput | Prisma.SeriesScalarWhereWithAggregatesInput[]
   OR?: Prisma.SeriesScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SeriesScalarWhereWithAggregatesInput | Prisma.SeriesScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Series"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Series"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"Series"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Series"> | string | null
   slug?: Prisma.StringNullableWithAggregatesFilter<"Series"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Series"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Series"> | Date | string | null
 }
 
 export type SeriesCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   contents?: Prisma.ContentCreateNestedManyWithoutSeriesInput
 }
 
 export type SeriesUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   contents?: Prisma.ContentUncheckedCreateNestedManyWithoutSeriesInput
 }
 
 export type SeriesUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUpdateManyWithoutSeriesNestedInput
 }
 
 export type SeriesUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUncheckedUpdateManyWithoutSeriesNestedInput
 }
 
 export type SeriesCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type SeriesUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SeriesUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SeriesNullableScalarRelationFilter = {
@@ -306,6 +361,11 @@ export type SeriesCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type SeriesAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type SeriesMaxOrderByAggregateInput = {
@@ -314,6 +374,7 @@ export type SeriesMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type SeriesMinOrderByAggregateInput = {
@@ -322,6 +383,11 @@ export type SeriesMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type SeriesSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type SeriesCreateNestedOneWithoutContentsInput = {
@@ -341,19 +407,21 @@ export type SeriesUpdateOneWithoutContentsNestedInput = {
 }
 
 export type SeriesCreateWithoutContentsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type SeriesUncheckedCreateWithoutContentsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type SeriesCreateOrConnectWithoutContentsInput = {
@@ -373,19 +441,21 @@ export type SeriesUpdateToOneWithWhereWithoutContentsInput = {
 }
 
 export type SeriesUpdateWithoutContentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SeriesUncheckedUpdateWithoutContentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -425,6 +495,7 @@ export type SeriesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   description?: boolean
   slug?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
   contents?: boolean | Prisma.Series$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.SeriesCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["series"]>
@@ -437,9 +508,10 @@ export type SeriesSelectScalar = {
   description?: boolean
   slug?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type SeriesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "slug" | "createdAt", ExtArgs["result"]["series"]>
+export type SeriesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "slug" | "createdAt" | "deletedAt", ExtArgs["result"]["series"]>
 export type SeriesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contents?: boolean | Prisma.Series$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.SeriesCountOutputTypeDefaultArgs<ExtArgs>
@@ -451,11 +523,12 @@ export type $SeriesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     contents: Prisma.$ContentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
     description: string | null
     slug: string | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["series"]>
   composites: {}
 }
@@ -826,11 +899,12 @@ export interface Prisma__SeriesClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the Series model
  */
 export interface SeriesFieldRefs {
-  readonly id: Prisma.FieldRef<"Series", 'String'>
+  readonly id: Prisma.FieldRef<"Series", 'BigInt'>
   readonly name: Prisma.FieldRef<"Series", 'String'>
   readonly description: Prisma.FieldRef<"Series", 'String'>
   readonly slug: Prisma.FieldRef<"Series", 'String'>
   readonly createdAt: Prisma.FieldRef<"Series", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Series", 'DateTime'>
 }
     
 

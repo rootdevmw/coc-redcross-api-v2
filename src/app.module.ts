@@ -14,6 +14,7 @@ import { NewslettersModule } from './modules/newsletters/newsletters.module';
 import { StreamsModule } from './modules/streams/streams.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';
+import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RolesModule } from './modules/roles/roles.module';
     StreamsModule,
     AuthModule,
     RolesModule,
+    ProgramTemplatesModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

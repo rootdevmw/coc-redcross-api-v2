@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { verifySoftDelete } from './soft-delete-check';
 import FormData from 'form-data';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -82,6 +83,7 @@ async function run() {
     const fileExists = fs.existsSync(storedPath);
 
     console.log('💾 File saved:', fileExists ? 'PASSED' : 'FAILED');
+    await verifySoftDelete(axios, `${API}/newsletters`, newsletterId);
 
     console.log('\n🎉 ALL NEWSLETTER TESTS PASSED');
   } catch (error: any) {

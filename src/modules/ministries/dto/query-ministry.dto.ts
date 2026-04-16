@@ -12,4 +12,12 @@ export class QueryMinistryDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  leaderId?: string;
+
+  @IsOptional()
+  @IsNumberString()
+  overseerId?: string;
 }

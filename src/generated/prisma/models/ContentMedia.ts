@@ -20,18 +20,30 @@ export type ContentMediaModel = runtime.Types.Result.DefaultSelection<Prisma.$Co
 
 export type AggregateContentMedia = {
   _count: ContentMediaCountAggregateOutputType | null
+  _avg: ContentMediaAvgAggregateOutputType | null
+  _sum: ContentMediaSumAggregateOutputType | null
   _min: ContentMediaMinAggregateOutputType | null
   _max: ContentMediaMaxAggregateOutputType | null
 }
 
+export type ContentMediaAvgAggregateOutputType = {
+  contentId: number | null
+  mediaId: number | null
+}
+
+export type ContentMediaSumAggregateOutputType = {
+  contentId: bigint | null
+  mediaId: bigint | null
+}
+
 export type ContentMediaMinAggregateOutputType = {
-  contentId: string | null
-  mediaId: string | null
+  contentId: bigint | null
+  mediaId: bigint | null
 }
 
 export type ContentMediaMaxAggregateOutputType = {
-  contentId: string | null
-  mediaId: string | null
+  contentId: bigint | null
+  mediaId: bigint | null
 }
 
 export type ContentMediaCountAggregateOutputType = {
@@ -40,6 +52,16 @@ export type ContentMediaCountAggregateOutputType = {
   _all: number
 }
 
+
+export type ContentMediaAvgAggregateInputType = {
+  contentId?: true
+  mediaId?: true
+}
+
+export type ContentMediaSumAggregateInputType = {
+  contentId?: true
+  mediaId?: true
+}
 
 export type ContentMediaMinAggregateInputType = {
   contentId?: true
@@ -95,6 +117,18 @@ export type ContentMediaAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ContentMediaAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ContentMediaSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ContentMediaMinAggregateInputType
@@ -125,14 +159,18 @@ export type ContentMediaGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   _count?: ContentMediaCountAggregateInputType | true
+  _avg?: ContentMediaAvgAggregateInputType
+  _sum?: ContentMediaSumAggregateInputType
   _min?: ContentMediaMinAggregateInputType
   _max?: ContentMediaMaxAggregateInputType
 }
 
 export type ContentMediaGroupByOutputType = {
-  contentId: string
-  mediaId: string
+  contentId: bigint
+  mediaId: bigint
   _count: ContentMediaCountAggregateOutputType | null
+  _avg: ContentMediaAvgAggregateOutputType | null
+  _sum: ContentMediaSumAggregateOutputType | null
   _min: ContentMediaMinAggregateOutputType | null
   _max: ContentMediaMaxAggregateOutputType | null
 }
@@ -156,8 +194,8 @@ export type ContentMediaWhereInput = {
   AND?: Prisma.ContentMediaWhereInput | Prisma.ContentMediaWhereInput[]
   OR?: Prisma.ContentMediaWhereInput[]
   NOT?: Prisma.ContentMediaWhereInput | Prisma.ContentMediaWhereInput[]
-  contentId?: Prisma.StringFilter<"ContentMedia"> | string
-  mediaId?: Prisma.StringFilter<"ContentMedia"> | string
+  contentId?: Prisma.BigIntFilter<"ContentMedia"> | bigint | number
+  mediaId?: Prisma.BigIntFilter<"ContentMedia"> | bigint | number
   content?: Prisma.XOR<Prisma.ContentScalarRelationFilter, Prisma.ContentWhereInput>
   media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
 }
@@ -167,7 +205,6 @@ export type ContentMediaOrderByWithRelationInput = {
   mediaId?: Prisma.SortOrder
   content?: Prisma.ContentOrderByWithRelationInput
   media?: Prisma.MediaOrderByWithRelationInput
-  _relevance?: Prisma.ContentMediaOrderByRelevanceInput
 }
 
 export type ContentMediaWhereUniqueInput = Prisma.AtLeast<{
@@ -175,8 +212,8 @@ export type ContentMediaWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ContentMediaWhereInput | Prisma.ContentMediaWhereInput[]
   OR?: Prisma.ContentMediaWhereInput[]
   NOT?: Prisma.ContentMediaWhereInput | Prisma.ContentMediaWhereInput[]
-  contentId?: Prisma.StringFilter<"ContentMedia"> | string
-  mediaId?: Prisma.StringFilter<"ContentMedia"> | string
+  contentId?: Prisma.BigIntFilter<"ContentMedia"> | bigint | number
+  mediaId?: Prisma.BigIntFilter<"ContentMedia"> | bigint | number
   content?: Prisma.XOR<Prisma.ContentScalarRelationFilter, Prisma.ContentWhereInput>
   media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
 }, "contentId_mediaId">
@@ -185,16 +222,18 @@ export type ContentMediaOrderByWithAggregationInput = {
   contentId?: Prisma.SortOrder
   mediaId?: Prisma.SortOrder
   _count?: Prisma.ContentMediaCountOrderByAggregateInput
+  _avg?: Prisma.ContentMediaAvgOrderByAggregateInput
   _max?: Prisma.ContentMediaMaxOrderByAggregateInput
   _min?: Prisma.ContentMediaMinOrderByAggregateInput
+  _sum?: Prisma.ContentMediaSumOrderByAggregateInput
 }
 
 export type ContentMediaScalarWhereWithAggregatesInput = {
   AND?: Prisma.ContentMediaScalarWhereWithAggregatesInput | Prisma.ContentMediaScalarWhereWithAggregatesInput[]
   OR?: Prisma.ContentMediaScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ContentMediaScalarWhereWithAggregatesInput | Prisma.ContentMediaScalarWhereWithAggregatesInput[]
-  contentId?: Prisma.StringWithAggregatesFilter<"ContentMedia"> | string
-  mediaId?: Prisma.StringWithAggregatesFilter<"ContentMedia"> | string
+  contentId?: Prisma.BigIntWithAggregatesFilter<"ContentMedia"> | bigint | number
+  mediaId?: Prisma.BigIntWithAggregatesFilter<"ContentMedia"> | bigint | number
 }
 
 export type ContentMediaCreateInput = {
@@ -203,8 +242,8 @@ export type ContentMediaCreateInput = {
 }
 
 export type ContentMediaUncheckedCreateInput = {
-  contentId: string
-  mediaId: string
+  contentId: bigint | number
+  mediaId: bigint | number
 }
 
 export type ContentMediaUpdateInput = {
@@ -213,13 +252,13 @@ export type ContentMediaUpdateInput = {
 }
 
 export type ContentMediaUncheckedUpdateInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentMediaCreateManyInput = {
-  contentId: string
-  mediaId: string
+  contentId: bigint | number
+  mediaId: bigint | number
 }
 
 export type ContentMediaUpdateManyMutationInput = {
@@ -227,8 +266,8 @@ export type ContentMediaUpdateManyMutationInput = {
 }
 
 export type ContentMediaUncheckedUpdateManyInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentMediaListRelationFilter = {
@@ -241,18 +280,17 @@ export type ContentMediaOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ContentMediaOrderByRelevanceInput = {
-  fields: Prisma.ContentMediaOrderByRelevanceFieldEnum | Prisma.ContentMediaOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type ContentMediaContentIdMediaIdCompoundUniqueInput = {
-  contentId: string
-  mediaId: string
+  contentId: bigint | number
+  mediaId: bigint | number
 }
 
 export type ContentMediaCountOrderByAggregateInput = {
+  contentId?: Prisma.SortOrder
+  mediaId?: Prisma.SortOrder
+}
+
+export type ContentMediaAvgOrderByAggregateInput = {
   contentId?: Prisma.SortOrder
   mediaId?: Prisma.SortOrder
 }
@@ -263,6 +301,11 @@ export type ContentMediaMaxOrderByAggregateInput = {
 }
 
 export type ContentMediaMinOrderByAggregateInput = {
+  contentId?: Prisma.SortOrder
+  mediaId?: Prisma.SortOrder
+}
+
+export type ContentMediaSumOrderByAggregateInput = {
   contentId?: Prisma.SortOrder
   mediaId?: Prisma.SortOrder
 }
@@ -356,7 +399,7 @@ export type ContentMediaCreateWithoutContentInput = {
 }
 
 export type ContentMediaUncheckedCreateWithoutContentInput = {
-  mediaId: string
+  mediaId: bigint | number
 }
 
 export type ContentMediaCreateOrConnectWithoutContentInput = {
@@ -389,8 +432,8 @@ export type ContentMediaScalarWhereInput = {
   AND?: Prisma.ContentMediaScalarWhereInput | Prisma.ContentMediaScalarWhereInput[]
   OR?: Prisma.ContentMediaScalarWhereInput[]
   NOT?: Prisma.ContentMediaScalarWhereInput | Prisma.ContentMediaScalarWhereInput[]
-  contentId?: Prisma.StringFilter<"ContentMedia"> | string
-  mediaId?: Prisma.StringFilter<"ContentMedia"> | string
+  contentId?: Prisma.BigIntFilter<"ContentMedia"> | bigint | number
+  mediaId?: Prisma.BigIntFilter<"ContentMedia"> | bigint | number
 }
 
 export type ContentMediaCreateWithoutMediaInput = {
@@ -398,7 +441,7 @@ export type ContentMediaCreateWithoutMediaInput = {
 }
 
 export type ContentMediaUncheckedCreateWithoutMediaInput = {
-  contentId: string
+  contentId: bigint | number
 }
 
 export type ContentMediaCreateOrConnectWithoutMediaInput = {
@@ -428,7 +471,7 @@ export type ContentMediaUpdateManyWithWhereWithoutMediaInput = {
 }
 
 export type ContentMediaCreateManyContentInput = {
-  mediaId: string
+  mediaId: bigint | number
 }
 
 export type ContentMediaUpdateWithoutContentInput = {
@@ -436,15 +479,15 @@ export type ContentMediaUpdateWithoutContentInput = {
 }
 
 export type ContentMediaUncheckedUpdateWithoutContentInput = {
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentMediaUncheckedUpdateManyWithoutContentInput = {
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentMediaCreateManyMediaInput = {
-  contentId: string
+  contentId: bigint | number
 }
 
 export type ContentMediaUpdateWithoutMediaInput = {
@@ -452,11 +495,11 @@ export type ContentMediaUpdateWithoutMediaInput = {
 }
 
 export type ContentMediaUncheckedUpdateWithoutMediaInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentMediaUncheckedUpdateManyWithoutMediaInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -488,8 +531,8 @@ export type $ContentMediaPayload<ExtArgs extends runtime.Types.Extensions.Intern
     media: Prisma.$MediaPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    contentId: string
-    mediaId: string
+    contentId: bigint
+    mediaId: bigint
   }, ExtArgs["result"]["contentMedia"]>
   composites: {}
 }
@@ -861,8 +904,8 @@ export interface Prisma__ContentMediaClient<T, Null = never, ExtArgs extends run
  * Fields of the ContentMedia model
  */
 export interface ContentMediaFieldRefs {
-  readonly contentId: Prisma.FieldRef<"ContentMedia", 'String'>
-  readonly mediaId: Prisma.FieldRef<"ContentMedia", 'String'>
+  readonly contentId: Prisma.FieldRef<"ContentMedia", 'BigInt'>
+  readonly mediaId: Prisma.FieldRef<"ContentMedia", 'BigInt'>
 }
     
 

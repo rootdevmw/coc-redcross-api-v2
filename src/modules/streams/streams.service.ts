@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { toBigIntOptional } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class StreamsService {
@@ -29,6 +30,9 @@ export class StreamsService {
       },
       include: {
         platforms: {
+          where: {
+            platform: { deletedAt: null },
+          },
           include: {
             platform: true,
           },
@@ -57,6 +61,9 @@ export class StreamsService {
         orderBy: { createdAt: 'desc' },
         include: {
           platforms: {
+            where: {
+              platform: { deletedAt: null },
+            },
             include: {
               platform: true,
             },
@@ -82,6 +89,9 @@ export class StreamsService {
       orderBy: { createdAt: 'desc' },
       include: {
         platforms: {
+          where: {
+            platform: { deletedAt: null },
+          },
           include: {
             platform: true,
           },
@@ -100,10 +110,13 @@ export class StreamsService {
   // GET ONE
   // -----------------------------
   async findOne(id: string) {
-    const stream = await this.prisma.stream.findUnique({
-      where: { id },
+    const stream = await this.prisma.stream.findFirst({
+      where: { id: toBigIntOptional(id) },
       include: {
         platforms: {
+          where: {
+            platform: { deletedAt: null },
+          },
           include: {
             platform: true,
           },
@@ -129,12 +142,12 @@ export class StreamsService {
     // replace platforms if provided
     if (dto.platformIds) {
       await this.prisma.streamPlatform.deleteMany({
-        where: { streamId: id },
+        where: { streamId: toBigIntOptional(id) },
       });
     }
 
     const stream = await this.prisma.stream.update({
-      where: { id },
+      where: { id: toBigIntOptional(id) },
       data: {
         title: dto.title,
         isLive: dto.isLive,
@@ -150,6 +163,9 @@ export class StreamsService {
       },
       include: {
         platforms: {
+          where: {
+            platform: { deletedAt: null },
+          },
           include: {
             platform: true,
           },
@@ -160,6 +176,18 @@ export class StreamsService {
     return {
       success: true,
       data: this.format(stream),
+      meta: {},
+    };
+  }
+
+  async remove(id: string) {
+    await this.prisma.stream.delete({
+      where: { id: toBigIntOptional(id) },
+    });
+
+    return {
+      success: true,
+      data: {},
       meta: {},
     };
   }
@@ -175,7 +203,7 @@ export class StreamsService {
     });
 
     const stream = await this.prisma.stream.update({
-      where: { id },
+      where: { id: toBigIntOptional(id) },
       data: { isLive: true },
       include: {
         platforms: {

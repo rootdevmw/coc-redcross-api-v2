@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateHomecellDto } from './dto/create-homecell.dto';
 import { UpdateHomecellDto } from './dto/update-homecell.dto';
+import { toBigInt } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class HomecellsService {
@@ -13,7 +14,12 @@ export class HomecellsService {
     this.logger.log('Creating homecell');
 
     const homecell = await this.prisma.homecell.create({
-      data: dto,
+      data: {
+        name: dto.name,
+        location: dto.location,
+        leaderId: dto.leaderId ? toBigInt(dto.leaderId) : undefined,
+        overseerId: dto.overseerId ? toBigInt(dto.overseerId) : undefined,
+      },
     });
 
     this.logger.log(`Created homecell ${homecell.name}`);
@@ -32,7 +38,9 @@ export class HomecellsService {
       orderBy: { createdAt: 'desc' },
       include: {
         leader: true,
-        members: true,
+        members: {
+          where: { deletedAt: null },
+        },
         overseer: true,
       },
     });
@@ -49,11 +57,13 @@ export class HomecellsService {
   async findOne(id: string) {
     this.logger.log(`Fetching homecell ${id}`);
 
-    const homecell = await this.prisma.homecell.findUnique({
-      where: { id },
+    const homecell = await this.prisma.homecell.findFirst({
+      where: { id: toBigInt(id) },
       include: {
         leader: true,
-        members: true,
+        members: {
+          where: { deletedAt: null },
+        },
         overseer: true,
       },
     });
@@ -73,8 +83,13 @@ export class HomecellsService {
     this.logger.log(`Updating homecell ${id}`);
 
     const homecell = await this.prisma.homecell.update({
-      where: { id },
-      data: dto,
+      where: { id: toBigInt(id) },
+      data: {
+        name: dto.name,
+        location: dto.location,
+        leaderId: dto.leaderId ? toBigInt(dto.leaderId) : undefined,
+        overseerId: dto.overseerId ? toBigInt(dto.overseerId) : undefined,
+      },
     });
 
     this.logger.log(`Updated homecell ${homecell.id}`);
@@ -86,21 +101,33 @@ export class HomecellsService {
     };
   }
 
+  async remove(id: string) {
+    await this.prisma.homecell.delete({
+      where: { id: toBigInt(id) },
+    });
+
+    return {
+      success: true,
+      data: {},
+      meta: {},
+    };
+  }
+
   /**
    * A member can belong to ONLY ONE homecell
    * → This overrides previous assignment
    */
   async assignMember(homecellId: string, memberId: string) {
     // Ensure homecell exists
-    const homecell = await this.prisma.homecell.findUnique({
-      where: { id: homecellId },
+    const homecell = await this.prisma.homecell.findFirst({
+      where: { id: toBigInt(homecellId) },
     });
 
     if (!homecell) throw new NotFoundException('Homecell not found');
 
     // Ensure member exists
-    const member = await this.prisma.member.findUnique({
-      where: { id: memberId },
+    const member = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId) },
     });
     this.logger.log(
       `Assigning member ${member?.firstName} ${member?.lastName} to homecell ${homecell.name}`,
@@ -110,9 +137,9 @@ export class HomecellsService {
 
     //KEY LOGIC: override previous homecell
     await this.prisma.member.update({
-      where: { id: memberId },
+      where: { id: toBigInt(memberId) },
       data: {
-        homecellId: homecellId,
+        homecellId: toBigInt(homecellId),
       },
     });
 
@@ -129,7 +156,7 @@ export class HomecellsService {
     this.logger.log(`Fetching members for homecell ${homecellId}`);
 
     const members = await this.prisma.member.findMany({
-      where: { homecellId },
+      where: { homecellId: toBigInt(homecellId) },
       include: {
         ministries: {
           include: {
@@ -146,6 +173,44 @@ export class HomecellsService {
     return {
       success: true,
       data: members,
+      meta: {},
+    };
+  }
+
+  async removeMember(homecellId: string, memberId: string) {
+    this.logger.log(`Removing member ${memberId} from homecell ${homecellId}`);
+
+    // Ensure homecell exists
+    const homecell = await this.prisma.homecell.findFirst({
+      where: { id: toBigInt(homecellId) },
+    });
+
+    if (!homecell)
+      throw new NotFoundException('Homecell with ID ${homecellId} not found');
+
+    // Ensure member exists and is in this homecell
+    const member = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId), homecellId: toBigInt(homecellId) },
+    });
+
+    if (!member)
+      throw new NotFoundException(
+        'Member with ID ${memberId} not found in this homecell',
+      );
+
+    // Remove by setting homecellId to null
+    await this.prisma.member.update({
+      where: { id: toBigInt(memberId) },
+      data: { homecellId: null },
+    });
+
+    this.logger.log(
+      `Removed member ${member.firstName} ${member.lastName} from homecell ${homecell.name}`,
+    );
+
+    return {
+      success: true,
+      message: 'Member removed from homecell',
       meta: {},
     };
   }

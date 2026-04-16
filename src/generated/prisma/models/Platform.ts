@@ -20,46 +20,70 @@ export type PlatformModel = runtime.Types.Result.DefaultSelection<Prisma.$Platfo
 
 export type AggregatePlatform = {
   _count: PlatformCountAggregateOutputType | null
+  _avg: PlatformAvgAggregateOutputType | null
+  _sum: PlatformSumAggregateOutputType | null
   _min: PlatformMinAggregateOutputType | null
   _max: PlatformMaxAggregateOutputType | null
 }
 
+export type PlatformAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type PlatformSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type PlatformMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   url: string | null
+  deletedAt: Date | null
 }
 
 export type PlatformMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   url: string | null
+  deletedAt: Date | null
 }
 
 export type PlatformCountAggregateOutputType = {
   id: number
   name: number
   url: number
+  deletedAt: number
   _all: number
 }
 
+
+export type PlatformAvgAggregateInputType = {
+  id?: true
+}
+
+export type PlatformSumAggregateInputType = {
+  id?: true
+}
 
 export type PlatformMinAggregateInputType = {
   id?: true
   name?: true
   url?: true
+  deletedAt?: true
 }
 
 export type PlatformMaxAggregateInputType = {
   id?: true
   name?: true
   url?: true
+  deletedAt?: true
 }
 
 export type PlatformCountAggregateInputType = {
   id?: true
   name?: true
   url?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -101,6 +125,18 @@ export type PlatformAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: PlatformAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: PlatformSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: PlatformMinAggregateInputType
@@ -131,15 +167,20 @@ export type PlatformGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: PlatformCountAggregateInputType | true
+  _avg?: PlatformAvgAggregateInputType
+  _sum?: PlatformSumAggregateInputType
   _min?: PlatformMinAggregateInputType
   _max?: PlatformMaxAggregateInputType
 }
 
 export type PlatformGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
   url: string
+  deletedAt: Date | null
   _count: PlatformCountAggregateOutputType | null
+  _avg: PlatformAvgAggregateOutputType | null
+  _sum: PlatformSumAggregateOutputType | null
   _min: PlatformMinAggregateOutputType | null
   _max: PlatformMaxAggregateOutputType | null
 }
@@ -163,9 +204,10 @@ export type PlatformWhereInput = {
   AND?: Prisma.PlatformWhereInput | Prisma.PlatformWhereInput[]
   OR?: Prisma.PlatformWhereInput[]
   NOT?: Prisma.PlatformWhereInput | Prisma.PlatformWhereInput[]
-  id?: Prisma.StringFilter<"Platform"> | string
+  id?: Prisma.BigIntFilter<"Platform"> | bigint | number
   name?: Prisma.StringFilter<"Platform"> | string
   url?: Prisma.StringFilter<"Platform"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Platform"> | Date | string | null
   streamPlatforms?: Prisma.StreamPlatformListRelationFilter
 }
 
@@ -173,17 +215,19 @@ export type PlatformOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   streamPlatforms?: Prisma.StreamPlatformOrderByRelationAggregateInput
   _relevance?: Prisma.PlatformOrderByRelevanceInput
 }
 
 export type PlatformWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   name?: string
   AND?: Prisma.PlatformWhereInput | Prisma.PlatformWhereInput[]
   OR?: Prisma.PlatformWhereInput[]
   NOT?: Prisma.PlatformWhereInput | Prisma.PlatformWhereInput[]
   url?: Prisma.StringFilter<"Platform"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Platform"> | Date | string | null
   streamPlatforms?: Prisma.StreamPlatformListRelationFilter
 }, "id" | "name">
 
@@ -191,64 +235,75 @@ export type PlatformOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PlatformCountOrderByAggregateInput
+  _avg?: Prisma.PlatformAvgOrderByAggregateInput
   _max?: Prisma.PlatformMaxOrderByAggregateInput
   _min?: Prisma.PlatformMinOrderByAggregateInput
+  _sum?: Prisma.PlatformSumOrderByAggregateInput
 }
 
 export type PlatformScalarWhereWithAggregatesInput = {
   AND?: Prisma.PlatformScalarWhereWithAggregatesInput | Prisma.PlatformScalarWhereWithAggregatesInput[]
   OR?: Prisma.PlatformScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PlatformScalarWhereWithAggregatesInput | Prisma.PlatformScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Platform"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Platform"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"Platform"> | string
   url?: Prisma.StringWithAggregatesFilter<"Platform"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Platform"> | Date | string | null
 }
 
 export type PlatformCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   url: string
+  deletedAt?: Date | string | null
   streamPlatforms?: Prisma.StreamPlatformCreateNestedManyWithoutPlatformInput
 }
 
 export type PlatformUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   url: string
+  deletedAt?: Date | string | null
   streamPlatforms?: Prisma.StreamPlatformUncheckedCreateNestedManyWithoutPlatformInput
 }
 
 export type PlatformUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   streamPlatforms?: Prisma.StreamPlatformUpdateManyWithoutPlatformNestedInput
 }
 
 export type PlatformUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   streamPlatforms?: Prisma.StreamPlatformUncheckedUpdateManyWithoutPlatformNestedInput
 }
 
 export type PlatformCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
   url: string
+  deletedAt?: Date | string | null
 }
 
 export type PlatformUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PlatformUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PlatformOrderByRelevanceInput = {
@@ -261,18 +316,29 @@ export type PlatformCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type PlatformAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type PlatformMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type PlatformMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   url?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type PlatformSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type PlatformScalarRelationFilter = {
@@ -295,15 +361,17 @@ export type PlatformUpdateOneRequiredWithoutStreamPlatformsNestedInput = {
 }
 
 export type PlatformCreateWithoutStreamPlatformsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   url: string
+  deletedAt?: Date | string | null
 }
 
 export type PlatformUncheckedCreateWithoutStreamPlatformsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   url: string
+  deletedAt?: Date | string | null
 }
 
 export type PlatformCreateOrConnectWithoutStreamPlatformsInput = {
@@ -323,15 +391,17 @@ export type PlatformUpdateToOneWithWhereWithoutStreamPlatformsInput = {
 }
 
 export type PlatformUpdateWithoutStreamPlatformsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type PlatformUncheckedUpdateWithoutStreamPlatformsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -369,6 +439,7 @@ export type PlatformSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   name?: boolean
   url?: boolean
+  deletedAt?: boolean
   streamPlatforms?: boolean | Prisma.Platform$streamPlatformsArgs<ExtArgs>
   _count?: boolean | Prisma.PlatformCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["platform"]>
@@ -379,9 +450,10 @@ export type PlatformSelectScalar = {
   id?: boolean
   name?: boolean
   url?: boolean
+  deletedAt?: boolean
 }
 
-export type PlatformOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "url", ExtArgs["result"]["platform"]>
+export type PlatformOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "url" | "deletedAt", ExtArgs["result"]["platform"]>
 export type PlatformInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   streamPlatforms?: boolean | Prisma.Platform$streamPlatformsArgs<ExtArgs>
   _count?: boolean | Prisma.PlatformCountOutputTypeDefaultArgs<ExtArgs>
@@ -393,9 +465,10 @@ export type $PlatformPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     streamPlatforms: Prisma.$StreamPlatformPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
     url: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["platform"]>
   composites: {}
 }
@@ -766,9 +839,10 @@ export interface Prisma__PlatformClient<T, Null = never, ExtArgs extends runtime
  * Fields of the Platform model
  */
 export interface PlatformFieldRefs {
-  readonly id: Prisma.FieldRef<"Platform", 'String'>
+  readonly id: Prisma.FieldRef<"Platform", 'BigInt'>
   readonly name: Prisma.FieldRef<"Platform", 'String'>
   readonly url: Prisma.FieldRef<"Platform", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Platform", 'DateTime'>
 }
     
 

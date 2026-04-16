@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
+import { toBigInt } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class MembersService {
@@ -15,7 +16,12 @@ export class MembersService {
 
     const member = await this.prisma.member.create({
       data: {
-        ...dto,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+        status: dto.status,
+        location: dto.location,
+        homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : null,
       },
     });
@@ -56,6 +62,9 @@ export class MembersService {
         include: {
           homecell: true,
           ministries: {
+            where: {
+              ministry: { deletedAt: null },
+            },
             include: {
               ministry: true,
             },
@@ -77,15 +86,20 @@ export class MembersService {
   async findOne(id: string) {
     this.logger.log(`Fetching member ${id}`);
 
-    const member = await this.prisma.member.findUnique({
-      where: { id },
+    const member = await this.prisma.member.findFirst({
+      where: { id: toBigInt(id) },
       include: {
         homecell: true,
         ministries: {
+          where: {
+            ministry: { deletedAt: null },
+          },
           include: { ministry: true },
         },
       },
     });
+
+    if (!member) throw new NotFoundException('Member not found');
 
     this.logger.log(`Fetched member ${id}`);
 
@@ -99,9 +113,14 @@ export class MembersService {
     this.logger.log(`Updating member ${id}`);
 
     const member = await this.prisma.member.update({
-      where: { id },
+      where: { id: toBigInt(id) },
       data: {
-        ...dto,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+        status: dto.status,
+        location: dto.location,
+        homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : undefined,
       },
     });
@@ -115,13 +134,25 @@ export class MembersService {
     };
   }
 
+  async remove(id: string) {
+    await this.prisma.member.delete({
+      where: { id: toBigInt(id) },
+    });
+
+    return {
+      success: true,
+      data: {},
+      meta: {},
+    };
+  }
+
   async assignMinistry(memberId: string, ministryId: string) {
     this.logger.log(`Assigning member ${memberId} to ministry ${ministryId}`);
 
     await this.prisma.memberMinistry.create({
       data: {
-        memberId,
-        ministryId,
+        memberId: toBigInt(memberId),
+        ministryId: toBigInt(ministryId),
       },
     });
 
@@ -140,8 +171,8 @@ export class MembersService {
     await this.prisma.memberMinistry.delete({
       where: {
         memberId_ministryId: {
-          memberId,
-          ministryId,
+          memberId: toBigInt(memberId),
+          ministryId: toBigInt(ministryId),
         },
       },
     });

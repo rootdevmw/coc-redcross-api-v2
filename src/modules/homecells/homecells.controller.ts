@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Body,
+  Delete,
+} from '@nestjs/common';
 import { HomecellsService } from './homecells.service';
 import { CreateHomecellDto } from './dto/create-homecell.dto';
 import { UpdateHomecellDto } from './dto/update-homecell.dto';
@@ -28,6 +36,11 @@ export class HomecellsController {
     return this.service.update(id, dto);
   }
 
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+
   @Get(':id/members')
   getMembers(@Param('id') id: string) {
     return this.service.getMembers(id);
@@ -36,5 +49,10 @@ export class HomecellsController {
   @Post(':id/members')
   assignMember(@Param('id') homecellId: string, @Body() dto: AssignMemberDto) {
     return this.service.assignMember(homecellId, dto.memberId);
+  }
+
+  @Delete(':id/members/:memberId')
+  removeMember(@Param('id') homecellId: string, @Param('memberId') memberId: string) {
+    return this.service.removeMember(homecellId, memberId);
   }
 }

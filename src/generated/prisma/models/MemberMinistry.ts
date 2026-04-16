@@ -20,18 +20,30 @@ export type MemberMinistryModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateMemberMinistry = {
   _count: MemberMinistryCountAggregateOutputType | null
+  _avg: MemberMinistryAvgAggregateOutputType | null
+  _sum: MemberMinistrySumAggregateOutputType | null
   _min: MemberMinistryMinAggregateOutputType | null
   _max: MemberMinistryMaxAggregateOutputType | null
 }
 
+export type MemberMinistryAvgAggregateOutputType = {
+  memberId: number | null
+  ministryId: number | null
+}
+
+export type MemberMinistrySumAggregateOutputType = {
+  memberId: bigint | null
+  ministryId: bigint | null
+}
+
 export type MemberMinistryMinAggregateOutputType = {
-  memberId: string | null
-  ministryId: string | null
+  memberId: bigint | null
+  ministryId: bigint | null
 }
 
 export type MemberMinistryMaxAggregateOutputType = {
-  memberId: string | null
-  ministryId: string | null
+  memberId: bigint | null
+  ministryId: bigint | null
 }
 
 export type MemberMinistryCountAggregateOutputType = {
@@ -40,6 +52,16 @@ export type MemberMinistryCountAggregateOutputType = {
   _all: number
 }
 
+
+export type MemberMinistryAvgAggregateInputType = {
+  memberId?: true
+  ministryId?: true
+}
+
+export type MemberMinistrySumAggregateInputType = {
+  memberId?: true
+  ministryId?: true
+}
 
 export type MemberMinistryMinAggregateInputType = {
   memberId?: true
@@ -95,6 +117,18 @@ export type MemberMinistryAggregateArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: MemberMinistryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: MemberMinistrySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: MemberMinistryMinAggregateInputType
@@ -125,14 +159,18 @@ export type MemberMinistryGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: MemberMinistryCountAggregateInputType | true
+  _avg?: MemberMinistryAvgAggregateInputType
+  _sum?: MemberMinistrySumAggregateInputType
   _min?: MemberMinistryMinAggregateInputType
   _max?: MemberMinistryMaxAggregateInputType
 }
 
 export type MemberMinistryGroupByOutputType = {
-  memberId: string
-  ministryId: string
+  memberId: bigint
+  ministryId: bigint
   _count: MemberMinistryCountAggregateOutputType | null
+  _avg: MemberMinistryAvgAggregateOutputType | null
+  _sum: MemberMinistrySumAggregateOutputType | null
   _min: MemberMinistryMinAggregateOutputType | null
   _max: MemberMinistryMaxAggregateOutputType | null
 }
@@ -156,8 +194,8 @@ export type MemberMinistryWhereInput = {
   AND?: Prisma.MemberMinistryWhereInput | Prisma.MemberMinistryWhereInput[]
   OR?: Prisma.MemberMinistryWhereInput[]
   NOT?: Prisma.MemberMinistryWhereInput | Prisma.MemberMinistryWhereInput[]
-  memberId?: Prisma.StringFilter<"MemberMinistry"> | string
-  ministryId?: Prisma.StringFilter<"MemberMinistry"> | string
+  memberId?: Prisma.BigIntFilter<"MemberMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntFilter<"MemberMinistry"> | bigint | number
   member?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
   ministry?: Prisma.XOR<Prisma.MinistryScalarRelationFilter, Prisma.MinistryWhereInput>
 }
@@ -167,7 +205,6 @@ export type MemberMinistryOrderByWithRelationInput = {
   ministryId?: Prisma.SortOrder
   member?: Prisma.MemberOrderByWithRelationInput
   ministry?: Prisma.MinistryOrderByWithRelationInput
-  _relevance?: Prisma.MemberMinistryOrderByRelevanceInput
 }
 
 export type MemberMinistryWhereUniqueInput = Prisma.AtLeast<{
@@ -175,8 +212,8 @@ export type MemberMinistryWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MemberMinistryWhereInput | Prisma.MemberMinistryWhereInput[]
   OR?: Prisma.MemberMinistryWhereInput[]
   NOT?: Prisma.MemberMinistryWhereInput | Prisma.MemberMinistryWhereInput[]
-  memberId?: Prisma.StringFilter<"MemberMinistry"> | string
-  ministryId?: Prisma.StringFilter<"MemberMinistry"> | string
+  memberId?: Prisma.BigIntFilter<"MemberMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntFilter<"MemberMinistry"> | bigint | number
   member?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
   ministry?: Prisma.XOR<Prisma.MinistryScalarRelationFilter, Prisma.MinistryWhereInput>
 }, "memberId_ministryId">
@@ -185,16 +222,18 @@ export type MemberMinistryOrderByWithAggregationInput = {
   memberId?: Prisma.SortOrder
   ministryId?: Prisma.SortOrder
   _count?: Prisma.MemberMinistryCountOrderByAggregateInput
+  _avg?: Prisma.MemberMinistryAvgOrderByAggregateInput
   _max?: Prisma.MemberMinistryMaxOrderByAggregateInput
   _min?: Prisma.MemberMinistryMinOrderByAggregateInput
+  _sum?: Prisma.MemberMinistrySumOrderByAggregateInput
 }
 
 export type MemberMinistryScalarWhereWithAggregatesInput = {
   AND?: Prisma.MemberMinistryScalarWhereWithAggregatesInput | Prisma.MemberMinistryScalarWhereWithAggregatesInput[]
   OR?: Prisma.MemberMinistryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MemberMinistryScalarWhereWithAggregatesInput | Prisma.MemberMinistryScalarWhereWithAggregatesInput[]
-  memberId?: Prisma.StringWithAggregatesFilter<"MemberMinistry"> | string
-  ministryId?: Prisma.StringWithAggregatesFilter<"MemberMinistry"> | string
+  memberId?: Prisma.BigIntWithAggregatesFilter<"MemberMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntWithAggregatesFilter<"MemberMinistry"> | bigint | number
 }
 
 export type MemberMinistryCreateInput = {
@@ -203,8 +242,8 @@ export type MemberMinistryCreateInput = {
 }
 
 export type MemberMinistryUncheckedCreateInput = {
-  memberId: string
-  ministryId: string
+  memberId: bigint | number
+  ministryId: bigint | number
 }
 
 export type MemberMinistryUpdateInput = {
@@ -213,13 +252,13 @@ export type MemberMinistryUpdateInput = {
 }
 
 export type MemberMinistryUncheckedUpdateInput = {
-  memberId?: Prisma.StringFieldUpdateOperationsInput | string
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type MemberMinistryCreateManyInput = {
-  memberId: string
-  ministryId: string
+  memberId: bigint | number
+  ministryId: bigint | number
 }
 
 export type MemberMinistryUpdateManyMutationInput = {
@@ -227,8 +266,8 @@ export type MemberMinistryUpdateManyMutationInput = {
 }
 
 export type MemberMinistryUncheckedUpdateManyInput = {
-  memberId?: Prisma.StringFieldUpdateOperationsInput | string
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type MemberMinistryListRelationFilter = {
@@ -241,18 +280,17 @@ export type MemberMinistryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type MemberMinistryOrderByRelevanceInput = {
-  fields: Prisma.MemberMinistryOrderByRelevanceFieldEnum | Prisma.MemberMinistryOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type MemberMinistryMemberIdMinistryIdCompoundUniqueInput = {
-  memberId: string
-  ministryId: string
+  memberId: bigint | number
+  ministryId: bigint | number
 }
 
 export type MemberMinistryCountOrderByAggregateInput = {
+  memberId?: Prisma.SortOrder
+  ministryId?: Prisma.SortOrder
+}
+
+export type MemberMinistryAvgOrderByAggregateInput = {
   memberId?: Prisma.SortOrder
   ministryId?: Prisma.SortOrder
 }
@@ -263,6 +301,11 @@ export type MemberMinistryMaxOrderByAggregateInput = {
 }
 
 export type MemberMinistryMinOrderByAggregateInput = {
+  memberId?: Prisma.SortOrder
+  ministryId?: Prisma.SortOrder
+}
+
+export type MemberMinistrySumOrderByAggregateInput = {
   memberId?: Prisma.SortOrder
   ministryId?: Prisma.SortOrder
 }
@@ -356,7 +399,7 @@ export type MemberMinistryCreateWithoutMemberInput = {
 }
 
 export type MemberMinistryUncheckedCreateWithoutMemberInput = {
-  ministryId: string
+  ministryId: bigint | number
 }
 
 export type MemberMinistryCreateOrConnectWithoutMemberInput = {
@@ -389,8 +432,8 @@ export type MemberMinistryScalarWhereInput = {
   AND?: Prisma.MemberMinistryScalarWhereInput | Prisma.MemberMinistryScalarWhereInput[]
   OR?: Prisma.MemberMinistryScalarWhereInput[]
   NOT?: Prisma.MemberMinistryScalarWhereInput | Prisma.MemberMinistryScalarWhereInput[]
-  memberId?: Prisma.StringFilter<"MemberMinistry"> | string
-  ministryId?: Prisma.StringFilter<"MemberMinistry"> | string
+  memberId?: Prisma.BigIntFilter<"MemberMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntFilter<"MemberMinistry"> | bigint | number
 }
 
 export type MemberMinistryCreateWithoutMinistryInput = {
@@ -398,7 +441,7 @@ export type MemberMinistryCreateWithoutMinistryInput = {
 }
 
 export type MemberMinistryUncheckedCreateWithoutMinistryInput = {
-  memberId: string
+  memberId: bigint | number
 }
 
 export type MemberMinistryCreateOrConnectWithoutMinistryInput = {
@@ -428,7 +471,7 @@ export type MemberMinistryUpdateManyWithWhereWithoutMinistryInput = {
 }
 
 export type MemberMinistryCreateManyMemberInput = {
-  ministryId: string
+  ministryId: bigint | number
 }
 
 export type MemberMinistryUpdateWithoutMemberInput = {
@@ -436,15 +479,15 @@ export type MemberMinistryUpdateWithoutMemberInput = {
 }
 
 export type MemberMinistryUncheckedUpdateWithoutMemberInput = {
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type MemberMinistryUncheckedUpdateManyWithoutMemberInput = {
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type MemberMinistryCreateManyMinistryInput = {
-  memberId: string
+  memberId: bigint | number
 }
 
 export type MemberMinistryUpdateWithoutMinistryInput = {
@@ -452,11 +495,11 @@ export type MemberMinistryUpdateWithoutMinistryInput = {
 }
 
 export type MemberMinistryUncheckedUpdateWithoutMinistryInput = {
-  memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type MemberMinistryUncheckedUpdateManyWithoutMinistryInput = {
-  memberId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -488,8 +531,8 @@ export type $MemberMinistryPayload<ExtArgs extends runtime.Types.Extensions.Inte
     ministry: Prisma.$MinistryPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    memberId: string
-    ministryId: string
+    memberId: bigint
+    ministryId: bigint
   }, ExtArgs["result"]["memberMinistry"]>
   composites: {}
 }
@@ -861,8 +904,8 @@ export interface Prisma__MemberMinistryClient<T, Null = never, ExtArgs extends r
  * Fields of the MemberMinistry model
  */
 export interface MemberMinistryFieldRefs {
-  readonly memberId: Prisma.FieldRef<"MemberMinistry", 'String'>
-  readonly ministryId: Prisma.FieldRef<"MemberMinistry", 'String'>
+  readonly memberId: Prisma.FieldRef<"MemberMinistry", 'BigInt'>
+  readonly ministryId: Prisma.FieldRef<"MemberMinistry", 'BigInt'>
 }
     
 

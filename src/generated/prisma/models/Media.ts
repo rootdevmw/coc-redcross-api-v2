@@ -20,46 +20,70 @@ export type MediaModel = runtime.Types.Result.DefaultSelection<Prisma.$MediaPayl
 
 export type AggregateMedia = {
   _count: MediaCountAggregateOutputType | null
+  _avg: MediaAvgAggregateOutputType | null
+  _sum: MediaSumAggregateOutputType | null
   _min: MediaMinAggregateOutputType | null
   _max: MediaMaxAggregateOutputType | null
 }
 
+export type MediaAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type MediaSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type MediaMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   url: string | null
   type: string | null
+  deletedAt: Date | null
 }
 
 export type MediaMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   url: string | null
   type: string | null
+  deletedAt: Date | null
 }
 
 export type MediaCountAggregateOutputType = {
   id: number
   url: number
   type: number
+  deletedAt: number
   _all: number
 }
 
+
+export type MediaAvgAggregateInputType = {
+  id?: true
+}
+
+export type MediaSumAggregateInputType = {
+  id?: true
+}
 
 export type MediaMinAggregateInputType = {
   id?: true
   url?: true
   type?: true
+  deletedAt?: true
 }
 
 export type MediaMaxAggregateInputType = {
   id?: true
   url?: true
   type?: true
+  deletedAt?: true
 }
 
 export type MediaCountAggregateInputType = {
   id?: true
   url?: true
   type?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -101,6 +125,18 @@ export type MediaAggregateArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: MediaAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: MediaSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: MediaMinAggregateInputType
@@ -131,15 +167,20 @@ export type MediaGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   _count?: MediaCountAggregateInputType | true
+  _avg?: MediaAvgAggregateInputType
+  _sum?: MediaSumAggregateInputType
   _min?: MediaMinAggregateInputType
   _max?: MediaMaxAggregateInputType
 }
 
 export type MediaGroupByOutputType = {
-  id: string
+  id: bigint
   url: string
   type: string
+  deletedAt: Date | null
   _count: MediaCountAggregateOutputType | null
+  _avg: MediaAvgAggregateOutputType | null
+  _sum: MediaSumAggregateOutputType | null
   _min: MediaMinAggregateOutputType | null
   _max: MediaMaxAggregateOutputType | null
 }
@@ -163,9 +204,10 @@ export type MediaWhereInput = {
   AND?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
   OR?: Prisma.MediaWhereInput[]
   NOT?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
-  id?: Prisma.StringFilter<"Media"> | string
+  id?: Prisma.BigIntFilter<"Media"> | bigint | number
   url?: Prisma.StringFilter<"Media"> | string
   type?: Prisma.StringFilter<"Media"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Media"> | Date | string | null
   events?: Prisma.EventListRelationFilter
   contentMedia?: Prisma.ContentMediaListRelationFilter
   eventMedia?: Prisma.EventMediaListRelationFilter
@@ -175,6 +217,7 @@ export type MediaOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   events?: Prisma.EventOrderByRelationAggregateInput
   contentMedia?: Prisma.ContentMediaOrderByRelationAggregateInput
   eventMedia?: Prisma.EventMediaOrderByRelationAggregateInput
@@ -182,12 +225,13 @@ export type MediaOrderByWithRelationInput = {
 }
 
 export type MediaWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
   OR?: Prisma.MediaWhereInput[]
   NOT?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
   url?: Prisma.StringFilter<"Media"> | string
   type?: Prisma.StringFilter<"Media"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Media"> | Date | string | null
   events?: Prisma.EventListRelationFilter
   contentMedia?: Prisma.ContentMediaListRelationFilter
   eventMedia?: Prisma.EventMediaListRelationFilter
@@ -197,72 +241,83 @@ export type MediaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MediaCountOrderByAggregateInput
+  _avg?: Prisma.MediaAvgOrderByAggregateInput
   _max?: Prisma.MediaMaxOrderByAggregateInput
   _min?: Prisma.MediaMinOrderByAggregateInput
+  _sum?: Prisma.MediaSumOrderByAggregateInput
 }
 
 export type MediaScalarWhereWithAggregatesInput = {
   AND?: Prisma.MediaScalarWhereWithAggregatesInput | Prisma.MediaScalarWhereWithAggregatesInput[]
   OR?: Prisma.MediaScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MediaScalarWhereWithAggregatesInput | Prisma.MediaScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Media"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Media"> | bigint | number
   url?: Prisma.StringWithAggregatesFilter<"Media"> | string
   type?: Prisma.StringWithAggregatesFilter<"Media"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Media"> | Date | string | null
 }
 
 export type MediaCreateInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventCreateNestedManyWithoutMediaInput
   contentMedia?: Prisma.ContentMediaCreateNestedManyWithoutMediaInput
   eventMedia?: Prisma.EventMediaCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventUncheckedCreateNestedManyWithoutMediaInput
   contentMedia?: Prisma.ContentMediaUncheckedCreateNestedManyWithoutMediaInput
   eventMedia?: Prisma.EventMediaUncheckedCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUpdateManyWithoutMediaNestedInput
   contentMedia?: Prisma.ContentMediaUpdateManyWithoutMediaNestedInput
   eventMedia?: Prisma.EventMediaUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUncheckedUpdateManyWithoutMediaNestedInput
   contentMedia?: Prisma.ContentMediaUncheckedUpdateManyWithoutMediaNestedInput
   eventMedia?: Prisma.EventMediaUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaCreateManyInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
 }
 
 export type MediaUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MediaUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MediaOrderByRelevanceInput = {
@@ -275,18 +330,29 @@ export type MediaCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type MediaAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type MediaMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type MediaMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type MediaSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type MediaScalarRelationFilter = {
@@ -371,17 +437,19 @@ export type MediaUncheckedUpdateManyWithoutEventsNestedInput = {
 }
 
 export type MediaCreateWithoutContentMediaInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventCreateNestedManyWithoutMediaInput
   eventMedia?: Prisma.EventMediaCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUncheckedCreateWithoutContentMediaInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventUncheckedCreateNestedManyWithoutMediaInput
   eventMedia?: Prisma.EventMediaUncheckedCreateNestedManyWithoutMediaInput
 }
@@ -403,33 +471,37 @@ export type MediaUpdateToOneWithWhereWithoutContentMediaInput = {
 }
 
 export type MediaUpdateWithoutContentMediaInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUpdateManyWithoutMediaNestedInput
   eventMedia?: Prisma.EventMediaUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateWithoutContentMediaInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUncheckedUpdateManyWithoutMediaNestedInput
   eventMedia?: Prisma.EventMediaUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaCreateWithoutEventMediaInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventCreateNestedManyWithoutMediaInput
   contentMedia?: Prisma.ContentMediaCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUncheckedCreateWithoutEventMediaInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventUncheckedCreateNestedManyWithoutMediaInput
   contentMedia?: Prisma.ContentMediaUncheckedCreateNestedManyWithoutMediaInput
 }
@@ -451,33 +523,37 @@ export type MediaUpdateToOneWithWhereWithoutEventMediaInput = {
 }
 
 export type MediaUpdateWithoutEventMediaInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUpdateManyWithoutMediaNestedInput
   contentMedia?: Prisma.ContentMediaUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateWithoutEventMediaInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUncheckedUpdateManyWithoutMediaNestedInput
   contentMedia?: Prisma.ContentMediaUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaCreateWithoutEventsInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   contentMedia?: Prisma.ContentMediaCreateNestedManyWithoutMediaInput
   eventMedia?: Prisma.EventMediaCreateNestedManyWithoutMediaInput
 }
 
 export type MediaUncheckedCreateWithoutEventsInput = {
-  id?: string
+  id?: bigint | number
   url: string
   type: string
+  deletedAt?: Date | string | null
   contentMedia?: Prisma.ContentMediaUncheckedCreateNestedManyWithoutMediaInput
   eventMedia?: Prisma.EventMediaUncheckedCreateNestedManyWithoutMediaInput
 }
@@ -507,31 +583,35 @@ export type MediaScalarWhereInput = {
   AND?: Prisma.MediaScalarWhereInput | Prisma.MediaScalarWhereInput[]
   OR?: Prisma.MediaScalarWhereInput[]
   NOT?: Prisma.MediaScalarWhereInput | Prisma.MediaScalarWhereInput[]
-  id?: Prisma.StringFilter<"Media"> | string
+  id?: Prisma.BigIntFilter<"Media"> | bigint | number
   url?: Prisma.StringFilter<"Media"> | string
   type?: Prisma.StringFilter<"Media"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Media"> | Date | string | null
 }
 
 export type MediaUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contentMedia?: Prisma.ContentMediaUpdateManyWithoutMediaNestedInput
   eventMedia?: Prisma.EventMediaUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contentMedia?: Prisma.ContentMediaUncheckedUpdateManyWithoutMediaNestedInput
   eventMedia?: Prisma.EventMediaUncheckedUpdateManyWithoutMediaNestedInput
 }
 
 export type MediaUncheckedUpdateManyWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   url?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -587,6 +667,7 @@ export type MediaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   url?: boolean
   type?: boolean
+  deletedAt?: boolean
   events?: boolean | Prisma.Media$eventsArgs<ExtArgs>
   contentMedia?: boolean | Prisma.Media$contentMediaArgs<ExtArgs>
   eventMedia?: boolean | Prisma.Media$eventMediaArgs<ExtArgs>
@@ -599,9 +680,10 @@ export type MediaSelectScalar = {
   id?: boolean
   url?: boolean
   type?: boolean
+  deletedAt?: boolean
 }
 
-export type MediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "url" | "type", ExtArgs["result"]["media"]>
+export type MediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "url" | "type" | "deletedAt", ExtArgs["result"]["media"]>
 export type MediaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.Media$eventsArgs<ExtArgs>
   contentMedia?: boolean | Prisma.Media$contentMediaArgs<ExtArgs>
@@ -617,9 +699,10 @@ export type $MediaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     eventMedia: Prisma.$EventMediaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     url: string
     type: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["media"]>
   composites: {}
 }
@@ -992,9 +1075,10 @@ export interface Prisma__MediaClient<T, Null = never, ExtArgs extends runtime.Ty
  * Fields of the Media model
  */
 export interface MediaFieldRefs {
-  readonly id: Prisma.FieldRef<"Media", 'String'>
+  readonly id: Prisma.FieldRef<"Media", 'BigInt'>
   readonly url: Prisma.FieldRef<"Media", 'String'>
   readonly type: Prisma.FieldRef<"Media", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Media", 'DateTime'>
 }
     
 

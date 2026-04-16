@@ -1,7 +1,9 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { toBigInt } from 'src/common/utils/to-bigint';
+import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class AuthService {
@@ -9,7 +11,7 @@ export class AuthService {
 
   constructor(
     private prisma: PrismaService,
-    private jwt: JwtService,
+    private config: ConfigService,
   ) {}
 
   // -----------------------------
@@ -18,7 +20,7 @@ export class AuthService {
   async register(dto: any) {
     this.logger.log(`Registering user: ${dto.email}`);
 
-    const existing = await this.prisma.user.findUnique({
+    const existing = await this.prisma.user.findFirst({
       where: { email: dto.email },
     });
 
@@ -48,34 +50,60 @@ export class AuthService {
   // LOGIN
   // -----------------------------
   async login(dto: any) {
-    this.logger.log(`User login attempt: ${dto.email}`);
-
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: { email: dto.email },
-      include: {
-        roles: { include: { role: true } },
-      },
+      include: { roles: { include: { role: true } } },
     });
 
-    if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user) throw new UnauthorizedException();
 
     const valid = await bcrypt.compare(dto.password, user.password);
-    if (!valid) throw new UnauthorizedException('Invalid credentials');
+    if (!valid) throw new UnauthorizedException();
 
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      roles: user.roles.map((r) => r.role.name),
-    };
+    const sessionId = this.generateSessionId();
 
-    const token = await this.jwt.signAsync(payload);
+    await this.prisma.session.create({
+      data: {
+        id: sessionId,
+        userId: user.id,
+        expiresAt: new Date(
+          Date.now() + Number(this.config.get<string>('COOKIE_MAX_AGE')),
+        ),
+      },
+    });
 
     return {
       success: true,
       data: {
-        token,
-        user: payload,
+        sessionId,
+        user: {
+          id: user.id,
+          email: user.email,
+          roles: user.roles.map((r) => r.role.name),
+        },
       },
+      meta: {},
+    };
+  }
+
+  async logout(sessionId?: string) {
+    this.logger.log(`Logout attempt`);
+
+    if (!sessionId) {
+      return {
+        success: true,
+        data: {},
+        meta: {},
+      };
+    }
+
+    await this.prisma.session.deleteMany({
+      where: { id: sessionId },
+    });
+
+    return {
+      success: true,
+      data: {},
       meta: {},
     };
   }
@@ -86,10 +114,10 @@ export class AuthService {
   async assignRole(userId: string, roleId: string) {
     const rel = await this.prisma.userRole.upsert({
       where: {
-        userId_roleId: { userId, roleId },
+        userId_roleId: { userId: toBigInt(userId), roleId: toBigInt(roleId) },
       },
       update: {},
-      create: { userId, roleId },
+      create: { userId: toBigInt(userId), roleId: toBigInt(roleId) },
     });
 
     return {
@@ -97,5 +125,9 @@ export class AuthService {
       data: rel,
       meta: {},
     };
+  }
+
+  private generateSessionId() {
+    return crypto.randomBytes(32).toString('hex');
   }
 }

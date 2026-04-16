@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { QueryAnnouncementDto } from './dto/query-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
+import { toBigInt } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class AnnouncementsService {
@@ -23,7 +24,7 @@ export class AnnouncementsService {
         targets: {
           create: dto.targets.map((t) => ({
             targetType: t.targetType,
-            targetId: t.targetId,
+            targetId: toBigInt(t.targetId),
           })),
         },
       },
@@ -71,8 +72,8 @@ export class AnnouncementsService {
   async findForMember(memberId: string) {
     this.logger.log(`Fetching announcements for member ${memberId}`);
 
-    const member = await this.prisma.member.findUnique({
-      where: { id: memberId },
+    const member = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId) },
       include: {
         ministries: true,
       },
@@ -128,18 +129,35 @@ export class AnnouncementsService {
     return { success: true, data: announcements, meta: {} };
   }
 
+  async findOne(id: string) {
+    const announcement = await this.prisma.announcement.findFirst({
+      where: { id: toBigInt(id) },
+      include: {
+        targets: true,
+      },
+    });
+
+    if (!announcement) throw new NotFoundException('Announcement not found');
+
+    return {
+      success: true,
+      data: announcement,
+      meta: {},
+    };
+  }
+
   async update(id: string, dto: UpdateAnnouncementDto) {
     this.logger.log(`Updating announcement: ${id}`);
 
     // If targets are provided → replace them
     if (dto.targets) {
       await this.prisma.announcementTarget.deleteMany({
-        where: { announcementId: id },
+        where: { announcementId: toBigInt(id) },
       });
     }
 
     const announcement = await this.prisma.announcement.update({
-      where: { id },
+      where: { id: toBigInt(id) },
       data: {
         title: dto.title,
         body: dto.body,
@@ -148,7 +166,10 @@ export class AnnouncementsService {
 
         targets: dto.targets
           ? {
-              create: dto.targets,
+              create: dto.targets.map((t) => ({
+                targetType: t.targetType,
+                targetId: toBigInt(t.targetId),
+              })),
             }
           : undefined,
       },
@@ -157,6 +178,18 @@ export class AnnouncementsService {
     return {
       success: true,
       data: announcement,
+      meta: {},
+    };
+  }
+
+  async remove(id: string) {
+    await this.prisma.announcement.delete({
+      where: { id: toBigInt(id) },
+    });
+
+    return {
+      success: true,
+      data: {},
       meta: {},
     };
   }

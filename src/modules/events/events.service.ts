@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { QueryEventDto } from './dto/query-event.dto';
+import { toBigInt } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class EventsService {
@@ -18,14 +19,14 @@ export class EventsService {
         title: dto.title,
         description: dto.description,
         location: dto.location,
-        typeId: dto.typeId,
+        typeId: toBigInt(dto.typeId),
         startTime: new Date(dto.startTime),
         endTime: new Date(dto.endTime),
 
         ministries: dto.ministryIds
           ? {
               create: dto.ministryIds.map((ministryId) => ({
-                ministryId,
+                ministryId: toBigInt(ministryId),
               })),
             }
           : undefined,
@@ -68,6 +69,9 @@ export class EventsService {
         include: {
           type: true,
           ministries: {
+            where: {
+              ministry: { deletedAt: null },
+            },
             include: {
               ministry: true,
             },
@@ -91,11 +95,14 @@ export class EventsService {
   }
 
   async findOne(id: string) {
-    const event = await this.prisma.event.findUnique({
-      where: { id },
+    const event = await this.prisma.event.findFirst({
+      where: { id: toBigInt(id) },
       include: {
         type: true,
         ministries: {
+          where: {
+            ministry: { deletedAt: null },
+          },
           include: { ministry: true },
         },
       },
@@ -112,30 +119,33 @@ export class EventsService {
     // Replace ministries if provided
     if (dto.ministryIds) {
       await this.prisma.eventMinistry.deleteMany({
-        where: { eventId: id },
+        where: { eventId: toBigInt(id) },
       });
     }
 
     const event = await this.prisma.event.update({
-      where: { id },
+      where: { id: toBigInt(id) },
       data: {
         title: dto.title,
         description: dto.description,
         location: dto.location,
-        typeId: dto.typeId,
+        typeId: toBigInt(dto.typeId!),
         startTime: dto.startTime ? new Date(dto.startTime) : undefined,
         endTime: dto.endTime ? new Date(dto.endTime) : undefined,
 
         ministries: dto.ministryIds
           ? {
               create: dto.ministryIds.map((ministryId) => ({
-                ministryId,
+                ministryId: toBigInt(ministryId),
               })),
             }
           : undefined,
       },
       include: {
         ministries: {
+          where: {
+            ministry: { deletedAt: null },
+          },
           include: {
             ministry: true,
           },
@@ -144,6 +154,14 @@ export class EventsService {
     });
 
     return { success: true, data: event, meta: {} };
+  }
+
+  async remove(id: string) {
+    await this.prisma.event.delete({
+      where: { id: toBigInt(id) },
+    });
+
+    return { success: true, data: {}, meta: {} };
   }
 
   async createType(name: string) {

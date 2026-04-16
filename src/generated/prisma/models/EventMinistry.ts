@@ -20,18 +20,30 @@ export type EventMinistryModel = runtime.Types.Result.DefaultSelection<Prisma.$E
 
 export type AggregateEventMinistry = {
   _count: EventMinistryCountAggregateOutputType | null
+  _avg: EventMinistryAvgAggregateOutputType | null
+  _sum: EventMinistrySumAggregateOutputType | null
   _min: EventMinistryMinAggregateOutputType | null
   _max: EventMinistryMaxAggregateOutputType | null
 }
 
+export type EventMinistryAvgAggregateOutputType = {
+  eventId: number | null
+  ministryId: number | null
+}
+
+export type EventMinistrySumAggregateOutputType = {
+  eventId: bigint | null
+  ministryId: bigint | null
+}
+
 export type EventMinistryMinAggregateOutputType = {
-  eventId: string | null
-  ministryId: string | null
+  eventId: bigint | null
+  ministryId: bigint | null
 }
 
 export type EventMinistryMaxAggregateOutputType = {
-  eventId: string | null
-  ministryId: string | null
+  eventId: bigint | null
+  ministryId: bigint | null
 }
 
 export type EventMinistryCountAggregateOutputType = {
@@ -40,6 +52,16 @@ export type EventMinistryCountAggregateOutputType = {
   _all: number
 }
 
+
+export type EventMinistryAvgAggregateInputType = {
+  eventId?: true
+  ministryId?: true
+}
+
+export type EventMinistrySumAggregateInputType = {
+  eventId?: true
+  ministryId?: true
+}
 
 export type EventMinistryMinAggregateInputType = {
   eventId?: true
@@ -95,6 +117,18 @@ export type EventMinistryAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: EventMinistryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: EventMinistrySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: EventMinistryMinAggregateInputType
@@ -125,14 +159,18 @@ export type EventMinistryGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   _count?: EventMinistryCountAggregateInputType | true
+  _avg?: EventMinistryAvgAggregateInputType
+  _sum?: EventMinistrySumAggregateInputType
   _min?: EventMinistryMinAggregateInputType
   _max?: EventMinistryMaxAggregateInputType
 }
 
 export type EventMinistryGroupByOutputType = {
-  eventId: string
-  ministryId: string
+  eventId: bigint
+  ministryId: bigint
   _count: EventMinistryCountAggregateOutputType | null
+  _avg: EventMinistryAvgAggregateOutputType | null
+  _sum: EventMinistrySumAggregateOutputType | null
   _min: EventMinistryMinAggregateOutputType | null
   _max: EventMinistryMaxAggregateOutputType | null
 }
@@ -156,8 +194,8 @@ export type EventMinistryWhereInput = {
   AND?: Prisma.EventMinistryWhereInput | Prisma.EventMinistryWhereInput[]
   OR?: Prisma.EventMinistryWhereInput[]
   NOT?: Prisma.EventMinistryWhereInput | Prisma.EventMinistryWhereInput[]
-  eventId?: Prisma.StringFilter<"EventMinistry"> | string
-  ministryId?: Prisma.StringFilter<"EventMinistry"> | string
+  eventId?: Prisma.BigIntFilter<"EventMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntFilter<"EventMinistry"> | bigint | number
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
   ministry?: Prisma.XOR<Prisma.MinistryScalarRelationFilter, Prisma.MinistryWhereInput>
 }
@@ -167,7 +205,6 @@ export type EventMinistryOrderByWithRelationInput = {
   ministryId?: Prisma.SortOrder
   event?: Prisma.EventOrderByWithRelationInput
   ministry?: Prisma.MinistryOrderByWithRelationInput
-  _relevance?: Prisma.EventMinistryOrderByRelevanceInput
 }
 
 export type EventMinistryWhereUniqueInput = Prisma.AtLeast<{
@@ -175,8 +212,8 @@ export type EventMinistryWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.EventMinistryWhereInput | Prisma.EventMinistryWhereInput[]
   OR?: Prisma.EventMinistryWhereInput[]
   NOT?: Prisma.EventMinistryWhereInput | Prisma.EventMinistryWhereInput[]
-  eventId?: Prisma.StringFilter<"EventMinistry"> | string
-  ministryId?: Prisma.StringFilter<"EventMinistry"> | string
+  eventId?: Prisma.BigIntFilter<"EventMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntFilter<"EventMinistry"> | bigint | number
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
   ministry?: Prisma.XOR<Prisma.MinistryScalarRelationFilter, Prisma.MinistryWhereInput>
 }, "eventId_ministryId">
@@ -185,16 +222,18 @@ export type EventMinistryOrderByWithAggregationInput = {
   eventId?: Prisma.SortOrder
   ministryId?: Prisma.SortOrder
   _count?: Prisma.EventMinistryCountOrderByAggregateInput
+  _avg?: Prisma.EventMinistryAvgOrderByAggregateInput
   _max?: Prisma.EventMinistryMaxOrderByAggregateInput
   _min?: Prisma.EventMinistryMinOrderByAggregateInput
+  _sum?: Prisma.EventMinistrySumOrderByAggregateInput
 }
 
 export type EventMinistryScalarWhereWithAggregatesInput = {
   AND?: Prisma.EventMinistryScalarWhereWithAggregatesInput | Prisma.EventMinistryScalarWhereWithAggregatesInput[]
   OR?: Prisma.EventMinistryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.EventMinistryScalarWhereWithAggregatesInput | Prisma.EventMinistryScalarWhereWithAggregatesInput[]
-  eventId?: Prisma.StringWithAggregatesFilter<"EventMinistry"> | string
-  ministryId?: Prisma.StringWithAggregatesFilter<"EventMinistry"> | string
+  eventId?: Prisma.BigIntWithAggregatesFilter<"EventMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntWithAggregatesFilter<"EventMinistry"> | bigint | number
 }
 
 export type EventMinistryCreateInput = {
@@ -203,8 +242,8 @@ export type EventMinistryCreateInput = {
 }
 
 export type EventMinistryUncheckedCreateInput = {
-  eventId: string
-  ministryId: string
+  eventId: bigint | number
+  ministryId: bigint | number
 }
 
 export type EventMinistryUpdateInput = {
@@ -213,13 +252,13 @@ export type EventMinistryUpdateInput = {
 }
 
 export type EventMinistryUncheckedUpdateInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMinistryCreateManyInput = {
-  eventId: string
-  ministryId: string
+  eventId: bigint | number
+  ministryId: bigint | number
 }
 
 export type EventMinistryUpdateManyMutationInput = {
@@ -227,8 +266,8 @@ export type EventMinistryUpdateManyMutationInput = {
 }
 
 export type EventMinistryUncheckedUpdateManyInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMinistryListRelationFilter = {
@@ -241,18 +280,17 @@ export type EventMinistryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type EventMinistryOrderByRelevanceInput = {
-  fields: Prisma.EventMinistryOrderByRelevanceFieldEnum | Prisma.EventMinistryOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type EventMinistryEventIdMinistryIdCompoundUniqueInput = {
-  eventId: string
-  ministryId: string
+  eventId: bigint | number
+  ministryId: bigint | number
 }
 
 export type EventMinistryCountOrderByAggregateInput = {
+  eventId?: Prisma.SortOrder
+  ministryId?: Prisma.SortOrder
+}
+
+export type EventMinistryAvgOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   ministryId?: Prisma.SortOrder
 }
@@ -263,6 +301,11 @@ export type EventMinistryMaxOrderByAggregateInput = {
 }
 
 export type EventMinistryMinOrderByAggregateInput = {
+  eventId?: Prisma.SortOrder
+  ministryId?: Prisma.SortOrder
+}
+
+export type EventMinistrySumOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   ministryId?: Prisma.SortOrder
 }
@@ -356,7 +399,7 @@ export type EventMinistryCreateWithoutMinistryInput = {
 }
 
 export type EventMinistryUncheckedCreateWithoutMinistryInput = {
-  eventId: string
+  eventId: bigint | number
 }
 
 export type EventMinistryCreateOrConnectWithoutMinistryInput = {
@@ -389,8 +432,8 @@ export type EventMinistryScalarWhereInput = {
   AND?: Prisma.EventMinistryScalarWhereInput | Prisma.EventMinistryScalarWhereInput[]
   OR?: Prisma.EventMinistryScalarWhereInput[]
   NOT?: Prisma.EventMinistryScalarWhereInput | Prisma.EventMinistryScalarWhereInput[]
-  eventId?: Prisma.StringFilter<"EventMinistry"> | string
-  ministryId?: Prisma.StringFilter<"EventMinistry"> | string
+  eventId?: Prisma.BigIntFilter<"EventMinistry"> | bigint | number
+  ministryId?: Prisma.BigIntFilter<"EventMinistry"> | bigint | number
 }
 
 export type EventMinistryCreateWithoutEventInput = {
@@ -398,7 +441,7 @@ export type EventMinistryCreateWithoutEventInput = {
 }
 
 export type EventMinistryUncheckedCreateWithoutEventInput = {
-  ministryId: string
+  ministryId: bigint | number
 }
 
 export type EventMinistryCreateOrConnectWithoutEventInput = {
@@ -428,7 +471,7 @@ export type EventMinistryUpdateManyWithWhereWithoutEventInput = {
 }
 
 export type EventMinistryCreateManyMinistryInput = {
-  eventId: string
+  eventId: bigint | number
 }
 
 export type EventMinistryUpdateWithoutMinistryInput = {
@@ -436,15 +479,15 @@ export type EventMinistryUpdateWithoutMinistryInput = {
 }
 
 export type EventMinistryUncheckedUpdateWithoutMinistryInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMinistryUncheckedUpdateManyWithoutMinistryInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMinistryCreateManyEventInput = {
-  ministryId: string
+  ministryId: bigint | number
 }
 
 export type EventMinistryUpdateWithoutEventInput = {
@@ -452,11 +495,11 @@ export type EventMinistryUpdateWithoutEventInput = {
 }
 
 export type EventMinistryUncheckedUpdateWithoutEventInput = {
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMinistryUncheckedUpdateManyWithoutEventInput = {
-  ministryId?: Prisma.StringFieldUpdateOperationsInput | string
+  ministryId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -488,8 +531,8 @@ export type $EventMinistryPayload<ExtArgs extends runtime.Types.Extensions.Inter
     ministry: Prisma.$MinistryPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    eventId: string
-    ministryId: string
+    eventId: bigint
+    ministryId: bigint
   }, ExtArgs["result"]["eventMinistry"]>
   composites: {}
 }
@@ -861,8 +904,8 @@ export interface Prisma__EventMinistryClient<T, Null = never, ExtArgs extends ru
  * Fields of the EventMinistry model
  */
 export interface EventMinistryFieldRefs {
-  readonly eventId: Prisma.FieldRef<"EventMinistry", 'String'>
-  readonly ministryId: Prisma.FieldRef<"EventMinistry", 'String'>
+  readonly eventId: Prisma.FieldRef<"EventMinistry", 'BigInt'>
+  readonly ministryId: Prisma.FieldRef<"EventMinistry", 'BigInt'>
 }
     
 

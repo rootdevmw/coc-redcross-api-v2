@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 
@@ -44,5 +45,10 @@ export class EventsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: any) {
     return this.service.update(id, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

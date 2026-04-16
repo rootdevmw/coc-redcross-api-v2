@@ -20,28 +20,44 @@ export type MinistryModel = runtime.Types.Result.DefaultSelection<Prisma.$Minist
 
 export type AggregateMinistry = {
   _count: MinistryCountAggregateOutputType | null
+  _avg: MinistryAvgAggregateOutputType | null
+  _sum: MinistrySumAggregateOutputType | null
   _min: MinistryMinAggregateOutputType | null
   _max: MinistryMaxAggregateOutputType | null
 }
 
+export type MinistryAvgAggregateOutputType = {
+  id: number | null
+  leaderId: number | null
+  overseerId: number | null
+}
+
+export type MinistrySumAggregateOutputType = {
+  id: bigint | null
+  leaderId: bigint | null
+  overseerId: bigint | null
+}
+
 export type MinistryMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   description: string | null
-  leaderId: string | null
-  overseerId: string | null
+  leaderId: bigint | null
+  overseerId: bigint | null
   slug: string | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type MinistryMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   description: string | null
-  leaderId: string | null
-  overseerId: string | null
+  leaderId: bigint | null
+  overseerId: bigint | null
   slug: string | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type MinistryCountAggregateOutputType = {
@@ -52,9 +68,22 @@ export type MinistryCountAggregateOutputType = {
   overseerId: number
   slug: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
+
+export type MinistryAvgAggregateInputType = {
+  id?: true
+  leaderId?: true
+  overseerId?: true
+}
+
+export type MinistrySumAggregateInputType = {
+  id?: true
+  leaderId?: true
+  overseerId?: true
+}
 
 export type MinistryMinAggregateInputType = {
   id?: true
@@ -64,6 +93,7 @@ export type MinistryMinAggregateInputType = {
   overseerId?: true
   slug?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type MinistryMaxAggregateInputType = {
@@ -74,6 +104,7 @@ export type MinistryMaxAggregateInputType = {
   overseerId?: true
   slug?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type MinistryCountAggregateInputType = {
@@ -84,6 +115,7 @@ export type MinistryCountAggregateInputType = {
   overseerId?: true
   slug?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -125,6 +157,18 @@ export type MinistryAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: MinistryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: MinistrySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: MinistryMinAggregateInputType
@@ -155,19 +199,24 @@ export type MinistryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: MinistryCountAggregateInputType | true
+  _avg?: MinistryAvgAggregateInputType
+  _sum?: MinistrySumAggregateInputType
   _min?: MinistryMinAggregateInputType
   _max?: MinistryMaxAggregateInputType
 }
 
 export type MinistryGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
   description: string | null
-  leaderId: string | null
-  overseerId: string | null
+  leaderId: bigint | null
+  overseerId: bigint | null
   slug: string | null
   createdAt: Date
+  deletedAt: Date | null
   _count: MinistryCountAggregateOutputType | null
+  _avg: MinistryAvgAggregateOutputType | null
+  _sum: MinistrySumAggregateOutputType | null
   _min: MinistryMinAggregateOutputType | null
   _max: MinistryMaxAggregateOutputType | null
 }
@@ -191,13 +240,14 @@ export type MinistryWhereInput = {
   AND?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
   OR?: Prisma.MinistryWhereInput[]
   NOT?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
-  id?: Prisma.StringFilter<"Ministry"> | string
+  id?: Prisma.BigIntFilter<"Ministry"> | bigint | number
   name?: Prisma.StringFilter<"Ministry"> | string
   description?: Prisma.StringNullableFilter<"Ministry"> | string | null
-  leaderId?: Prisma.StringNullableFilter<"Ministry"> | string | null
-  overseerId?: Prisma.StringNullableFilter<"Ministry"> | string | null
+  leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   slug?: Prisma.StringNullableFilter<"Ministry"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   overseer?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   members?: Prisma.MemberMinistryListRelationFilter
@@ -212,6 +262,7 @@ export type MinistryOrderByWithRelationInput = {
   overseerId?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   leader?: Prisma.MemberOrderByWithRelationInput
   overseer?: Prisma.MemberOrderByWithRelationInput
   members?: Prisma.MemberMinistryOrderByRelationAggregateInput
@@ -220,16 +271,17 @@ export type MinistryOrderByWithRelationInput = {
 }
 
 export type MinistryWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   slug?: string
   AND?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
   OR?: Prisma.MinistryWhereInput[]
   NOT?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
   name?: Prisma.StringFilter<"Ministry"> | string
   description?: Prisma.StringNullableFilter<"Ministry"> | string | null
-  leaderId?: Prisma.StringNullableFilter<"Ministry"> | string | null
-  overseerId?: Prisma.StringNullableFilter<"Ministry"> | string | null
+  leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   overseer?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   members?: Prisma.MemberMinistryListRelationFilter
@@ -244,30 +296,35 @@ export type MinistryOrderByWithAggregationInput = {
   overseerId?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MinistryCountOrderByAggregateInput
+  _avg?: Prisma.MinistryAvgOrderByAggregateInput
   _max?: Prisma.MinistryMaxOrderByAggregateInput
   _min?: Prisma.MinistryMinOrderByAggregateInput
+  _sum?: Prisma.MinistrySumOrderByAggregateInput
 }
 
 export type MinistryScalarWhereWithAggregatesInput = {
   AND?: Prisma.MinistryScalarWhereWithAggregatesInput | Prisma.MinistryScalarWhereWithAggregatesInput[]
   OR?: Prisma.MinistryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MinistryScalarWhereWithAggregatesInput | Prisma.MinistryScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Ministry"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Ministry"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"Ministry"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Ministry"> | string | null
-  leaderId?: Prisma.StringNullableWithAggregatesFilter<"Ministry"> | string | null
-  overseerId?: Prisma.StringNullableWithAggregatesFilter<"Ministry"> | string | null
+  leaderId?: Prisma.BigIntNullableWithAggregatesFilter<"Ministry"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableWithAggregatesFilter<"Ministry"> | bigint | number | null
   slug?: Prisma.StringNullableWithAggregatesFilter<"Ministry"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Ministry"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Ministry"> | Date | string | null
 }
 
 export type MinistryCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
   overseer?: Prisma.MemberCreateNestedOneWithoutOverseeingMinistriesInput
   members?: Prisma.MemberMinistryCreateNestedManyWithoutMinistryInput
@@ -275,23 +332,25 @@ export type MinistryCreateInput = {
 }
 
 export type MinistryUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
   events?: Prisma.EventMinistryUncheckedCreateNestedManyWithoutMinistryInput
 }
 
 export type MinistryUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutOverseeingMinistriesNestedInput
   members?: Prisma.MemberMinistryUpdateManyWithoutMinistryNestedInput
@@ -299,43 +358,47 @@ export type MinistryUpdateInput = {
 }
 
 export type MinistryUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
   events?: Prisma.EventMinistryUncheckedUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type MinistryUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MinistryUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MinistryListRelationFilter = {
@@ -367,6 +430,13 @@ export type MinistryCountOrderByAggregateInput = {
   overseerId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type MinistryAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  leaderId?: Prisma.SortOrder
+  overseerId?: Prisma.SortOrder
 }
 
 export type MinistryMaxOrderByAggregateInput = {
@@ -377,6 +447,7 @@ export type MinistryMaxOrderByAggregateInput = {
   overseerId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type MinistryMinOrderByAggregateInput = {
@@ -387,6 +458,13 @@ export type MinistryMinOrderByAggregateInput = {
   overseerId?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type MinistrySumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  leaderId?: Prisma.SortOrder
+  overseerId?: Prisma.SortOrder
 }
 
 export type MinistryCreateNestedManyWithoutLeaderInput = {
@@ -502,23 +580,25 @@ export type MinistryUpdateOneRequiredWithoutEventsNestedInput = {
 }
 
 export type MinistryCreateWithoutLeaderInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   overseer?: Prisma.MemberCreateNestedOneWithoutOverseeingMinistriesInput
   members?: Prisma.MemberMinistryCreateNestedManyWithoutMinistryInput
   events?: Prisma.EventMinistryCreateNestedManyWithoutMinistryInput
 }
 
 export type MinistryUncheckedCreateWithoutLeaderInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  overseerId?: string | null
+  overseerId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
   events?: Prisma.EventMinistryUncheckedCreateNestedManyWithoutMinistryInput
 }
@@ -534,23 +614,25 @@ export type MinistryCreateManyLeaderInputEnvelope = {
 }
 
 export type MinistryCreateWithoutOverseerInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
   members?: Prisma.MemberMinistryCreateNestedManyWithoutMinistryInput
   events?: Prisma.EventMinistryCreateNestedManyWithoutMinistryInput
 }
 
 export type MinistryUncheckedCreateWithoutOverseerInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  leaderId?: string | null
+  leaderId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
   events?: Prisma.EventMinistryUncheckedCreateNestedManyWithoutMinistryInput
 }
@@ -585,13 +667,14 @@ export type MinistryScalarWhereInput = {
   AND?: Prisma.MinistryScalarWhereInput | Prisma.MinistryScalarWhereInput[]
   OR?: Prisma.MinistryScalarWhereInput[]
   NOT?: Prisma.MinistryScalarWhereInput | Prisma.MinistryScalarWhereInput[]
-  id?: Prisma.StringFilter<"Ministry"> | string
+  id?: Prisma.BigIntFilter<"Ministry"> | bigint | number
   name?: Prisma.StringFilter<"Ministry"> | string
   description?: Prisma.StringNullableFilter<"Ministry"> | string | null
-  leaderId?: Prisma.StringNullableFilter<"Ministry"> | string | null
-  overseerId?: Prisma.StringNullableFilter<"Ministry"> | string | null
+  leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   slug?: Prisma.StringNullableFilter<"Ministry"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
 }
 
 export type MinistryUpsertWithWhereUniqueWithoutOverseerInput = {
@@ -611,24 +694,26 @@ export type MinistryUpdateManyWithWhereWithoutOverseerInput = {
 }
 
 export type MinistryCreateWithoutMembersInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
   overseer?: Prisma.MemberCreateNestedOneWithoutOverseeingMinistriesInput
   events?: Prisma.EventMinistryCreateNestedManyWithoutMinistryInput
 }
 
 export type MinistryUncheckedCreateWithoutMembersInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   events?: Prisma.EventMinistryUncheckedCreateNestedManyWithoutMinistryInput
 }
 
@@ -649,46 +734,50 @@ export type MinistryUpdateToOneWithWhereWithoutMembersInput = {
 }
 
 export type MinistryUpdateWithoutMembersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutOverseeingMinistriesNestedInput
   events?: Prisma.EventMinistryUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryUncheckedUpdateWithoutMembersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventMinistryUncheckedUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryCreateWithoutEventsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
   overseer?: Prisma.MemberCreateNestedOneWithoutOverseeingMinistriesInput
   members?: Prisma.MemberMinistryCreateNestedManyWithoutMinistryInput
 }
 
 export type MinistryUncheckedCreateWithoutEventsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
 }
 
@@ -709,105 +798,115 @@ export type MinistryUpdateToOneWithWhereWithoutEventsInput = {
 }
 
 export type MinistryUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutOverseeingMinistriesNestedInput
   members?: Prisma.MemberMinistryUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryUncheckedUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryCreateManyLeaderInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  overseerId?: string | null
+  overseerId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type MinistryCreateManyOverseerInput = {
-  id?: string
+  id?: bigint | number
   name: string
   description?: string | null
-  leaderId?: string | null
+  leaderId?: bigint | number | null
   slug?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type MinistryUpdateWithoutLeaderInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   overseer?: Prisma.MemberUpdateOneWithoutOverseeingMinistriesNestedInput
   members?: Prisma.MemberMinistryUpdateManyWithoutMinistryNestedInput
   events?: Prisma.EventMinistryUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryUncheckedUpdateWithoutLeaderInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
   events?: Prisma.EventMinistryUncheckedUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryUncheckedUpdateManyWithoutLeaderInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MinistryUpdateWithoutOverseerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
   members?: Prisma.MemberMinistryUpdateManyWithoutMinistryNestedInput
   events?: Prisma.EventMinistryUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryUncheckedUpdateWithoutOverseerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
   events?: Prisma.EventMinistryUncheckedUpdateManyWithoutMinistryNestedInput
 }
 
 export type MinistryUncheckedUpdateManyWithoutOverseerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -858,6 +957,7 @@ export type MinistrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   overseerId?: boolean
   slug?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
   leader?: boolean | Prisma.Ministry$leaderArgs<ExtArgs>
   overseer?: boolean | Prisma.Ministry$overseerArgs<ExtArgs>
   members?: boolean | Prisma.Ministry$membersArgs<ExtArgs>
@@ -875,9 +975,10 @@ export type MinistrySelectScalar = {
   overseerId?: boolean
   slug?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type MinistryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "leaderId" | "overseerId" | "slug" | "createdAt", ExtArgs["result"]["ministry"]>
+export type MinistryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "leaderId" | "overseerId" | "slug" | "createdAt" | "deletedAt", ExtArgs["result"]["ministry"]>
 export type MinistryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   leader?: boolean | Prisma.Ministry$leaderArgs<ExtArgs>
   overseer?: boolean | Prisma.Ministry$overseerArgs<ExtArgs>
@@ -895,13 +996,14 @@ export type $MinistryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     events: Prisma.$EventMinistryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
     description: string | null
-    leaderId: string | null
-    overseerId: string | null
+    leaderId: bigint | null
+    overseerId: bigint | null
     slug: string | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["ministry"]>
   composites: {}
 }
@@ -1275,13 +1377,14 @@ export interface Prisma__MinistryClient<T, Null = never, ExtArgs extends runtime
  * Fields of the Ministry model
  */
 export interface MinistryFieldRefs {
-  readonly id: Prisma.FieldRef<"Ministry", 'String'>
+  readonly id: Prisma.FieldRef<"Ministry", 'BigInt'>
   readonly name: Prisma.FieldRef<"Ministry", 'String'>
   readonly description: Prisma.FieldRef<"Ministry", 'String'>
-  readonly leaderId: Prisma.FieldRef<"Ministry", 'String'>
-  readonly overseerId: Prisma.FieldRef<"Ministry", 'String'>
+  readonly leaderId: Prisma.FieldRef<"Ministry", 'BigInt'>
+  readonly overseerId: Prisma.FieldRef<"Ministry", 'BigInt'>
   readonly slug: Prisma.FieldRef<"Ministry", 'String'>
   readonly createdAt: Prisma.FieldRef<"Ministry", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Ministry", 'DateTime'>
 }
     
 

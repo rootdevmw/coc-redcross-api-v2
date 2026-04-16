@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { verifySoftDelete } from './soft-delete-check';
 
 const API = 'http://localhost:3000';
 
@@ -105,6 +106,7 @@ async function run() {
     const search = await axios.get(`${API}/ministries?search=Media`);
 
     console.log('🔎 Search results:', search.data.data.length);
+    await verifySoftDelete(axios, `${API}/ministries`, ministryId);
 
     console.log('\n🎉 ALL MINISTRY TESTS PASSED');
   } catch (error: any) {

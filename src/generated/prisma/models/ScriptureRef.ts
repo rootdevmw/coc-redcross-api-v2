@@ -27,20 +27,25 @@ export type AggregateScriptureRef = {
 }
 
 export type ScriptureRefAvgAggregateOutputType = {
+  id: number | null
+  contentId: number | null
   chapter: number | null
   verseFrom: number | null
   verseTo: number | null
 }
 
 export type ScriptureRefSumAggregateOutputType = {
+  id: bigint | null
+  contentId: bigint | null
   chapter: number | null
   verseFrom: number | null
   verseTo: number | null
 }
 
 export type ScriptureRefMinAggregateOutputType = {
-  id: string | null
-  contentId: string | null
+  id: bigint | null
+  contentId: bigint | null
+  deletedAt: Date | null
   book: string | null
   chapter: number | null
   verseFrom: number | null
@@ -49,8 +54,9 @@ export type ScriptureRefMinAggregateOutputType = {
 }
 
 export type ScriptureRefMaxAggregateOutputType = {
-  id: string | null
-  contentId: string | null
+  id: bigint | null
+  contentId: bigint | null
+  deletedAt: Date | null
   book: string | null
   chapter: number | null
   verseFrom: number | null
@@ -61,6 +67,7 @@ export type ScriptureRefMaxAggregateOutputType = {
 export type ScriptureRefCountAggregateOutputType = {
   id: number
   contentId: number
+  deletedAt: number
   book: number
   chapter: number
   verseFrom: number
@@ -71,12 +78,16 @@ export type ScriptureRefCountAggregateOutputType = {
 
 
 export type ScriptureRefAvgAggregateInputType = {
+  id?: true
+  contentId?: true
   chapter?: true
   verseFrom?: true
   verseTo?: true
 }
 
 export type ScriptureRefSumAggregateInputType = {
+  id?: true
+  contentId?: true
   chapter?: true
   verseFrom?: true
   verseTo?: true
@@ -85,6 +96,7 @@ export type ScriptureRefSumAggregateInputType = {
 export type ScriptureRefMinAggregateInputType = {
   id?: true
   contentId?: true
+  deletedAt?: true
   book?: true
   chapter?: true
   verseFrom?: true
@@ -95,6 +107,7 @@ export type ScriptureRefMinAggregateInputType = {
 export type ScriptureRefMaxAggregateInputType = {
   id?: true
   contentId?: true
+  deletedAt?: true
   book?: true
   chapter?: true
   verseFrom?: true
@@ -105,6 +118,7 @@ export type ScriptureRefMaxAggregateInputType = {
 export type ScriptureRefCountAggregateInputType = {
   id?: true
   contentId?: true
+  deletedAt?: true
   book?: true
   chapter?: true
   verseFrom?: true
@@ -200,8 +214,9 @@ export type ScriptureRefGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type ScriptureRefGroupByOutputType = {
-  id: string
-  contentId: string
+  id: bigint
+  contentId: bigint
+  deletedAt: Date | null
   book: string
   chapter: number
   verseFrom: number
@@ -233,8 +248,9 @@ export type ScriptureRefWhereInput = {
   AND?: Prisma.ScriptureRefWhereInput | Prisma.ScriptureRefWhereInput[]
   OR?: Prisma.ScriptureRefWhereInput[]
   NOT?: Prisma.ScriptureRefWhereInput | Prisma.ScriptureRefWhereInput[]
-  id?: Prisma.StringFilter<"ScriptureRef"> | string
-  contentId?: Prisma.StringFilter<"ScriptureRef"> | string
+  id?: Prisma.BigIntFilter<"ScriptureRef"> | bigint | number
+  contentId?: Prisma.BigIntFilter<"ScriptureRef"> | bigint | number
+  deletedAt?: Prisma.DateTimeNullableFilter<"ScriptureRef"> | Date | string | null
   book?: Prisma.StringFilter<"ScriptureRef"> | string
   chapter?: Prisma.IntFilter<"ScriptureRef"> | number
   verseFrom?: Prisma.IntFilter<"ScriptureRef"> | number
@@ -246,6 +262,7 @@ export type ScriptureRefWhereInput = {
 export type ScriptureRefOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   book?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
@@ -256,11 +273,12 @@ export type ScriptureRefOrderByWithRelationInput = {
 }
 
 export type ScriptureRefWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.ScriptureRefWhereInput | Prisma.ScriptureRefWhereInput[]
   OR?: Prisma.ScriptureRefWhereInput[]
   NOT?: Prisma.ScriptureRefWhereInput | Prisma.ScriptureRefWhereInput[]
-  contentId?: Prisma.StringFilter<"ScriptureRef"> | string
+  contentId?: Prisma.BigIntFilter<"ScriptureRef"> | bigint | number
+  deletedAt?: Prisma.DateTimeNullableFilter<"ScriptureRef"> | Date | string | null
   book?: Prisma.StringFilter<"ScriptureRef"> | string
   chapter?: Prisma.IntFilter<"ScriptureRef"> | number
   verseFrom?: Prisma.IntFilter<"ScriptureRef"> | number
@@ -272,6 +290,7 @@ export type ScriptureRefWhereUniqueInput = Prisma.AtLeast<{
 export type ScriptureRefOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   book?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
@@ -288,8 +307,9 @@ export type ScriptureRefScalarWhereWithAggregatesInput = {
   AND?: Prisma.ScriptureRefScalarWhereWithAggregatesInput | Prisma.ScriptureRefScalarWhereWithAggregatesInput[]
   OR?: Prisma.ScriptureRefScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ScriptureRefScalarWhereWithAggregatesInput | Prisma.ScriptureRefScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"ScriptureRef"> | string
-  contentId?: Prisma.StringWithAggregatesFilter<"ScriptureRef"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"ScriptureRef"> | bigint | number
+  contentId?: Prisma.BigIntWithAggregatesFilter<"ScriptureRef"> | bigint | number
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ScriptureRef"> | Date | string | null
   book?: Prisma.StringWithAggregatesFilter<"ScriptureRef"> | string
   chapter?: Prisma.IntWithAggregatesFilter<"ScriptureRef"> | number
   verseFrom?: Prisma.IntWithAggregatesFilter<"ScriptureRef"> | number
@@ -298,7 +318,8 @@ export type ScriptureRefScalarWhereWithAggregatesInput = {
 }
 
 export type ScriptureRefCreateInput = {
-  id?: string
+  id?: bigint | number
+  deletedAt?: Date | string | null
   book: string
   chapter: number
   verseFrom: number
@@ -308,8 +329,9 @@ export type ScriptureRefCreateInput = {
 }
 
 export type ScriptureRefUncheckedCreateInput = {
-  id?: string
-  contentId: string
+  id?: bigint | number
+  contentId: bigint | number
+  deletedAt?: Date | string | null
   book: string
   chapter: number
   verseFrom: number
@@ -318,7 +340,8 @@ export type ScriptureRefUncheckedCreateInput = {
 }
 
 export type ScriptureRefUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -328,8 +351,9 @@ export type ScriptureRefUpdateInput = {
 }
 
 export type ScriptureRefUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -338,8 +362,9 @@ export type ScriptureRefUncheckedUpdateInput = {
 }
 
 export type ScriptureRefCreateManyInput = {
-  id?: string
-  contentId: string
+  id?: bigint | number
+  contentId: bigint | number
+  deletedAt?: Date | string | null
   book: string
   chapter: number
   verseFrom: number
@@ -348,7 +373,8 @@ export type ScriptureRefCreateManyInput = {
 }
 
 export type ScriptureRefUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -357,8 +383,9 @@ export type ScriptureRefUpdateManyMutationInput = {
 }
 
 export type ScriptureRefUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -385,6 +412,7 @@ export type ScriptureRefOrderByRelevanceInput = {
 export type ScriptureRefCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   book?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
@@ -393,6 +421,8 @@ export type ScriptureRefCountOrderByAggregateInput = {
 }
 
 export type ScriptureRefAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  contentId?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
   verseTo?: Prisma.SortOrder
@@ -401,6 +431,7 @@ export type ScriptureRefAvgOrderByAggregateInput = {
 export type ScriptureRefMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   book?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
@@ -411,6 +442,7 @@ export type ScriptureRefMaxOrderByAggregateInput = {
 export type ScriptureRefMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   book?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
@@ -419,6 +451,8 @@ export type ScriptureRefMinOrderByAggregateInput = {
 }
 
 export type ScriptureRefSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  contentId?: Prisma.SortOrder
   chapter?: Prisma.SortOrder
   verseFrom?: Prisma.SortOrder
   verseTo?: Prisma.SortOrder
@@ -483,7 +517,8 @@ export type NullableIntFieldUpdateOperationsInput = {
 }
 
 export type ScriptureRefCreateWithoutContentInput = {
-  id?: string
+  id?: bigint | number
+  deletedAt?: Date | string | null
   book: string
   chapter: number
   verseFrom: number
@@ -492,7 +527,8 @@ export type ScriptureRefCreateWithoutContentInput = {
 }
 
 export type ScriptureRefUncheckedCreateWithoutContentInput = {
-  id?: string
+  id?: bigint | number
+  deletedAt?: Date | string | null
   book: string
   chapter: number
   verseFrom: number
@@ -530,8 +566,9 @@ export type ScriptureRefScalarWhereInput = {
   AND?: Prisma.ScriptureRefScalarWhereInput | Prisma.ScriptureRefScalarWhereInput[]
   OR?: Prisma.ScriptureRefScalarWhereInput[]
   NOT?: Prisma.ScriptureRefScalarWhereInput | Prisma.ScriptureRefScalarWhereInput[]
-  id?: Prisma.StringFilter<"ScriptureRef"> | string
-  contentId?: Prisma.StringFilter<"ScriptureRef"> | string
+  id?: Prisma.BigIntFilter<"ScriptureRef"> | bigint | number
+  contentId?: Prisma.BigIntFilter<"ScriptureRef"> | bigint | number
+  deletedAt?: Prisma.DateTimeNullableFilter<"ScriptureRef"> | Date | string | null
   book?: Prisma.StringFilter<"ScriptureRef"> | string
   chapter?: Prisma.IntFilter<"ScriptureRef"> | number
   verseFrom?: Prisma.IntFilter<"ScriptureRef"> | number
@@ -540,7 +577,8 @@ export type ScriptureRefScalarWhereInput = {
 }
 
 export type ScriptureRefCreateManyContentInput = {
-  id?: string
+  id?: bigint | number
+  deletedAt?: Date | string | null
   book: string
   chapter: number
   verseFrom: number
@@ -549,7 +587,8 @@ export type ScriptureRefCreateManyContentInput = {
 }
 
 export type ScriptureRefUpdateWithoutContentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -558,7 +597,8 @@ export type ScriptureRefUpdateWithoutContentInput = {
 }
 
 export type ScriptureRefUncheckedUpdateWithoutContentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -567,7 +607,8 @@ export type ScriptureRefUncheckedUpdateWithoutContentInput = {
 }
 
 export type ScriptureRefUncheckedUpdateManyWithoutContentInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   book?: Prisma.StringFieldUpdateOperationsInput | string
   chapter?: Prisma.IntFieldUpdateOperationsInput | number
   verseFrom?: Prisma.IntFieldUpdateOperationsInput | number
@@ -580,6 +621,7 @@ export type ScriptureRefUncheckedUpdateManyWithoutContentInput = {
 export type ScriptureRefSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   contentId?: boolean
+  deletedAt?: boolean
   book?: boolean
   chapter?: boolean
   verseFrom?: boolean
@@ -593,6 +635,7 @@ export type ScriptureRefSelect<ExtArgs extends runtime.Types.Extensions.Internal
 export type ScriptureRefSelectScalar = {
   id?: boolean
   contentId?: boolean
+  deletedAt?: boolean
   book?: boolean
   chapter?: boolean
   verseFrom?: boolean
@@ -600,7 +643,7 @@ export type ScriptureRefSelectScalar = {
   version?: boolean
 }
 
-export type ScriptureRefOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contentId" | "book" | "chapter" | "verseFrom" | "verseTo" | "version", ExtArgs["result"]["scriptureRef"]>
+export type ScriptureRefOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contentId" | "deletedAt" | "book" | "chapter" | "verseFrom" | "verseTo" | "version", ExtArgs["result"]["scriptureRef"]>
 export type ScriptureRefInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   content?: boolean | Prisma.ContentDefaultArgs<ExtArgs>
 }
@@ -611,8 +654,9 @@ export type $ScriptureRefPayload<ExtArgs extends runtime.Types.Extensions.Intern
     content: Prisma.$ContentPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
-    contentId: string
+    id: bigint
+    contentId: bigint
+    deletedAt: Date | null
     book: string
     chapter: number
     verseFrom: number
@@ -988,8 +1032,9 @@ export interface Prisma__ScriptureRefClient<T, Null = never, ExtArgs extends run
  * Fields of the ScriptureRef model
  */
 export interface ScriptureRefFieldRefs {
-  readonly id: Prisma.FieldRef<"ScriptureRef", 'String'>
-  readonly contentId: Prisma.FieldRef<"ScriptureRef", 'String'>
+  readonly id: Prisma.FieldRef<"ScriptureRef", 'BigInt'>
+  readonly contentId: Prisma.FieldRef<"ScriptureRef", 'BigInt'>
+  readonly deletedAt: Prisma.FieldRef<"ScriptureRef", 'DateTime'>
   readonly book: Prisma.FieldRef<"ScriptureRef", 'String'>
   readonly chapter: Prisma.FieldRef<"ScriptureRef", 'Int'>
   readonly verseFrom: Prisma.FieldRef<"ScriptureRef", 'Int'>

@@ -20,40 +20,64 @@ export type TagModel = runtime.Types.Result.DefaultSelection<Prisma.$TagPayload>
 
 export type AggregateTag = {
   _count: TagCountAggregateOutputType | null
+  _avg: TagAvgAggregateOutputType | null
+  _sum: TagSumAggregateOutputType | null
   _min: TagMinAggregateOutputType | null
   _max: TagMaxAggregateOutputType | null
 }
 
+export type TagAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type TagSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type TagMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type TagMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type TagCountAggregateOutputType = {
   id: number
   name: number
+  deletedAt: number
   _all: number
 }
 
 
+export type TagAvgAggregateInputType = {
+  id?: true
+}
+
+export type TagSumAggregateInputType = {
+  id?: true
+}
+
 export type TagMinAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type TagMaxAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type TagCountAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -95,6 +119,18 @@ export type TagAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: TagAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: TagSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: TagMinAggregateInputType
@@ -125,14 +161,19 @@ export type TagGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   _count?: TagCountAggregateInputType | true
+  _avg?: TagAvgAggregateInputType
+  _sum?: TagSumAggregateInputType
   _min?: TagMinAggregateInputType
   _max?: TagMaxAggregateInputType
 }
 
 export type TagGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
+  deletedAt: Date | null
   _count: TagCountAggregateOutputType | null
+  _avg: TagAvgAggregateOutputType | null
+  _sum: TagSumAggregateOutputType | null
   _min: TagMinAggregateOutputType | null
   _max: TagMaxAggregateOutputType | null
 }
@@ -156,80 +197,94 @@ export type TagWhereInput = {
   AND?: Prisma.TagWhereInput | Prisma.TagWhereInput[]
   OR?: Prisma.TagWhereInput[]
   NOT?: Prisma.TagWhereInput | Prisma.TagWhereInput[]
-  id?: Prisma.StringFilter<"Tag"> | string
+  id?: Prisma.BigIntFilter<"Tag"> | bigint | number
   name?: Prisma.StringFilter<"Tag"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Tag"> | Date | string | null
   contents?: Prisma.ContentTagListRelationFilter
 }
 
 export type TagOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   contents?: Prisma.ContentTagOrderByRelationAggregateInput
   _relevance?: Prisma.TagOrderByRelevanceInput
 }
 
 export type TagWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   name?: string
   AND?: Prisma.TagWhereInput | Prisma.TagWhereInput[]
   OR?: Prisma.TagWhereInput[]
   NOT?: Prisma.TagWhereInput | Prisma.TagWhereInput[]
+  deletedAt?: Prisma.DateTimeNullableFilter<"Tag"> | Date | string | null
   contents?: Prisma.ContentTagListRelationFilter
 }, "id" | "name">
 
 export type TagOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.TagCountOrderByAggregateInput
+  _avg?: Prisma.TagAvgOrderByAggregateInput
   _max?: Prisma.TagMaxOrderByAggregateInput
   _min?: Prisma.TagMinOrderByAggregateInput
+  _sum?: Prisma.TagSumOrderByAggregateInput
 }
 
 export type TagScalarWhereWithAggregatesInput = {
   AND?: Prisma.TagScalarWhereWithAggregatesInput | Prisma.TagScalarWhereWithAggregatesInput[]
   OR?: Prisma.TagScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TagScalarWhereWithAggregatesInput | Prisma.TagScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Tag"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Tag"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"Tag"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Tag"> | Date | string | null
 }
 
 export type TagCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   contents?: Prisma.ContentTagCreateNestedManyWithoutTagInput
 }
 
 export type TagUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   contents?: Prisma.ContentTagUncheckedCreateNestedManyWithoutTagInput
 }
 
 export type TagUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentTagUpdateManyWithoutTagNestedInput
 }
 
 export type TagUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentTagUncheckedUpdateManyWithoutTagNestedInput
 }
 
 export type TagCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type TagUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type TagUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type TagOrderByRelevanceInput = {
@@ -241,16 +296,27 @@ export type TagOrderByRelevanceInput = {
 export type TagCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type TagAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type TagMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type TagMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type TagSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type TagScalarRelationFilter = {
@@ -273,13 +339,15 @@ export type TagUpdateOneRequiredWithoutContentsNestedInput = {
 }
 
 export type TagCreateWithoutContentsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type TagUncheckedCreateWithoutContentsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type TagCreateOrConnectWithoutContentsInput = {
@@ -299,13 +367,15 @@ export type TagUpdateToOneWithWhereWithoutContentsInput = {
 }
 
 export type TagUpdateWithoutContentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type TagUncheckedUpdateWithoutContentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -342,6 +412,7 @@ export type TagCountOutputTypeCountContentsArgs<ExtArgs extends runtime.Types.Ex
 export type TagSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
   contents?: boolean | Prisma.Tag$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.TagCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tag"]>
@@ -351,9 +422,10 @@ export type TagSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type TagSelectScalar = {
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }
 
-export type TagOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["tag"]>
+export type TagOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "deletedAt", ExtArgs["result"]["tag"]>
 export type TagInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contents?: boolean | Prisma.Tag$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.TagCountOutputTypeDefaultArgs<ExtArgs>
@@ -365,8 +437,9 @@ export type $TagPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     contents: Prisma.$ContentTagPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["tag"]>
   composites: {}
 }
@@ -737,8 +810,9 @@ export interface Prisma__TagClient<T, Null = never, ExtArgs extends runtime.Type
  * Fields of the Tag model
  */
 export interface TagFieldRefs {
-  readonly id: Prisma.FieldRef<"Tag", 'String'>
+  readonly id: Prisma.FieldRef<"Tag", 'BigInt'>
   readonly name: Prisma.FieldRef<"Tag", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Tag", 'DateTime'>
 }
     
 

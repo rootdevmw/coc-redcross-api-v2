@@ -27,29 +27,33 @@ export type AggregateAnnouncement = {
 }
 
 export type AnnouncementAvgAggregateOutputType = {
+  id: number | null
   priority: number | null
 }
 
 export type AnnouncementSumAggregateOutputType = {
+  id: bigint | null
   priority: number | null
 }
 
 export type AnnouncementMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   title: string | null
   body: string | null
   priority: number | null
   expiryDate: Date | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type AnnouncementMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   title: string | null
   body: string | null
   priority: number | null
   expiryDate: Date | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type AnnouncementCountAggregateOutputType = {
@@ -59,15 +63,18 @@ export type AnnouncementCountAggregateOutputType = {
   priority: number
   expiryDate: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
 
 export type AnnouncementAvgAggregateInputType = {
+  id?: true
   priority?: true
 }
 
 export type AnnouncementSumAggregateInputType = {
+  id?: true
   priority?: true
 }
 
@@ -78,6 +85,7 @@ export type AnnouncementMinAggregateInputType = {
   priority?: true
   expiryDate?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type AnnouncementMaxAggregateInputType = {
@@ -87,6 +95,7 @@ export type AnnouncementMaxAggregateInputType = {
   priority?: true
   expiryDate?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type AnnouncementCountAggregateInputType = {
@@ -96,6 +105,7 @@ export type AnnouncementCountAggregateInputType = {
   priority?: true
   expiryDate?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -186,12 +196,13 @@ export type AnnouncementGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type AnnouncementGroupByOutputType = {
-  id: string
+  id: bigint
   title: string
   body: string
   priority: number
   expiryDate: Date | null
   createdAt: Date
+  deletedAt: Date | null
   _count: AnnouncementCountAggregateOutputType | null
   _avg: AnnouncementAvgAggregateOutputType | null
   _sum: AnnouncementSumAggregateOutputType | null
@@ -218,12 +229,13 @@ export type AnnouncementWhereInput = {
   AND?: Prisma.AnnouncementWhereInput | Prisma.AnnouncementWhereInput[]
   OR?: Prisma.AnnouncementWhereInput[]
   NOT?: Prisma.AnnouncementWhereInput | Prisma.AnnouncementWhereInput[]
-  id?: Prisma.StringFilter<"Announcement"> | string
+  id?: Prisma.BigIntFilter<"Announcement"> | bigint | number
   title?: Prisma.StringFilter<"Announcement"> | string
   body?: Prisma.StringFilter<"Announcement"> | string
   priority?: Prisma.IntFilter<"Announcement"> | number
   expiryDate?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
   targets?: Prisma.AnnouncementTargetListRelationFilter
 }
 
@@ -234,12 +246,13 @@ export type AnnouncementOrderByWithRelationInput = {
   priority?: Prisma.SortOrder
   expiryDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   targets?: Prisma.AnnouncementTargetOrderByRelationAggregateInput
   _relevance?: Prisma.AnnouncementOrderByRelevanceInput
 }
 
 export type AnnouncementWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.AnnouncementWhereInput | Prisma.AnnouncementWhereInput[]
   OR?: Prisma.AnnouncementWhereInput[]
   NOT?: Prisma.AnnouncementWhereInput | Prisma.AnnouncementWhereInput[]
@@ -248,6 +261,7 @@ export type AnnouncementWhereUniqueInput = Prisma.AtLeast<{
   priority?: Prisma.IntFilter<"Announcement"> | number
   expiryDate?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Announcement"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Announcement"> | Date | string | null
   targets?: Prisma.AnnouncementTargetListRelationFilter
 }, "id">
 
@@ -258,6 +272,7 @@ export type AnnouncementOrderByWithAggregationInput = {
   priority?: Prisma.SortOrder
   expiryDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AnnouncementCountOrderByAggregateInput
   _avg?: Prisma.AnnouncementAvgOrderByAggregateInput
   _max?: Prisma.AnnouncementMaxOrderByAggregateInput
@@ -269,79 +284,87 @@ export type AnnouncementScalarWhereWithAggregatesInput = {
   AND?: Prisma.AnnouncementScalarWhereWithAggregatesInput | Prisma.AnnouncementScalarWhereWithAggregatesInput[]
   OR?: Prisma.AnnouncementScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AnnouncementScalarWhereWithAggregatesInput | Prisma.AnnouncementScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Announcement"> | bigint | number
   title?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   body?: Prisma.StringWithAggregatesFilter<"Announcement"> | string
   priority?: Prisma.IntWithAggregatesFilter<"Announcement"> | number
   expiryDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Announcement"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Announcement"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Announcement"> | Date | string | null
 }
 
 export type AnnouncementCreateInput = {
-  id?: string
+  id?: bigint | number
   title: string
   body: string
   priority: number
   expiryDate?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   targets?: Prisma.AnnouncementTargetCreateNestedManyWithoutAnnouncementInput
 }
 
 export type AnnouncementUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   title: string
   body: string
   priority: number
   expiryDate?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   targets?: Prisma.AnnouncementTargetUncheckedCreateNestedManyWithoutAnnouncementInput
 }
 
 export type AnnouncementUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   expiryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targets?: Prisma.AnnouncementTargetUpdateManyWithoutAnnouncementNestedInput
 }
 
 export type AnnouncementUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   expiryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   targets?: Prisma.AnnouncementTargetUncheckedUpdateManyWithoutAnnouncementNestedInput
 }
 
 export type AnnouncementCreateManyInput = {
-  id?: string
+  id?: bigint | number
   title: string
   body: string
   priority: number
   expiryDate?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type AnnouncementUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   expiryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AnnouncementUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   expiryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AnnouncementOrderByRelevanceInput = {
@@ -357,9 +380,11 @@ export type AnnouncementCountOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   expiryDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type AnnouncementAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   priority?: Prisma.SortOrder
 }
 
@@ -370,6 +395,7 @@ export type AnnouncementMaxOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   expiryDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type AnnouncementMinOrderByAggregateInput = {
@@ -379,9 +405,11 @@ export type AnnouncementMinOrderByAggregateInput = {
   priority?: Prisma.SortOrder
   expiryDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type AnnouncementSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
   priority?: Prisma.SortOrder
 }
 
@@ -405,21 +433,23 @@ export type AnnouncementUpdateOneRequiredWithoutTargetsNestedInput = {
 }
 
 export type AnnouncementCreateWithoutTargetsInput = {
-  id?: string
+  id?: bigint | number
   title: string
   body: string
   priority: number
   expiryDate?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type AnnouncementUncheckedCreateWithoutTargetsInput = {
-  id?: string
+  id?: bigint | number
   title: string
   body: string
   priority: number
   expiryDate?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type AnnouncementCreateOrConnectWithoutTargetsInput = {
@@ -439,21 +469,23 @@ export type AnnouncementUpdateToOneWithWhereWithoutTargetsInput = {
 }
 
 export type AnnouncementUpdateWithoutTargetsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   expiryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AnnouncementUncheckedUpdateWithoutTargetsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   priority?: Prisma.IntFieldUpdateOperationsInput | number
   expiryDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -494,6 +526,7 @@ export type AnnouncementSelect<ExtArgs extends runtime.Types.Extensions.Internal
   priority?: boolean
   expiryDate?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
   targets?: boolean | Prisma.Announcement$targetsArgs<ExtArgs>
   _count?: boolean | Prisma.AnnouncementCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["announcement"]>
@@ -507,9 +540,10 @@ export type AnnouncementSelectScalar = {
   priority?: boolean
   expiryDate?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type AnnouncementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "body" | "priority" | "expiryDate" | "createdAt", ExtArgs["result"]["announcement"]>
+export type AnnouncementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "body" | "priority" | "expiryDate" | "createdAt" | "deletedAt", ExtArgs["result"]["announcement"]>
 export type AnnouncementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   targets?: boolean | Prisma.Announcement$targetsArgs<ExtArgs>
   _count?: boolean | Prisma.AnnouncementCountOutputTypeDefaultArgs<ExtArgs>
@@ -521,12 +555,13 @@ export type $AnnouncementPayload<ExtArgs extends runtime.Types.Extensions.Intern
     targets: Prisma.$AnnouncementTargetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     title: string
     body: string
     priority: number
     expiryDate: Date | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["announcement"]>
   composites: {}
 }
@@ -897,12 +932,13 @@ export interface Prisma__AnnouncementClient<T, Null = never, ExtArgs extends run
  * Fields of the Announcement model
  */
 export interface AnnouncementFieldRefs {
-  readonly id: Prisma.FieldRef<"Announcement", 'String'>
+  readonly id: Prisma.FieldRef<"Announcement", 'BigInt'>
   readonly title: Prisma.FieldRef<"Announcement", 'String'>
   readonly body: Prisma.FieldRef<"Announcement", 'String'>
   readonly priority: Prisma.FieldRef<"Announcement", 'Int'>
   readonly expiryDate: Prisma.FieldRef<"Announcement", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Announcement", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Announcement", 'DateTime'>
 }
     
 

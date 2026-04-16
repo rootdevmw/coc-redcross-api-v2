@@ -5,6 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { toBigIntOptional } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class RolesService {
@@ -18,7 +19,7 @@ export class RolesService {
   async create(dto: any) {
     this.logger.log(`Creating role: ${dto.name}`);
 
-    const existing = await this.prisma.role.findUnique({
+    const existing = await this.prisma.role.findFirst({
       where: { name: dto.name },
     });
 
@@ -66,8 +67,8 @@ export class RolesService {
   // GET ONE
   // -----------------------------
   async findOne(id: string) {
-    const role = await this.prisma.role.findUnique({
-      where: { id },
+    const role = await this.prisma.role.findFirst({
+      where: { id: toBigIntOptional(id) },
     });
 
     if (!role) throw new NotFoundException(`Role with ID ${id} not found`);
@@ -86,7 +87,7 @@ export class RolesService {
     this.logger.log(`Updating role ${id}`);
 
     const role = await this.prisma.role.update({
-      where: { id },
+      where: { id: toBigIntOptional(id) },
       data: {
         name: dto.name,
       },
@@ -106,7 +107,7 @@ export class RolesService {
     this.logger.log(`Deleting role ${id}`);
 
     await this.prisma.role.delete({
-      where: { id },
+      where: { id: toBigIntOptional(id) },
     });
 
     return {

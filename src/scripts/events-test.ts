@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { verifySoftDelete } from './soft-delete-check';
 
 const API = 'http://localhost:3000';
 
@@ -112,6 +113,7 @@ async function run() {
     const types = await axios.get(`${API}/events/types`);
 
     console.log('📚 Event types:', types.data.data.length);
+    await verifySoftDelete(axios, `${API}/events`, eventId);
 
     console.log('\n🎉 ALL EVENT TESTS PASSED');
   } catch (error: any) {

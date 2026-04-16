@@ -20,18 +20,30 @@ export type ContentTagModel = runtime.Types.Result.DefaultSelection<Prisma.$Cont
 
 export type AggregateContentTag = {
   _count: ContentTagCountAggregateOutputType | null
+  _avg: ContentTagAvgAggregateOutputType | null
+  _sum: ContentTagSumAggregateOutputType | null
   _min: ContentTagMinAggregateOutputType | null
   _max: ContentTagMaxAggregateOutputType | null
 }
 
+export type ContentTagAvgAggregateOutputType = {
+  contentId: number | null
+  tagId: number | null
+}
+
+export type ContentTagSumAggregateOutputType = {
+  contentId: bigint | null
+  tagId: bigint | null
+}
+
 export type ContentTagMinAggregateOutputType = {
-  contentId: string | null
-  tagId: string | null
+  contentId: bigint | null
+  tagId: bigint | null
 }
 
 export type ContentTagMaxAggregateOutputType = {
-  contentId: string | null
-  tagId: string | null
+  contentId: bigint | null
+  tagId: bigint | null
 }
 
 export type ContentTagCountAggregateOutputType = {
@@ -40,6 +52,16 @@ export type ContentTagCountAggregateOutputType = {
   _all: number
 }
 
+
+export type ContentTagAvgAggregateInputType = {
+  contentId?: true
+  tagId?: true
+}
+
+export type ContentTagSumAggregateInputType = {
+  contentId?: true
+  tagId?: true
+}
 
 export type ContentTagMinAggregateInputType = {
   contentId?: true
@@ -95,6 +117,18 @@ export type ContentTagAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ContentTagAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ContentTagSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ContentTagMinAggregateInputType
@@ -125,14 +159,18 @@ export type ContentTagGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: ContentTagCountAggregateInputType | true
+  _avg?: ContentTagAvgAggregateInputType
+  _sum?: ContentTagSumAggregateInputType
   _min?: ContentTagMinAggregateInputType
   _max?: ContentTagMaxAggregateInputType
 }
 
 export type ContentTagGroupByOutputType = {
-  contentId: string
-  tagId: string
+  contentId: bigint
+  tagId: bigint
   _count: ContentTagCountAggregateOutputType | null
+  _avg: ContentTagAvgAggregateOutputType | null
+  _sum: ContentTagSumAggregateOutputType | null
   _min: ContentTagMinAggregateOutputType | null
   _max: ContentTagMaxAggregateOutputType | null
 }
@@ -156,8 +194,8 @@ export type ContentTagWhereInput = {
   AND?: Prisma.ContentTagWhereInput | Prisma.ContentTagWhereInput[]
   OR?: Prisma.ContentTagWhereInput[]
   NOT?: Prisma.ContentTagWhereInput | Prisma.ContentTagWhereInput[]
-  contentId?: Prisma.StringFilter<"ContentTag"> | string
-  tagId?: Prisma.StringFilter<"ContentTag"> | string
+  contentId?: Prisma.BigIntFilter<"ContentTag"> | bigint | number
+  tagId?: Prisma.BigIntFilter<"ContentTag"> | bigint | number
   content?: Prisma.XOR<Prisma.ContentScalarRelationFilter, Prisma.ContentWhereInput>
   tag?: Prisma.XOR<Prisma.TagScalarRelationFilter, Prisma.TagWhereInput>
 }
@@ -167,7 +205,6 @@ export type ContentTagOrderByWithRelationInput = {
   tagId?: Prisma.SortOrder
   content?: Prisma.ContentOrderByWithRelationInput
   tag?: Prisma.TagOrderByWithRelationInput
-  _relevance?: Prisma.ContentTagOrderByRelevanceInput
 }
 
 export type ContentTagWhereUniqueInput = Prisma.AtLeast<{
@@ -175,8 +212,8 @@ export type ContentTagWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ContentTagWhereInput | Prisma.ContentTagWhereInput[]
   OR?: Prisma.ContentTagWhereInput[]
   NOT?: Prisma.ContentTagWhereInput | Prisma.ContentTagWhereInput[]
-  contentId?: Prisma.StringFilter<"ContentTag"> | string
-  tagId?: Prisma.StringFilter<"ContentTag"> | string
+  contentId?: Prisma.BigIntFilter<"ContentTag"> | bigint | number
+  tagId?: Prisma.BigIntFilter<"ContentTag"> | bigint | number
   content?: Prisma.XOR<Prisma.ContentScalarRelationFilter, Prisma.ContentWhereInput>
   tag?: Prisma.XOR<Prisma.TagScalarRelationFilter, Prisma.TagWhereInput>
 }, "contentId_tagId">
@@ -185,16 +222,18 @@ export type ContentTagOrderByWithAggregationInput = {
   contentId?: Prisma.SortOrder
   tagId?: Prisma.SortOrder
   _count?: Prisma.ContentTagCountOrderByAggregateInput
+  _avg?: Prisma.ContentTagAvgOrderByAggregateInput
   _max?: Prisma.ContentTagMaxOrderByAggregateInput
   _min?: Prisma.ContentTagMinOrderByAggregateInput
+  _sum?: Prisma.ContentTagSumOrderByAggregateInput
 }
 
 export type ContentTagScalarWhereWithAggregatesInput = {
   AND?: Prisma.ContentTagScalarWhereWithAggregatesInput | Prisma.ContentTagScalarWhereWithAggregatesInput[]
   OR?: Prisma.ContentTagScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ContentTagScalarWhereWithAggregatesInput | Prisma.ContentTagScalarWhereWithAggregatesInput[]
-  contentId?: Prisma.StringWithAggregatesFilter<"ContentTag"> | string
-  tagId?: Prisma.StringWithAggregatesFilter<"ContentTag"> | string
+  contentId?: Prisma.BigIntWithAggregatesFilter<"ContentTag"> | bigint | number
+  tagId?: Prisma.BigIntWithAggregatesFilter<"ContentTag"> | bigint | number
 }
 
 export type ContentTagCreateInput = {
@@ -203,8 +242,8 @@ export type ContentTagCreateInput = {
 }
 
 export type ContentTagUncheckedCreateInput = {
-  contentId: string
-  tagId: string
+  contentId: bigint | number
+  tagId: bigint | number
 }
 
 export type ContentTagUpdateInput = {
@@ -213,13 +252,13 @@ export type ContentTagUpdateInput = {
 }
 
 export type ContentTagUncheckedUpdateInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
-  tagId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  tagId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentTagCreateManyInput = {
-  contentId: string
-  tagId: string
+  contentId: bigint | number
+  tagId: bigint | number
 }
 
 export type ContentTagUpdateManyMutationInput = {
@@ -227,8 +266,8 @@ export type ContentTagUpdateManyMutationInput = {
 }
 
 export type ContentTagUncheckedUpdateManyInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
-  tagId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  tagId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentTagListRelationFilter = {
@@ -241,18 +280,17 @@ export type ContentTagOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ContentTagOrderByRelevanceInput = {
-  fields: Prisma.ContentTagOrderByRelevanceFieldEnum | Prisma.ContentTagOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type ContentTagContentIdTagIdCompoundUniqueInput = {
-  contentId: string
-  tagId: string
+  contentId: bigint | number
+  tagId: bigint | number
 }
 
 export type ContentTagCountOrderByAggregateInput = {
+  contentId?: Prisma.SortOrder
+  tagId?: Prisma.SortOrder
+}
+
+export type ContentTagAvgOrderByAggregateInput = {
   contentId?: Prisma.SortOrder
   tagId?: Prisma.SortOrder
 }
@@ -263,6 +301,11 @@ export type ContentTagMaxOrderByAggregateInput = {
 }
 
 export type ContentTagMinOrderByAggregateInput = {
+  contentId?: Prisma.SortOrder
+  tagId?: Prisma.SortOrder
+}
+
+export type ContentTagSumOrderByAggregateInput = {
   contentId?: Prisma.SortOrder
   tagId?: Prisma.SortOrder
 }
@@ -356,7 +399,7 @@ export type ContentTagCreateWithoutContentInput = {
 }
 
 export type ContentTagUncheckedCreateWithoutContentInput = {
-  tagId: string
+  tagId: bigint | number
 }
 
 export type ContentTagCreateOrConnectWithoutContentInput = {
@@ -389,8 +432,8 @@ export type ContentTagScalarWhereInput = {
   AND?: Prisma.ContentTagScalarWhereInput | Prisma.ContentTagScalarWhereInput[]
   OR?: Prisma.ContentTagScalarWhereInput[]
   NOT?: Prisma.ContentTagScalarWhereInput | Prisma.ContentTagScalarWhereInput[]
-  contentId?: Prisma.StringFilter<"ContentTag"> | string
-  tagId?: Prisma.StringFilter<"ContentTag"> | string
+  contentId?: Prisma.BigIntFilter<"ContentTag"> | bigint | number
+  tagId?: Prisma.BigIntFilter<"ContentTag"> | bigint | number
 }
 
 export type ContentTagCreateWithoutTagInput = {
@@ -398,7 +441,7 @@ export type ContentTagCreateWithoutTagInput = {
 }
 
 export type ContentTagUncheckedCreateWithoutTagInput = {
-  contentId: string
+  contentId: bigint | number
 }
 
 export type ContentTagCreateOrConnectWithoutTagInput = {
@@ -428,7 +471,7 @@ export type ContentTagUpdateManyWithWhereWithoutTagInput = {
 }
 
 export type ContentTagCreateManyContentInput = {
-  tagId: string
+  tagId: bigint | number
 }
 
 export type ContentTagUpdateWithoutContentInput = {
@@ -436,15 +479,15 @@ export type ContentTagUpdateWithoutContentInput = {
 }
 
 export type ContentTagUncheckedUpdateWithoutContentInput = {
-  tagId?: Prisma.StringFieldUpdateOperationsInput | string
+  tagId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentTagUncheckedUpdateManyWithoutContentInput = {
-  tagId?: Prisma.StringFieldUpdateOperationsInput | string
+  tagId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentTagCreateManyTagInput = {
-  contentId: string
+  contentId: bigint | number
 }
 
 export type ContentTagUpdateWithoutTagInput = {
@@ -452,11 +495,11 @@ export type ContentTagUpdateWithoutTagInput = {
 }
 
 export type ContentTagUncheckedUpdateWithoutTagInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type ContentTagUncheckedUpdateManyWithoutTagInput = {
-  contentId?: Prisma.StringFieldUpdateOperationsInput | string
+  contentId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -488,8 +531,8 @@ export type $ContentTagPayload<ExtArgs extends runtime.Types.Extensions.Internal
     tag: Prisma.$TagPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    contentId: string
-    tagId: string
+    contentId: bigint
+    tagId: bigint
   }, ExtArgs["result"]["contentTag"]>
   composites: {}
 }
@@ -861,8 +904,8 @@ export interface Prisma__ContentTagClient<T, Null = never, ExtArgs extends runti
  * Fields of the ContentTag model
  */
 export interface ContentTagFieldRefs {
-  readonly contentId: Prisma.FieldRef<"ContentTag", 'String'>
-  readonly tagId: Prisma.FieldRef<"ContentTag", 'String'>
+  readonly contentId: Prisma.FieldRef<"ContentTag", 'BigInt'>
+  readonly tagId: Prisma.FieldRef<"ContentTag", 'BigInt'>
 }
     
 

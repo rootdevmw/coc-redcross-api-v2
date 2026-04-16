@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { verifySoftDelete } from './soft-delete-check';
 
 const API = 'http://localhost:3000';
 
@@ -78,7 +79,21 @@ async function run() {
     console.log('📋 Homecell 1 members:', hc1Members.data.data.length);
 
     // -----------------------------------
-    // 6. TEST OVERRIDE (CRITICAL RULE)
+    // 6. Remove Member from Homecell
+    // -----------------------------------
+    await axios.delete(`${API}/homecells/${hc1Id}/members/${member2Id}`);
+
+    console.log('🗑️ Member removed from Homecell 1');
+
+    // -----------------------------------
+    // 7. VERIFY Removal
+    // -----------------------------------
+    const hc1AfterRemove = await axios.get(`${API}/homecells/${hc1Id}/members`);
+
+    console.log('📉 Homecell 1 members after removal:', hc1AfterRemove.data.data.length);
+
+    // -----------------------------------
+    // 8. TEST OVERRIDE (CRITICAL RULE)
     // Move member1 to another homecell
     // -----------------------------------
     await axios.post(`${API}/homecells/${hc2Id}/members`, {
@@ -88,7 +103,7 @@ async function run() {
     console.log('🔁 Member reassigned to Homecell 2');
 
     // -----------------------------------
-    // 7. VERIFY OVERRIDE
+    // 9. VERIFY OVERRIDE
     // -----------------------------------
     const hc1After = await axios.get(`${API}/homecells/${hc1Id}/members`);
 
@@ -99,27 +114,28 @@ async function run() {
     console.log('📈 Homecell 2 members after move:', hc2After.data.data.length);
 
     // -----------------------------------
-    // 8. GET ALL HOMECELLS
+    // 10. GET ALL HOMECELLS
     // -----------------------------------
     const all = await axios.get(`${API}/homecells`);
 
     console.log('🏠 Total homecells:', all.data.data.length);
 
     // -----------------------------------
-    // 9. GET SINGLE HOMECELL
+    // 11. GET SINGLE HOMECELL
     // -----------------------------------
     const single = await axios.get(`${API}/homecells/${hc1Id}`);
 
     console.log('🔍 Single homecell:', single.data.data.name);
 
     // -----------------------------------
-    // 10. UPDATE HOMECELL
+    // 12. UPDATE HOMECELL
     // -----------------------------------
     await axios.patch(`${API}/homecells/${hc1Id}`, {
       location: 'Updated Area 25',
     });
 
     console.log('✏️ Homecell updated');
+    await verifySoftDelete(axios, `${API}/homecells`, hc1Id);
 
     console.log('\n🎉 ALL HOMECELL TESTS PASSED');
   } catch (error: any) {

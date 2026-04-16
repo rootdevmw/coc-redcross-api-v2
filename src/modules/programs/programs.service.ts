@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { toBigIntOptional } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class ProgramsService {
@@ -29,6 +30,62 @@ export class ProgramsService {
           })),
         },
       },
+      include: {
+        type: true,
+        homecell: true,
+        items: {
+          include: {
+            responsible: true,
+          },
+          orderBy: { sequence: 'asc' },
+        },
+      },
+    });
+
+    return { success: true, data: program, meta: {} };
+  }
+
+  async createFromTemplate(dto: any) {
+    this.logger.log(`Creating program from template ${dto.templateId}`);
+
+    const template = await this.prisma.programTemplate.findFirst({
+      where: {
+        id: toBigIntOptional(dto.templateId),
+        deletedAt: null,
+      },
+      include: {
+        items: {
+          where: { deletedAt: null },
+          orderBy: { sequence: 'asc' },
+        },
+      },
+    });
+
+    if (!template) {
+      throw new NotFoundException('Template not found');
+    }
+
+    const program = await this.prisma.program.create({
+      data: {
+        date: new Date(dto.date),
+
+        // 🔥 copy from template
+        typeId: template.typeId,
+
+        // allow override OR fallback
+        homecellId: dto.homecellId ?? template.homecellId ?? null,
+
+        items: {
+          create: template.items.map((item) => ({
+            title: item.title,
+            description: item.description,
+            time: item.time,
+            sequence: item.sequence,
+            responsibleId: item.responsibleId,
+          })),
+        },
+      },
+
       include: {
         type: true,
         homecell: true,
@@ -78,6 +135,7 @@ export class ProgramsService {
           type: true,
           homecell: true,
           items: {
+            where: { deletedAt: null },
             include: {
               responsible: true,
             },
@@ -99,12 +157,13 @@ export class ProgramsService {
   // GET SINGLE PROGRAM
   // -----------------------------
   async findOne(id: string) {
-    const program = await this.prisma.program.findUnique({
-      where: { id },
+    const program = await this.prisma.program.findFirst({
+      where: { id: toBigIntOptional(id) },
       include: {
         type: true,
         homecell: true,
         items: {
+          where: { deletedAt: null },
           include: {
             responsible: true,
           },
@@ -127,12 +186,12 @@ export class ProgramsService {
     // Replace items if provided
     if (dto.items) {
       await this.prisma.programItem.deleteMany({
-        where: { programId: id },
+        where: { programId: toBigIntOptional(id) },
       });
     }
 
     const program = await this.prisma.program.update({
-      where: { id },
+      where: { id: toBigIntOptional(id) },
       data: {
         date: dto.date ? new Date(dto.date) : undefined,
         typeId: dto.typeId,
@@ -154,6 +213,7 @@ export class ProgramsService {
         type: true,
         homecell: true,
         items: {
+          where: { deletedAt: null },
           include: {
             responsible: true,
           },
@@ -163,6 +223,14 @@ export class ProgramsService {
     });
 
     return { success: true, data: program, meta: {} };
+  }
+
+  async remove(id: string) {
+    await this.prisma.program.delete({
+      where: { id: toBigIntOptional(id) },
+    });
+
+    return { success: true, data: {}, meta: {} };
   }
 
   // -----------------------------

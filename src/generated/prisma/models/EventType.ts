@@ -20,40 +20,64 @@ export type EventTypeModel = runtime.Types.Result.DefaultSelection<Prisma.$Event
 
 export type AggregateEventType = {
   _count: EventTypeCountAggregateOutputType | null
+  _avg: EventTypeAvgAggregateOutputType | null
+  _sum: EventTypeSumAggregateOutputType | null
   _min: EventTypeMinAggregateOutputType | null
   _max: EventTypeMaxAggregateOutputType | null
 }
 
+export type EventTypeAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type EventTypeSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type EventTypeMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type EventTypeMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type EventTypeCountAggregateOutputType = {
   id: number
   name: number
+  deletedAt: number
   _all: number
 }
 
 
+export type EventTypeAvgAggregateInputType = {
+  id?: true
+}
+
+export type EventTypeSumAggregateInputType = {
+  id?: true
+}
+
 export type EventTypeMinAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type EventTypeMaxAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type EventTypeCountAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -95,6 +119,18 @@ export type EventTypeAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: EventTypeAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: EventTypeSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: EventTypeMinAggregateInputType
@@ -125,14 +161,19 @@ export type EventTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   _count?: EventTypeCountAggregateInputType | true
+  _avg?: EventTypeAvgAggregateInputType
+  _sum?: EventTypeSumAggregateInputType
   _min?: EventTypeMinAggregateInputType
   _max?: EventTypeMaxAggregateInputType
 }
 
 export type EventTypeGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
+  deletedAt: Date | null
   _count: EventTypeCountAggregateOutputType | null
+  _avg: EventTypeAvgAggregateOutputType | null
+  _sum: EventTypeSumAggregateOutputType | null
   _min: EventTypeMinAggregateOutputType | null
   _max: EventTypeMaxAggregateOutputType | null
 }
@@ -156,80 +197,94 @@ export type EventTypeWhereInput = {
   AND?: Prisma.EventTypeWhereInput | Prisma.EventTypeWhereInput[]
   OR?: Prisma.EventTypeWhereInput[]
   NOT?: Prisma.EventTypeWhereInput | Prisma.EventTypeWhereInput[]
-  id?: Prisma.StringFilter<"EventType"> | string
+  id?: Prisma.BigIntFilter<"EventType"> | bigint | number
   name?: Prisma.StringFilter<"EventType"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"EventType"> | Date | string | null
   events?: Prisma.EventListRelationFilter
 }
 
 export type EventTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   events?: Prisma.EventOrderByRelationAggregateInput
   _relevance?: Prisma.EventTypeOrderByRelevanceInput
 }
 
 export type EventTypeWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   name?: string
   AND?: Prisma.EventTypeWhereInput | Prisma.EventTypeWhereInput[]
   OR?: Prisma.EventTypeWhereInput[]
   NOT?: Prisma.EventTypeWhereInput | Prisma.EventTypeWhereInput[]
+  deletedAt?: Prisma.DateTimeNullableFilter<"EventType"> | Date | string | null
   events?: Prisma.EventListRelationFilter
 }, "id" | "name">
 
 export type EventTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.EventTypeCountOrderByAggregateInput
+  _avg?: Prisma.EventTypeAvgOrderByAggregateInput
   _max?: Prisma.EventTypeMaxOrderByAggregateInput
   _min?: Prisma.EventTypeMinOrderByAggregateInput
+  _sum?: Prisma.EventTypeSumOrderByAggregateInput
 }
 
 export type EventTypeScalarWhereWithAggregatesInput = {
   AND?: Prisma.EventTypeScalarWhereWithAggregatesInput | Prisma.EventTypeScalarWhereWithAggregatesInput[]
   OR?: Prisma.EventTypeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.EventTypeScalarWhereWithAggregatesInput | Prisma.EventTypeScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"EventType"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"EventType"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"EventType"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"EventType"> | Date | string | null
 }
 
 export type EventTypeCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventCreateNestedManyWithoutTypeInput
 }
 
 export type EventTypeUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   events?: Prisma.EventUncheckedCreateNestedManyWithoutTypeInput
 }
 
 export type EventTypeUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUpdateManyWithoutTypeNestedInput
 }
 
 export type EventTypeUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventUncheckedUpdateManyWithoutTypeNestedInput
 }
 
 export type EventTypeCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type EventTypeUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type EventTypeUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type EventTypeOrderByRelevanceInput = {
@@ -241,16 +296,27 @@ export type EventTypeOrderByRelevanceInput = {
 export type EventTypeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type EventTypeAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type EventTypeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type EventTypeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type EventTypeSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type EventTypeScalarRelationFilter = {
@@ -273,13 +339,15 @@ export type EventTypeUpdateOneRequiredWithoutEventsNestedInput = {
 }
 
 export type EventTypeCreateWithoutEventsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type EventTypeUncheckedCreateWithoutEventsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type EventTypeCreateOrConnectWithoutEventsInput = {
@@ -299,13 +367,15 @@ export type EventTypeUpdateToOneWithWhereWithoutEventsInput = {
 }
 
 export type EventTypeUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type EventTypeUncheckedUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -342,6 +412,7 @@ export type EventTypeCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Type
 export type EventTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
   events?: boolean | Prisma.EventType$eventsArgs<ExtArgs>
   _count?: boolean | Prisma.EventTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["eventType"]>
@@ -351,9 +422,10 @@ export type EventTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type EventTypeSelectScalar = {
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }
 
-export type EventTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["eventType"]>
+export type EventTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "deletedAt", ExtArgs["result"]["eventType"]>
 export type EventTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   events?: boolean | Prisma.EventType$eventsArgs<ExtArgs>
   _count?: boolean | Prisma.EventTypeCountOutputTypeDefaultArgs<ExtArgs>
@@ -365,8 +437,9 @@ export type $EventTypePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     events: Prisma.$EventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["eventType"]>
   composites: {}
 }
@@ -737,8 +810,9 @@ export interface Prisma__EventTypeClient<T, Null = never, ExtArgs extends runtim
  * Fields of the EventType model
  */
 export interface EventTypeFieldRefs {
-  readonly id: Prisma.FieldRef<"EventType", 'String'>
+  readonly id: Prisma.FieldRef<"EventType", 'BigInt'>
   readonly name: Prisma.FieldRef<"EventType", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"EventType", 'DateTime'>
 }
     
 

@@ -20,18 +20,30 @@ export type EventMediaModel = runtime.Types.Result.DefaultSelection<Prisma.$Even
 
 export type AggregateEventMedia = {
   _count: EventMediaCountAggregateOutputType | null
+  _avg: EventMediaAvgAggregateOutputType | null
+  _sum: EventMediaSumAggregateOutputType | null
   _min: EventMediaMinAggregateOutputType | null
   _max: EventMediaMaxAggregateOutputType | null
 }
 
+export type EventMediaAvgAggregateOutputType = {
+  eventId: number | null
+  mediaId: number | null
+}
+
+export type EventMediaSumAggregateOutputType = {
+  eventId: bigint | null
+  mediaId: bigint | null
+}
+
 export type EventMediaMinAggregateOutputType = {
-  eventId: string | null
-  mediaId: string | null
+  eventId: bigint | null
+  mediaId: bigint | null
 }
 
 export type EventMediaMaxAggregateOutputType = {
-  eventId: string | null
-  mediaId: string | null
+  eventId: bigint | null
+  mediaId: bigint | null
 }
 
 export type EventMediaCountAggregateOutputType = {
@@ -40,6 +52,16 @@ export type EventMediaCountAggregateOutputType = {
   _all: number
 }
 
+
+export type EventMediaAvgAggregateInputType = {
+  eventId?: true
+  mediaId?: true
+}
+
+export type EventMediaSumAggregateInputType = {
+  eventId?: true
+  mediaId?: true
+}
 
 export type EventMediaMinAggregateInputType = {
   eventId?: true
@@ -95,6 +117,18 @@ export type EventMediaAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: EventMediaAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: EventMediaSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: EventMediaMinAggregateInputType
@@ -125,14 +159,18 @@ export type EventMediaGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: EventMediaCountAggregateInputType | true
+  _avg?: EventMediaAvgAggregateInputType
+  _sum?: EventMediaSumAggregateInputType
   _min?: EventMediaMinAggregateInputType
   _max?: EventMediaMaxAggregateInputType
 }
 
 export type EventMediaGroupByOutputType = {
-  eventId: string
-  mediaId: string
+  eventId: bigint
+  mediaId: bigint
   _count: EventMediaCountAggregateOutputType | null
+  _avg: EventMediaAvgAggregateOutputType | null
+  _sum: EventMediaSumAggregateOutputType | null
   _min: EventMediaMinAggregateOutputType | null
   _max: EventMediaMaxAggregateOutputType | null
 }
@@ -156,8 +194,8 @@ export type EventMediaWhereInput = {
   AND?: Prisma.EventMediaWhereInput | Prisma.EventMediaWhereInput[]
   OR?: Prisma.EventMediaWhereInput[]
   NOT?: Prisma.EventMediaWhereInput | Prisma.EventMediaWhereInput[]
-  eventId?: Prisma.StringFilter<"EventMedia"> | string
-  mediaId?: Prisma.StringFilter<"EventMedia"> | string
+  eventId?: Prisma.BigIntFilter<"EventMedia"> | bigint | number
+  mediaId?: Prisma.BigIntFilter<"EventMedia"> | bigint | number
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
   media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
 }
@@ -167,7 +205,6 @@ export type EventMediaOrderByWithRelationInput = {
   mediaId?: Prisma.SortOrder
   event?: Prisma.EventOrderByWithRelationInput
   media?: Prisma.MediaOrderByWithRelationInput
-  _relevance?: Prisma.EventMediaOrderByRelevanceInput
 }
 
 export type EventMediaWhereUniqueInput = Prisma.AtLeast<{
@@ -175,8 +212,8 @@ export type EventMediaWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.EventMediaWhereInput | Prisma.EventMediaWhereInput[]
   OR?: Prisma.EventMediaWhereInput[]
   NOT?: Prisma.EventMediaWhereInput | Prisma.EventMediaWhereInput[]
-  eventId?: Prisma.StringFilter<"EventMedia"> | string
-  mediaId?: Prisma.StringFilter<"EventMedia"> | string
+  eventId?: Prisma.BigIntFilter<"EventMedia"> | bigint | number
+  mediaId?: Prisma.BigIntFilter<"EventMedia"> | bigint | number
   event?: Prisma.XOR<Prisma.EventScalarRelationFilter, Prisma.EventWhereInput>
   media?: Prisma.XOR<Prisma.MediaScalarRelationFilter, Prisma.MediaWhereInput>
 }, "eventId_mediaId">
@@ -185,16 +222,18 @@ export type EventMediaOrderByWithAggregationInput = {
   eventId?: Prisma.SortOrder
   mediaId?: Prisma.SortOrder
   _count?: Prisma.EventMediaCountOrderByAggregateInput
+  _avg?: Prisma.EventMediaAvgOrderByAggregateInput
   _max?: Prisma.EventMediaMaxOrderByAggregateInput
   _min?: Prisma.EventMediaMinOrderByAggregateInput
+  _sum?: Prisma.EventMediaSumOrderByAggregateInput
 }
 
 export type EventMediaScalarWhereWithAggregatesInput = {
   AND?: Prisma.EventMediaScalarWhereWithAggregatesInput | Prisma.EventMediaScalarWhereWithAggregatesInput[]
   OR?: Prisma.EventMediaScalarWhereWithAggregatesInput[]
   NOT?: Prisma.EventMediaScalarWhereWithAggregatesInput | Prisma.EventMediaScalarWhereWithAggregatesInput[]
-  eventId?: Prisma.StringWithAggregatesFilter<"EventMedia"> | string
-  mediaId?: Prisma.StringWithAggregatesFilter<"EventMedia"> | string
+  eventId?: Prisma.BigIntWithAggregatesFilter<"EventMedia"> | bigint | number
+  mediaId?: Prisma.BigIntWithAggregatesFilter<"EventMedia"> | bigint | number
 }
 
 export type EventMediaCreateInput = {
@@ -203,8 +242,8 @@ export type EventMediaCreateInput = {
 }
 
 export type EventMediaUncheckedCreateInput = {
-  eventId: string
-  mediaId: string
+  eventId: bigint | number
+  mediaId: bigint | number
 }
 
 export type EventMediaUpdateInput = {
@@ -213,13 +252,13 @@ export type EventMediaUpdateInput = {
 }
 
 export type EventMediaUncheckedUpdateInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMediaCreateManyInput = {
-  eventId: string
-  mediaId: string
+  eventId: bigint | number
+  mediaId: bigint | number
 }
 
 export type EventMediaUpdateManyMutationInput = {
@@ -227,8 +266,8 @@ export type EventMediaUpdateManyMutationInput = {
 }
 
 export type EventMediaUncheckedUpdateManyInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMediaListRelationFilter = {
@@ -241,18 +280,17 @@ export type EventMediaOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type EventMediaOrderByRelevanceInput = {
-  fields: Prisma.EventMediaOrderByRelevanceFieldEnum | Prisma.EventMediaOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type EventMediaEventIdMediaIdCompoundUniqueInput = {
-  eventId: string
-  mediaId: string
+  eventId: bigint | number
+  mediaId: bigint | number
 }
 
 export type EventMediaCountOrderByAggregateInput = {
+  eventId?: Prisma.SortOrder
+  mediaId?: Prisma.SortOrder
+}
+
+export type EventMediaAvgOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   mediaId?: Prisma.SortOrder
 }
@@ -263,6 +301,11 @@ export type EventMediaMaxOrderByAggregateInput = {
 }
 
 export type EventMediaMinOrderByAggregateInput = {
+  eventId?: Prisma.SortOrder
+  mediaId?: Prisma.SortOrder
+}
+
+export type EventMediaSumOrderByAggregateInput = {
   eventId?: Prisma.SortOrder
   mediaId?: Prisma.SortOrder
 }
@@ -356,7 +399,7 @@ export type EventMediaCreateWithoutMediaInput = {
 }
 
 export type EventMediaUncheckedCreateWithoutMediaInput = {
-  eventId: string
+  eventId: bigint | number
 }
 
 export type EventMediaCreateOrConnectWithoutMediaInput = {
@@ -389,8 +432,8 @@ export type EventMediaScalarWhereInput = {
   AND?: Prisma.EventMediaScalarWhereInput | Prisma.EventMediaScalarWhereInput[]
   OR?: Prisma.EventMediaScalarWhereInput[]
   NOT?: Prisma.EventMediaScalarWhereInput | Prisma.EventMediaScalarWhereInput[]
-  eventId?: Prisma.StringFilter<"EventMedia"> | string
-  mediaId?: Prisma.StringFilter<"EventMedia"> | string
+  eventId?: Prisma.BigIntFilter<"EventMedia"> | bigint | number
+  mediaId?: Prisma.BigIntFilter<"EventMedia"> | bigint | number
 }
 
 export type EventMediaCreateWithoutEventInput = {
@@ -398,7 +441,7 @@ export type EventMediaCreateWithoutEventInput = {
 }
 
 export type EventMediaUncheckedCreateWithoutEventInput = {
-  mediaId: string
+  mediaId: bigint | number
 }
 
 export type EventMediaCreateOrConnectWithoutEventInput = {
@@ -428,7 +471,7 @@ export type EventMediaUpdateManyWithWhereWithoutEventInput = {
 }
 
 export type EventMediaCreateManyMediaInput = {
-  eventId: string
+  eventId: bigint | number
 }
 
 export type EventMediaUpdateWithoutMediaInput = {
@@ -436,15 +479,15 @@ export type EventMediaUpdateWithoutMediaInput = {
 }
 
 export type EventMediaUncheckedUpdateWithoutMediaInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMediaUncheckedUpdateManyWithoutMediaInput = {
-  eventId?: Prisma.StringFieldUpdateOperationsInput | string
+  eventId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMediaCreateManyEventInput = {
-  mediaId: string
+  mediaId: bigint | number
 }
 
 export type EventMediaUpdateWithoutEventInput = {
@@ -452,11 +495,11 @@ export type EventMediaUpdateWithoutEventInput = {
 }
 
 export type EventMediaUncheckedUpdateWithoutEventInput = {
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type EventMediaUncheckedUpdateManyWithoutEventInput = {
-  mediaId?: Prisma.StringFieldUpdateOperationsInput | string
+  mediaId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 
@@ -488,8 +531,8 @@ export type $EventMediaPayload<ExtArgs extends runtime.Types.Extensions.Internal
     media: Prisma.$MediaPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    eventId: string
-    mediaId: string
+    eventId: bigint
+    mediaId: bigint
   }, ExtArgs["result"]["eventMedia"]>
   composites: {}
 }
@@ -861,8 +904,8 @@ export interface Prisma__EventMediaClient<T, Null = never, ExtArgs extends runti
  * Fields of the EventMedia model
  */
 export interface EventMediaFieldRefs {
-  readonly eventId: Prisma.FieldRef<"EventMedia", 'String'>
-  readonly mediaId: Prisma.FieldRef<"EventMedia", 'String'>
+  readonly eventId: Prisma.FieldRef<"EventMedia", 'BigInt'>
+  readonly mediaId: Prisma.FieldRef<"EventMedia", 'BigInt'>
 }
     
 

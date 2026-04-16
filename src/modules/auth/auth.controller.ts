@@ -7,11 +7,12 @@ import {
   Request,
   Param,
   Res,
+  Req,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guard/jwt-guard';
 import { ConfigService } from '@nestjs/config';
+import { SessionAuthGuard } from './guard/session.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -50,7 +51,7 @@ export class AuthController {
 
     res.cookie(
       this.getCookieName(),
-      result.data.token,
+      result.data.sessionId,
       this.getCookieOptions(),
     );
 
@@ -65,14 +66,12 @@ export class AuthController {
   // LOGOUT
   // -----------------------------
   @Post('logout')
-  logout(@Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+    const result = await this.service.logout(req.cookies?.session_id);
+
     res.clearCookie(this.getCookieName(), this.getCookieOptions());
 
-    return {
-      success: true,
-      data: {},
-      meta: {},
-    };
+    return result;
   }
 
   // -----------------------------
@@ -86,7 +85,7 @@ export class AuthController {
   // -----------------------------
   // GET CURRENT USER
   // -----------------------------
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(SessionAuthGuard)
   @Get('me')
   me(@Request() req: any) {
     return {

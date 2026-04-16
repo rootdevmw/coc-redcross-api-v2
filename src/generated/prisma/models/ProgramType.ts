@@ -20,40 +20,64 @@ export type ProgramTypeModel = runtime.Types.Result.DefaultSelection<Prisma.$Pro
 
 export type AggregateProgramType = {
   _count: ProgramTypeCountAggregateOutputType | null
+  _avg: ProgramTypeAvgAggregateOutputType | null
+  _sum: ProgramTypeSumAggregateOutputType | null
   _min: ProgramTypeMinAggregateOutputType | null
   _max: ProgramTypeMaxAggregateOutputType | null
 }
 
+export type ProgramTypeAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type ProgramTypeSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type ProgramTypeMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type ProgramTypeMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type ProgramTypeCountAggregateOutputType = {
   id: number
   name: number
+  deletedAt: number
   _all: number
 }
 
 
+export type ProgramTypeAvgAggregateInputType = {
+  id?: true
+}
+
+export type ProgramTypeSumAggregateInputType = {
+  id?: true
+}
+
 export type ProgramTypeMinAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type ProgramTypeMaxAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type ProgramTypeCountAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -95,6 +119,18 @@ export type ProgramTypeAggregateArgs<ExtArgs extends runtime.Types.Extensions.In
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProgramTypeAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProgramTypeSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProgramTypeMinAggregateInputType
@@ -125,14 +161,19 @@ export type ProgramTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   _count?: ProgramTypeCountAggregateInputType | true
+  _avg?: ProgramTypeAvgAggregateInputType
+  _sum?: ProgramTypeSumAggregateInputType
   _min?: ProgramTypeMinAggregateInputType
   _max?: ProgramTypeMaxAggregateInputType
 }
 
 export type ProgramTypeGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
+  deletedAt: Date | null
   _count: ProgramTypeCountAggregateOutputType | null
+  _avg: ProgramTypeAvgAggregateOutputType | null
+  _sum: ProgramTypeSumAggregateOutputType | null
   _min: ProgramTypeMinAggregateOutputType | null
   _max: ProgramTypeMaxAggregateOutputType | null
 }
@@ -156,80 +197,101 @@ export type ProgramTypeWhereInput = {
   AND?: Prisma.ProgramTypeWhereInput | Prisma.ProgramTypeWhereInput[]
   OR?: Prisma.ProgramTypeWhereInput[]
   NOT?: Prisma.ProgramTypeWhereInput | Prisma.ProgramTypeWhereInput[]
-  id?: Prisma.StringFilter<"ProgramType"> | string
+  id?: Prisma.BigIntFilter<"ProgramType"> | bigint | number
   name?: Prisma.StringFilter<"ProgramType"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ProgramType"> | Date | string | null
   programs?: Prisma.ProgramListRelationFilter
+  programTemplates?: Prisma.ProgramTemplateListRelationFilter
 }
 
 export type ProgramTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   programs?: Prisma.ProgramOrderByRelationAggregateInput
+  programTemplates?: Prisma.ProgramTemplateOrderByRelationAggregateInput
   _relevance?: Prisma.ProgramTypeOrderByRelevanceInput
 }
 
 export type ProgramTypeWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   name?: string
   AND?: Prisma.ProgramTypeWhereInput | Prisma.ProgramTypeWhereInput[]
   OR?: Prisma.ProgramTypeWhereInput[]
   NOT?: Prisma.ProgramTypeWhereInput | Prisma.ProgramTypeWhereInput[]
+  deletedAt?: Prisma.DateTimeNullableFilter<"ProgramType"> | Date | string | null
   programs?: Prisma.ProgramListRelationFilter
+  programTemplates?: Prisma.ProgramTemplateListRelationFilter
 }, "id" | "name">
 
 export type ProgramTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProgramTypeCountOrderByAggregateInput
+  _avg?: Prisma.ProgramTypeAvgOrderByAggregateInput
   _max?: Prisma.ProgramTypeMaxOrderByAggregateInput
   _min?: Prisma.ProgramTypeMinOrderByAggregateInput
+  _sum?: Prisma.ProgramTypeSumOrderByAggregateInput
 }
 
 export type ProgramTypeScalarWhereWithAggregatesInput = {
   AND?: Prisma.ProgramTypeScalarWhereWithAggregatesInput | Prisma.ProgramTypeScalarWhereWithAggregatesInput[]
   OR?: Prisma.ProgramTypeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProgramTypeScalarWhereWithAggregatesInput | Prisma.ProgramTypeScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"ProgramType"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"ProgramType"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"ProgramType"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProgramType"> | Date | string | null
 }
 
 export type ProgramTypeCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   programs?: Prisma.ProgramCreateNestedManyWithoutTypeInput
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutTypeInput
 }
 
 export type ProgramTypeUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutTypeInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutTypeInput
 }
 
 export type ProgramTypeUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   programs?: Prisma.ProgramUpdateManyWithoutTypeNestedInput
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutTypeNestedInput
 }
 
 export type ProgramTypeUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   programs?: Prisma.ProgramUncheckedUpdateManyWithoutTypeNestedInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutTypeNestedInput
 }
 
 export type ProgramTypeCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type ProgramTypeUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramTypeUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramTypeOrderByRelevanceInput = {
@@ -241,16 +303,27 @@ export type ProgramTypeOrderByRelevanceInput = {
 export type ProgramTypeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type ProgramTypeAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type ProgramTypeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ProgramTypeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type ProgramTypeSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type ProgramTypeScalarRelationFilter = {
@@ -272,14 +345,32 @@ export type ProgramTypeUpdateOneRequiredWithoutProgramsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProgramTypeUpdateToOneWithWhereWithoutProgramsInput, Prisma.ProgramTypeUpdateWithoutProgramsInput>, Prisma.ProgramTypeUncheckedUpdateWithoutProgramsInput>
 }
 
+export type ProgramTypeCreateNestedOneWithoutProgramTemplatesInput = {
+  create?: Prisma.XOR<Prisma.ProgramTypeCreateWithoutProgramTemplatesInput, Prisma.ProgramTypeUncheckedCreateWithoutProgramTemplatesInput>
+  connectOrCreate?: Prisma.ProgramTypeCreateOrConnectWithoutProgramTemplatesInput
+  connect?: Prisma.ProgramTypeWhereUniqueInput
+}
+
+export type ProgramTypeUpdateOneRequiredWithoutProgramTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProgramTypeCreateWithoutProgramTemplatesInput, Prisma.ProgramTypeUncheckedCreateWithoutProgramTemplatesInput>
+  connectOrCreate?: Prisma.ProgramTypeCreateOrConnectWithoutProgramTemplatesInput
+  upsert?: Prisma.ProgramTypeUpsertWithoutProgramTemplatesInput
+  connect?: Prisma.ProgramTypeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProgramTypeUpdateToOneWithWhereWithoutProgramTemplatesInput, Prisma.ProgramTypeUpdateWithoutProgramTemplatesInput>, Prisma.ProgramTypeUncheckedUpdateWithoutProgramTemplatesInput>
+}
+
 export type ProgramTypeCreateWithoutProgramsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutTypeInput
 }
 
 export type ProgramTypeUncheckedCreateWithoutProgramsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutTypeInput
 }
 
 export type ProgramTypeCreateOrConnectWithoutProgramsInput = {
@@ -299,13 +390,61 @@ export type ProgramTypeUpdateToOneWithWhereWithoutProgramsInput = {
 }
 
 export type ProgramTypeUpdateWithoutProgramsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutTypeNestedInput
 }
 
 export type ProgramTypeUncheckedUpdateWithoutProgramsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutTypeNestedInput
+}
+
+export type ProgramTypeCreateWithoutProgramTemplatesInput = {
+  id?: bigint | number
+  name: string
+  deletedAt?: Date | string | null
+  programs?: Prisma.ProgramCreateNestedManyWithoutTypeInput
+}
+
+export type ProgramTypeUncheckedCreateWithoutProgramTemplatesInput = {
+  id?: bigint | number
+  name: string
+  deletedAt?: Date | string | null
+  programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutTypeInput
+}
+
+export type ProgramTypeCreateOrConnectWithoutProgramTemplatesInput = {
+  where: Prisma.ProgramTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProgramTypeCreateWithoutProgramTemplatesInput, Prisma.ProgramTypeUncheckedCreateWithoutProgramTemplatesInput>
+}
+
+export type ProgramTypeUpsertWithoutProgramTemplatesInput = {
+  update: Prisma.XOR<Prisma.ProgramTypeUpdateWithoutProgramTemplatesInput, Prisma.ProgramTypeUncheckedUpdateWithoutProgramTemplatesInput>
+  create: Prisma.XOR<Prisma.ProgramTypeCreateWithoutProgramTemplatesInput, Prisma.ProgramTypeUncheckedCreateWithoutProgramTemplatesInput>
+  where?: Prisma.ProgramTypeWhereInput
+}
+
+export type ProgramTypeUpdateToOneWithWhereWithoutProgramTemplatesInput = {
+  where?: Prisma.ProgramTypeWhereInput
+  data: Prisma.XOR<Prisma.ProgramTypeUpdateWithoutProgramTemplatesInput, Prisma.ProgramTypeUncheckedUpdateWithoutProgramTemplatesInput>
+}
+
+export type ProgramTypeUpdateWithoutProgramTemplatesInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  programs?: Prisma.ProgramUpdateManyWithoutTypeNestedInput
+}
+
+export type ProgramTypeUncheckedUpdateWithoutProgramTemplatesInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  programs?: Prisma.ProgramUncheckedUpdateManyWithoutTypeNestedInput
 }
 
 
@@ -315,10 +454,12 @@ export type ProgramTypeUncheckedUpdateWithoutProgramsInput = {
 
 export type ProgramTypeCountOutputType = {
   programs: number
+  programTemplates: number
 }
 
 export type ProgramTypeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   programs?: boolean | ProgramTypeCountOutputTypeCountProgramsArgs
+  programTemplates?: boolean | ProgramTypeCountOutputTypeCountProgramTemplatesArgs
 }
 
 /**
@@ -338,11 +479,20 @@ export type ProgramTypeCountOutputTypeCountProgramsArgs<ExtArgs extends runtime.
   where?: Prisma.ProgramWhereInput
 }
 
+/**
+ * ProgramTypeCountOutputType without action
+ */
+export type ProgramTypeCountOutputTypeCountProgramTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProgramTemplateWhereInput
+}
+
 
 export type ProgramTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
   programs?: boolean | Prisma.ProgramType$programsArgs<ExtArgs>
+  programTemplates?: boolean | Prisma.ProgramType$programTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.ProgramTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["programType"]>
 
@@ -351,11 +501,13 @@ export type ProgramTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ProgramTypeSelectScalar = {
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }
 
-export type ProgramTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["programType"]>
+export type ProgramTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "deletedAt", ExtArgs["result"]["programType"]>
 export type ProgramTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   programs?: boolean | Prisma.ProgramType$programsArgs<ExtArgs>
+  programTemplates?: boolean | Prisma.ProgramType$programTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.ProgramTypeCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -363,10 +515,12 @@ export type $ProgramTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "ProgramType"
   objects: {
     programs: Prisma.$ProgramPayload<ExtArgs>[]
+    programTemplates: Prisma.$ProgramTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["programType"]>
   composites: {}
 }
@@ -708,6 +862,7 @@ readonly fields: ProgramTypeFieldRefs;
 export interface Prisma__ProgramTypeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   programs<T extends Prisma.ProgramType$programsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProgramType$programsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  programTemplates<T extends Prisma.ProgramType$programTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProgramType$programTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -737,8 +892,9 @@ export interface Prisma__ProgramTypeClient<T, Null = never, ExtArgs extends runt
  * Fields of the ProgramType model
  */
 export interface ProgramTypeFieldRefs {
-  readonly id: Prisma.FieldRef<"ProgramType", 'String'>
+  readonly id: Prisma.FieldRef<"ProgramType", 'BigInt'>
   readonly name: Prisma.FieldRef<"ProgramType", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"ProgramType", 'DateTime'>
 }
     
 
@@ -1108,6 +1264,30 @@ export type ProgramType$programsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ProgramScalarFieldEnum | Prisma.ProgramScalarFieldEnum[]
+}
+
+/**
+ * ProgramType.programTemplates
+ */
+export type ProgramType$programTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProgramTemplate
+   */
+  select?: Prisma.ProgramTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProgramTemplate
+   */
+  omit?: Prisma.ProgramTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProgramTemplateInclude<ExtArgs> | null
+  where?: Prisma.ProgramTemplateWhereInput
+  orderBy?: Prisma.ProgramTemplateOrderByWithRelationInput | Prisma.ProgramTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.ProgramTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProgramTemplateScalarFieldEnum | Prisma.ProgramTemplateScalarFieldEnum[]
 }
 
 /**

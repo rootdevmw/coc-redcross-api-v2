@@ -20,26 +20,42 @@ export type HomecellModel = runtime.Types.Result.DefaultSelection<Prisma.$Homece
 
 export type AggregateHomecell = {
   _count: HomecellCountAggregateOutputType | null
+  _avg: HomecellAvgAggregateOutputType | null
+  _sum: HomecellSumAggregateOutputType | null
   _min: HomecellMinAggregateOutputType | null
   _max: HomecellMaxAggregateOutputType | null
 }
 
+export type HomecellAvgAggregateOutputType = {
+  id: number | null
+  leaderId: number | null
+  overseerId: number | null
+}
+
+export type HomecellSumAggregateOutputType = {
+  id: bigint | null
+  leaderId: bigint | null
+  overseerId: bigint | null
+}
+
 export type HomecellMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   location: string | null
-  leaderId: string | null
-  overseerId: string | null
+  leaderId: bigint | null
+  overseerId: bigint | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type HomecellMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
   location: string | null
-  leaderId: string | null
-  overseerId: string | null
+  leaderId: bigint | null
+  overseerId: bigint | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type HomecellCountAggregateOutputType = {
@@ -49,9 +65,22 @@ export type HomecellCountAggregateOutputType = {
   leaderId: number
   overseerId: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
+
+export type HomecellAvgAggregateInputType = {
+  id?: true
+  leaderId?: true
+  overseerId?: true
+}
+
+export type HomecellSumAggregateInputType = {
+  id?: true
+  leaderId?: true
+  overseerId?: true
+}
 
 export type HomecellMinAggregateInputType = {
   id?: true
@@ -60,6 +89,7 @@ export type HomecellMinAggregateInputType = {
   leaderId?: true
   overseerId?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type HomecellMaxAggregateInputType = {
@@ -69,6 +99,7 @@ export type HomecellMaxAggregateInputType = {
   leaderId?: true
   overseerId?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type HomecellCountAggregateInputType = {
@@ -78,6 +109,7 @@ export type HomecellCountAggregateInputType = {
   leaderId?: true
   overseerId?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -119,6 +151,18 @@ export type HomecellAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: HomecellAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: HomecellSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: HomecellMinAggregateInputType
@@ -149,18 +193,23 @@ export type HomecellGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: HomecellCountAggregateInputType | true
+  _avg?: HomecellAvgAggregateInputType
+  _sum?: HomecellSumAggregateInputType
   _min?: HomecellMinAggregateInputType
   _max?: HomecellMaxAggregateInputType
 }
 
 export type HomecellGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
   location: string | null
-  leaderId: string | null
-  overseerId: string | null
+  leaderId: bigint | null
+  overseerId: bigint | null
   createdAt: Date
+  deletedAt: Date | null
   _count: HomecellCountAggregateOutputType | null
+  _avg: HomecellAvgAggregateOutputType | null
+  _sum: HomecellSumAggregateOutputType | null
   _min: HomecellMinAggregateOutputType | null
   _max: HomecellMaxAggregateOutputType | null
 }
@@ -184,16 +233,18 @@ export type HomecellWhereInput = {
   AND?: Prisma.HomecellWhereInput | Prisma.HomecellWhereInput[]
   OR?: Prisma.HomecellWhereInput[]
   NOT?: Prisma.HomecellWhereInput | Prisma.HomecellWhereInput[]
-  id?: Prisma.StringFilter<"Homecell"> | string
+  id?: Prisma.BigIntFilter<"Homecell"> | bigint | number
   name?: Prisma.StringFilter<"Homecell"> | string
   location?: Prisma.StringNullableFilter<"Homecell"> | string | null
-  leaderId?: Prisma.StringNullableFilter<"Homecell"> | string | null
-  overseerId?: Prisma.StringNullableFilter<"Homecell"> | string | null
+  leaderId?: Prisma.BigIntNullableFilter<"Homecell"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableFilter<"Homecell"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Homecell"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Homecell"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   overseer?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   members?: Prisma.MemberListRelationFilter
   programs?: Prisma.ProgramListRelationFilter
+  programTemplates?: Prisma.ProgramTemplateListRelationFilter
 }
 
 export type HomecellOrderByWithRelationInput = {
@@ -203,27 +254,31 @@ export type HomecellOrderByWithRelationInput = {
   leaderId?: Prisma.SortOrderInput | Prisma.SortOrder
   overseerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   leader?: Prisma.MemberOrderByWithRelationInput
   overseer?: Prisma.MemberOrderByWithRelationInput
   members?: Prisma.MemberOrderByRelationAggregateInput
   programs?: Prisma.ProgramOrderByRelationAggregateInput
+  programTemplates?: Prisma.ProgramTemplateOrderByRelationAggregateInput
   _relevance?: Prisma.HomecellOrderByRelevanceInput
 }
 
 export type HomecellWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.HomecellWhereInput | Prisma.HomecellWhereInput[]
   OR?: Prisma.HomecellWhereInput[]
   NOT?: Prisma.HomecellWhereInput | Prisma.HomecellWhereInput[]
   name?: Prisma.StringFilter<"Homecell"> | string
   location?: Prisma.StringNullableFilter<"Homecell"> | string | null
-  leaderId?: Prisma.StringNullableFilter<"Homecell"> | string | null
-  overseerId?: Prisma.StringNullableFilter<"Homecell"> | string | null
+  leaderId?: Prisma.BigIntNullableFilter<"Homecell"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableFilter<"Homecell"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Homecell"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Homecell"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   overseer?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   members?: Prisma.MemberListRelationFilter
   programs?: Prisma.ProgramListRelationFilter
+  programTemplates?: Prisma.ProgramTemplateListRelationFilter
 }, "id">
 
 export type HomecellOrderByWithAggregationInput = {
@@ -233,90 +288,105 @@ export type HomecellOrderByWithAggregationInput = {
   leaderId?: Prisma.SortOrderInput | Prisma.SortOrder
   overseerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.HomecellCountOrderByAggregateInput
+  _avg?: Prisma.HomecellAvgOrderByAggregateInput
   _max?: Prisma.HomecellMaxOrderByAggregateInput
   _min?: Prisma.HomecellMinOrderByAggregateInput
+  _sum?: Prisma.HomecellSumOrderByAggregateInput
 }
 
 export type HomecellScalarWhereWithAggregatesInput = {
   AND?: Prisma.HomecellScalarWhereWithAggregatesInput | Prisma.HomecellScalarWhereWithAggregatesInput[]
   OR?: Prisma.HomecellScalarWhereWithAggregatesInput[]
   NOT?: Prisma.HomecellScalarWhereWithAggregatesInput | Prisma.HomecellScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Homecell"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Homecell"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"Homecell"> | string
   location?: Prisma.StringNullableWithAggregatesFilter<"Homecell"> | string | null
-  leaderId?: Prisma.StringNullableWithAggregatesFilter<"Homecell"> | string | null
-  overseerId?: Prisma.StringNullableWithAggregatesFilter<"Homecell"> | string | null
+  leaderId?: Prisma.BigIntNullableWithAggregatesFilter<"Homecell"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableWithAggregatesFilter<"Homecell"> | bigint | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Homecell"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Homecell"> | Date | string | null
 }
 
 export type HomecellCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingHomecellsInput
   overseer?: Prisma.MemberCreateNestedOneWithoutHomecellsInput
   members?: Prisma.MemberCreateNestedManyWithoutHomecellInput
   programs?: Prisma.ProgramCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutHomecellInput
   programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingHomecellsNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutHomecellsNestedInput
   members?: Prisma.MemberUpdateManyWithoutHomecellNestedInput
   programs?: Prisma.ProgramUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberUncheckedUpdateManyWithoutHomecellNestedInput
   programs?: Prisma.ProgramUncheckedUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type HomecellUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type HomecellUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type HomecellNullableScalarRelationFilter = {
@@ -347,6 +417,13 @@ export type HomecellCountOrderByAggregateInput = {
   leaderId?: Prisma.SortOrder
   overseerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type HomecellAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  leaderId?: Prisma.SortOrder
+  overseerId?: Prisma.SortOrder
 }
 
 export type HomecellMaxOrderByAggregateInput = {
@@ -356,6 +433,7 @@ export type HomecellMaxOrderByAggregateInput = {
   leaderId?: Prisma.SortOrder
   overseerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type HomecellMinOrderByAggregateInput = {
@@ -365,6 +443,13 @@ export type HomecellMinOrderByAggregateInput = {
   leaderId?: Prisma.SortOrder
   overseerId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type HomecellSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  leaderId?: Prisma.SortOrder
+  overseerId?: Prisma.SortOrder
 }
 
 export type HomecellCreateNestedOneWithoutMembersInput = {
@@ -483,24 +568,44 @@ export type HomecellUpdateOneWithoutProgramsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.HomecellUpdateToOneWithWhereWithoutProgramsInput, Prisma.HomecellUpdateWithoutProgramsInput>, Prisma.HomecellUncheckedUpdateWithoutProgramsInput>
 }
 
+export type HomecellCreateNestedOneWithoutProgramTemplatesInput = {
+  create?: Prisma.XOR<Prisma.HomecellCreateWithoutProgramTemplatesInput, Prisma.HomecellUncheckedCreateWithoutProgramTemplatesInput>
+  connectOrCreate?: Prisma.HomecellCreateOrConnectWithoutProgramTemplatesInput
+  connect?: Prisma.HomecellWhereUniqueInput
+}
+
+export type HomecellUpdateOneWithoutProgramTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.HomecellCreateWithoutProgramTemplatesInput, Prisma.HomecellUncheckedCreateWithoutProgramTemplatesInput>
+  connectOrCreate?: Prisma.HomecellCreateOrConnectWithoutProgramTemplatesInput
+  upsert?: Prisma.HomecellUpsertWithoutProgramTemplatesInput
+  disconnect?: Prisma.HomecellWhereInput | boolean
+  delete?: Prisma.HomecellWhereInput | boolean
+  connect?: Prisma.HomecellWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HomecellUpdateToOneWithWhereWithoutProgramTemplatesInput, Prisma.HomecellUpdateWithoutProgramTemplatesInput>, Prisma.HomecellUncheckedUpdateWithoutProgramTemplatesInput>
+}
+
 export type HomecellCreateWithoutMembersInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingHomecellsInput
   overseer?: Prisma.MemberCreateNestedOneWithoutHomecellsInput
   programs?: Prisma.ProgramCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellUncheckedCreateWithoutMembersInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellCreateOrConnectWithoutMembersInput = {
@@ -509,23 +614,27 @@ export type HomecellCreateOrConnectWithoutMembersInput = {
 }
 
 export type HomecellCreateWithoutLeaderInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   overseer?: Prisma.MemberCreateNestedOneWithoutHomecellsInput
   members?: Prisma.MemberCreateNestedManyWithoutHomecellInput
   programs?: Prisma.ProgramCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellUncheckedCreateWithoutLeaderInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
-  overseerId?: string | null
+  overseerId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutHomecellInput
   programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellCreateOrConnectWithoutLeaderInput = {
@@ -539,23 +648,27 @@ export type HomecellCreateManyLeaderInputEnvelope = {
 }
 
 export type HomecellCreateWithoutOverseerInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingHomecellsInput
   members?: Prisma.MemberCreateNestedManyWithoutHomecellInput
   programs?: Prisma.ProgramCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellUncheckedCreateWithoutOverseerInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
-  leaderId?: string | null
+  leaderId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutHomecellInput
   programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellCreateOrConnectWithoutOverseerInput = {
@@ -580,23 +693,27 @@ export type HomecellUpdateToOneWithWhereWithoutMembersInput = {
 }
 
 export type HomecellUpdateWithoutMembersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingHomecellsNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutHomecellsNestedInput
   programs?: Prisma.ProgramUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUncheckedUpdateWithoutMembersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   programs?: Prisma.ProgramUncheckedUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUpsertWithWhereUniqueWithoutLeaderInput = {
@@ -619,12 +736,13 @@ export type HomecellScalarWhereInput = {
   AND?: Prisma.HomecellScalarWhereInput | Prisma.HomecellScalarWhereInput[]
   OR?: Prisma.HomecellScalarWhereInput[]
   NOT?: Prisma.HomecellScalarWhereInput | Prisma.HomecellScalarWhereInput[]
-  id?: Prisma.StringFilter<"Homecell"> | string
+  id?: Prisma.BigIntFilter<"Homecell"> | bigint | number
   name?: Prisma.StringFilter<"Homecell"> | string
   location?: Prisma.StringNullableFilter<"Homecell"> | string | null
-  leaderId?: Prisma.StringNullableFilter<"Homecell"> | string | null
-  overseerId?: Prisma.StringNullableFilter<"Homecell"> | string | null
+  leaderId?: Prisma.BigIntNullableFilter<"Homecell"> | bigint | number | null
+  overseerId?: Prisma.BigIntNullableFilter<"Homecell"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Homecell"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Homecell"> | Date | string | null
 }
 
 export type HomecellUpsertWithWhereUniqueWithoutOverseerInput = {
@@ -644,23 +762,27 @@ export type HomecellUpdateManyWithWhereWithoutOverseerInput = {
 }
 
 export type HomecellCreateWithoutProgramsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingHomecellsInput
   overseer?: Prisma.MemberCreateNestedOneWithoutHomecellsInput
   members?: Prisma.MemberCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellUncheckedCreateWithoutProgramsInput = {
-  id?: string
+  id?: bigint | number
   name: string
   location?: string | null
-  leaderId?: string | null
-  overseerId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutHomecellInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedCreateNestedManyWithoutHomecellInput
 }
 
 export type HomecellCreateOrConnectWithoutProgramsInput = {
@@ -680,95 +802,175 @@ export type HomecellUpdateToOneWithWhereWithoutProgramsInput = {
 }
 
 export type HomecellUpdateWithoutProgramsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingHomecellsNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutHomecellsNestedInput
   members?: Prisma.MemberUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUncheckedUpdateWithoutProgramsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberUncheckedUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutHomecellNestedInput
 }
 
-export type HomecellCreateManyLeaderInput = {
-  id?: string
+export type HomecellCreateWithoutProgramTemplatesInput = {
+  id?: bigint | number
   name: string
   location?: string | null
-  overseerId?: string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
+  leader?: Prisma.MemberCreateNestedOneWithoutLeadingHomecellsInput
+  overseer?: Prisma.MemberCreateNestedOneWithoutHomecellsInput
+  members?: Prisma.MemberCreateNestedManyWithoutHomecellInput
+  programs?: Prisma.ProgramCreateNestedManyWithoutHomecellInput
 }
 
-export type HomecellCreateManyOverseerInput = {
-  id?: string
+export type HomecellUncheckedCreateWithoutProgramTemplatesInput = {
+  id?: bigint | number
   name: string
   location?: string | null
-  leaderId?: string | null
+  leaderId?: bigint | number | null
+  overseerId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutHomecellInput
+  programs?: Prisma.ProgramUncheckedCreateNestedManyWithoutHomecellInput
 }
 
-export type HomecellUpdateWithoutLeaderInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+export type HomecellCreateOrConnectWithoutProgramTemplatesInput = {
+  where: Prisma.HomecellWhereUniqueInput
+  create: Prisma.XOR<Prisma.HomecellCreateWithoutProgramTemplatesInput, Prisma.HomecellUncheckedCreateWithoutProgramTemplatesInput>
+}
+
+export type HomecellUpsertWithoutProgramTemplatesInput = {
+  update: Prisma.XOR<Prisma.HomecellUpdateWithoutProgramTemplatesInput, Prisma.HomecellUncheckedUpdateWithoutProgramTemplatesInput>
+  create: Prisma.XOR<Prisma.HomecellCreateWithoutProgramTemplatesInput, Prisma.HomecellUncheckedCreateWithoutProgramTemplatesInput>
+  where?: Prisma.HomecellWhereInput
+}
+
+export type HomecellUpdateToOneWithWhereWithoutProgramTemplatesInput = {
+  where?: Prisma.HomecellWhereInput
+  data: Prisma.XOR<Prisma.HomecellUpdateWithoutProgramTemplatesInput, Prisma.HomecellUncheckedUpdateWithoutProgramTemplatesInput>
+}
+
+export type HomecellUpdateWithoutProgramTemplatesInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  leader?: Prisma.MemberUpdateOneWithoutLeadingHomecellsNestedInput
   overseer?: Prisma.MemberUpdateOneWithoutHomecellsNestedInput
   members?: Prisma.MemberUpdateManyWithoutHomecellNestedInput
   programs?: Prisma.ProgramUpdateManyWithoutHomecellNestedInput
 }
 
-export type HomecellUncheckedUpdateWithoutLeaderInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+export type HomecellUncheckedUpdateWithoutProgramTemplatesInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberUncheckedUpdateManyWithoutHomecellNestedInput
   programs?: Prisma.ProgramUncheckedUpdateManyWithoutHomecellNestedInput
+}
+
+export type HomecellCreateManyLeaderInput = {
+  id?: bigint | number
+  name: string
+  location?: string | null
+  overseerId?: bigint | number | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type HomecellCreateManyOverseerInput = {
+  id?: bigint | number
+  name: string
+  location?: string | null
+  leaderId?: bigint | number | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type HomecellUpdateWithoutLeaderInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  overseer?: Prisma.MemberUpdateOneWithoutHomecellsNestedInput
+  members?: Prisma.MemberUpdateManyWithoutHomecellNestedInput
+  programs?: Prisma.ProgramUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutHomecellNestedInput
+}
+
+export type HomecellUncheckedUpdateWithoutLeaderInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  members?: Prisma.MemberUncheckedUpdateManyWithoutHomecellNestedInput
+  programs?: Prisma.ProgramUncheckedUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUncheckedUpdateManyWithoutLeaderInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  overseerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type HomecellUpdateWithoutOverseerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingHomecellsNestedInput
   members?: Prisma.MemberUpdateManyWithoutHomecellNestedInput
   programs?: Prisma.ProgramUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUncheckedUpdateWithoutOverseerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberUncheckedUpdateManyWithoutHomecellNestedInput
   programs?: Prisma.ProgramUncheckedUpdateManyWithoutHomecellNestedInput
+  programTemplates?: Prisma.ProgramTemplateUncheckedUpdateManyWithoutHomecellNestedInput
 }
 
 export type HomecellUncheckedUpdateManyWithoutOverseerInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  leaderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -779,11 +981,13 @@ export type HomecellUncheckedUpdateManyWithoutOverseerInput = {
 export type HomecellCountOutputType = {
   members: number
   programs: number
+  programTemplates: number
 }
 
 export type HomecellCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | HomecellCountOutputTypeCountMembersArgs
   programs?: boolean | HomecellCountOutputTypeCountProgramsArgs
+  programTemplates?: boolean | HomecellCountOutputTypeCountProgramTemplatesArgs
 }
 
 /**
@@ -810,6 +1014,13 @@ export type HomecellCountOutputTypeCountProgramsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ProgramWhereInput
 }
 
+/**
+ * HomecellCountOutputType without action
+ */
+export type HomecellCountOutputTypeCountProgramTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProgramTemplateWhereInput
+}
+
 
 export type HomecellSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -818,10 +1029,12 @@ export type HomecellSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   leaderId?: boolean
   overseerId?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
   leader?: boolean | Prisma.Homecell$leaderArgs<ExtArgs>
   overseer?: boolean | Prisma.Homecell$overseerArgs<ExtArgs>
   members?: boolean | Prisma.Homecell$membersArgs<ExtArgs>
   programs?: boolean | Prisma.Homecell$programsArgs<ExtArgs>
+  programTemplates?: boolean | Prisma.Homecell$programTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.HomecellCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["homecell"]>
 
@@ -834,14 +1047,16 @@ export type HomecellSelectScalar = {
   leaderId?: boolean
   overseerId?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type HomecellOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "location" | "leaderId" | "overseerId" | "createdAt", ExtArgs["result"]["homecell"]>
+export type HomecellOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "location" | "leaderId" | "overseerId" | "createdAt" | "deletedAt", ExtArgs["result"]["homecell"]>
 export type HomecellInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   leader?: boolean | Prisma.Homecell$leaderArgs<ExtArgs>
   overseer?: boolean | Prisma.Homecell$overseerArgs<ExtArgs>
   members?: boolean | Prisma.Homecell$membersArgs<ExtArgs>
   programs?: boolean | Prisma.Homecell$programsArgs<ExtArgs>
+  programTemplates?: boolean | Prisma.Homecell$programTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.HomecellCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -852,14 +1067,16 @@ export type $HomecellPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     overseer: Prisma.$MemberPayload<ExtArgs> | null
     members: Prisma.$MemberPayload<ExtArgs>[]
     programs: Prisma.$ProgramPayload<ExtArgs>[]
+    programTemplates: Prisma.$ProgramTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
     location: string | null
-    leaderId: string | null
-    overseerId: string | null
+    leaderId: bigint | null
+    overseerId: bigint | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["homecell"]>
   composites: {}
 }
@@ -1204,6 +1421,7 @@ export interface Prisma__HomecellClient<T, Null = never, ExtArgs extends runtime
   overseer<T extends Prisma.Homecell$overseerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Homecell$overseerArgs<ExtArgs>>): Prisma.Prisma__MemberClient<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   members<T extends Prisma.Homecell$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Homecell$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   programs<T extends Prisma.Homecell$programsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Homecell$programsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  programTemplates<T extends Prisma.Homecell$programTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Homecell$programTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1233,12 +1451,13 @@ export interface Prisma__HomecellClient<T, Null = never, ExtArgs extends runtime
  * Fields of the Homecell model
  */
 export interface HomecellFieldRefs {
-  readonly id: Prisma.FieldRef<"Homecell", 'String'>
+  readonly id: Prisma.FieldRef<"Homecell", 'BigInt'>
   readonly name: Prisma.FieldRef<"Homecell", 'String'>
   readonly location: Prisma.FieldRef<"Homecell", 'String'>
-  readonly leaderId: Prisma.FieldRef<"Homecell", 'String'>
-  readonly overseerId: Prisma.FieldRef<"Homecell", 'String'>
+  readonly leaderId: Prisma.FieldRef<"Homecell", 'BigInt'>
+  readonly overseerId: Prisma.FieldRef<"Homecell", 'BigInt'>
   readonly createdAt: Prisma.FieldRef<"Homecell", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Homecell", 'DateTime'>
 }
     
 
@@ -1670,6 +1889,30 @@ export type Homecell$programsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ProgramScalarFieldEnum | Prisma.ProgramScalarFieldEnum[]
+}
+
+/**
+ * Homecell.programTemplates
+ */
+export type Homecell$programTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProgramTemplate
+   */
+  select?: Prisma.ProgramTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProgramTemplate
+   */
+  omit?: Prisma.ProgramTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProgramTemplateInclude<ExtArgs> | null
+  where?: Prisma.ProgramTemplateWhereInput
+  orderBy?: Prisma.ProgramTemplateOrderByWithRelationInput | Prisma.ProgramTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.ProgramTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProgramTemplateScalarFieldEnum | Prisma.ProgramTemplateScalarFieldEnum[]
 }
 
 /**

@@ -160,6 +160,16 @@ export type Program = Prisma.ProgramModel
  */
 export type ProgramItem = Prisma.ProgramItemModel
 /**
+ * Model ProgramTemplate
+ * 
+ */
+export type ProgramTemplate = Prisma.ProgramTemplateModel
+/**
+ * Model ProgramTemplateItem
+ * 
+ */
+export type ProgramTemplateItem = Prisma.ProgramTemplateItemModel
+/**
  * Model Stream
  * 
  */
@@ -179,3 +189,8 @@ export type StreamPlatform = Prisma.StreamPlatformModel
  * 
  */
 export type Newsletter = Prisma.NewsletterModel
+/**
+ * Model Session
+ * 
+ */
+export type Session = Prisma.SessionModel

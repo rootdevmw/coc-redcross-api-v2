@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { verifySoftDelete } from './soft-delete-check';
 
 const API = 'http://localhost:3000';
 
@@ -166,6 +167,7 @@ async function run() {
     );
 
     console.log('🔄 Update reflected:', updatedExists ? 'PASSED' : 'FAILED');
+    await verifySoftDelete(axios, `${API}/announcements`, announcementId);
 
     console.log('\n🎉 ALL ANNOUNCEMENT TESTS PASSED');
   } catch (error: any) {

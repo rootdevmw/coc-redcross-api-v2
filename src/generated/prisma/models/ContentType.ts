@@ -20,40 +20,64 @@ export type ContentTypeModel = runtime.Types.Result.DefaultSelection<Prisma.$Con
 
 export type AggregateContentType = {
   _count: ContentTypeCountAggregateOutputType | null
+  _avg: ContentTypeAvgAggregateOutputType | null
+  _sum: ContentTypeSumAggregateOutputType | null
   _min: ContentTypeMinAggregateOutputType | null
   _max: ContentTypeMaxAggregateOutputType | null
 }
 
+export type ContentTypeAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type ContentTypeSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type ContentTypeMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type ContentTypeMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type ContentTypeCountAggregateOutputType = {
   id: number
   name: number
+  deletedAt: number
   _all: number
 }
 
 
+export type ContentTypeAvgAggregateInputType = {
+  id?: true
+}
+
+export type ContentTypeSumAggregateInputType = {
+  id?: true
+}
+
 export type ContentTypeMinAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type ContentTypeMaxAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type ContentTypeCountAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -95,6 +119,18 @@ export type ContentTypeAggregateArgs<ExtArgs extends runtime.Types.Extensions.In
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ContentTypeAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ContentTypeSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ContentTypeMinAggregateInputType
@@ -125,14 +161,19 @@ export type ContentTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   _count?: ContentTypeCountAggregateInputType | true
+  _avg?: ContentTypeAvgAggregateInputType
+  _sum?: ContentTypeSumAggregateInputType
   _min?: ContentTypeMinAggregateInputType
   _max?: ContentTypeMaxAggregateInputType
 }
 
 export type ContentTypeGroupByOutputType = {
-  id: string
+  id: bigint
   name: string
+  deletedAt: Date | null
   _count: ContentTypeCountAggregateOutputType | null
+  _avg: ContentTypeAvgAggregateOutputType | null
+  _sum: ContentTypeSumAggregateOutputType | null
   _min: ContentTypeMinAggregateOutputType | null
   _max: ContentTypeMaxAggregateOutputType | null
 }
@@ -156,80 +197,94 @@ export type ContentTypeWhereInput = {
   AND?: Prisma.ContentTypeWhereInput | Prisma.ContentTypeWhereInput[]
   OR?: Prisma.ContentTypeWhereInput[]
   NOT?: Prisma.ContentTypeWhereInput | Prisma.ContentTypeWhereInput[]
-  id?: Prisma.StringFilter<"ContentType"> | string
+  id?: Prisma.BigIntFilter<"ContentType"> | bigint | number
   name?: Prisma.StringFilter<"ContentType"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ContentType"> | Date | string | null
   contents?: Prisma.ContentListRelationFilter
 }
 
 export type ContentTypeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   contents?: Prisma.ContentOrderByRelationAggregateInput
   _relevance?: Prisma.ContentTypeOrderByRelevanceInput
 }
 
 export type ContentTypeWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   name?: string
   AND?: Prisma.ContentTypeWhereInput | Prisma.ContentTypeWhereInput[]
   OR?: Prisma.ContentTypeWhereInput[]
   NOT?: Prisma.ContentTypeWhereInput | Prisma.ContentTypeWhereInput[]
+  deletedAt?: Prisma.DateTimeNullableFilter<"ContentType"> | Date | string | null
   contents?: Prisma.ContentListRelationFilter
 }, "id" | "name">
 
 export type ContentTypeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ContentTypeCountOrderByAggregateInput
+  _avg?: Prisma.ContentTypeAvgOrderByAggregateInput
   _max?: Prisma.ContentTypeMaxOrderByAggregateInput
   _min?: Prisma.ContentTypeMinOrderByAggregateInput
+  _sum?: Prisma.ContentTypeSumOrderByAggregateInput
 }
 
 export type ContentTypeScalarWhereWithAggregatesInput = {
   AND?: Prisma.ContentTypeScalarWhereWithAggregatesInput | Prisma.ContentTypeScalarWhereWithAggregatesInput[]
   OR?: Prisma.ContentTypeScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ContentTypeScalarWhereWithAggregatesInput | Prisma.ContentTypeScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"ContentType"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"ContentType"> | bigint | number
   name?: Prisma.StringWithAggregatesFilter<"ContentType"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ContentType"> | Date | string | null
 }
 
 export type ContentTypeCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   contents?: Prisma.ContentCreateNestedManyWithoutTypeInput
 }
 
 export type ContentTypeUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
   contents?: Prisma.ContentUncheckedCreateNestedManyWithoutTypeInput
 }
 
 export type ContentTypeUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUpdateManyWithoutTypeNestedInput
 }
 
 export type ContentTypeUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUncheckedUpdateManyWithoutTypeNestedInput
 }
 
 export type ContentTypeCreateManyInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type ContentTypeUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContentTypeUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContentTypeOrderByRelevanceInput = {
@@ -241,16 +296,27 @@ export type ContentTypeOrderByRelevanceInput = {
 export type ContentTypeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type ContentTypeAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type ContentTypeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ContentTypeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type ContentTypeSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type ContentTypeScalarRelationFilter = {
@@ -273,13 +339,15 @@ export type ContentTypeUpdateOneRequiredWithoutContentsNestedInput = {
 }
 
 export type ContentTypeCreateWithoutContentsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type ContentTypeUncheckedCreateWithoutContentsInput = {
-  id?: string
+  id?: bigint | number
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type ContentTypeCreateOrConnectWithoutContentsInput = {
@@ -299,13 +367,15 @@ export type ContentTypeUpdateToOneWithWhereWithoutContentsInput = {
 }
 
 export type ContentTypeUpdateWithoutContentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContentTypeUncheckedUpdateWithoutContentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -342,6 +412,7 @@ export type ContentTypeCountOutputTypeCountContentsArgs<ExtArgs extends runtime.
 export type ContentTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
   contents?: boolean | Prisma.ContentType$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.ContentTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["contentType"]>
@@ -351,9 +422,10 @@ export type ContentTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type ContentTypeSelectScalar = {
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }
 
-export type ContentTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["contentType"]>
+export type ContentTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "deletedAt", ExtArgs["result"]["contentType"]>
 export type ContentTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contents?: boolean | Prisma.ContentType$contentsArgs<ExtArgs>
   _count?: boolean | Prisma.ContentTypeCountOutputTypeDefaultArgs<ExtArgs>
@@ -365,8 +437,9 @@ export type $ContentTypePayload<ExtArgs extends runtime.Types.Extensions.Interna
     contents: Prisma.$ContentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     name: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["contentType"]>
   composites: {}
 }
@@ -737,8 +810,9 @@ export interface Prisma__ContentTypeClient<T, Null = never, ExtArgs extends runt
  * Fields of the ContentType model
  */
 export interface ContentTypeFieldRefs {
-  readonly id: Prisma.FieldRef<"ContentType", 'String'>
+  readonly id: Prisma.FieldRef<"ContentType", 'BigInt'>
   readonly name: Prisma.FieldRef<"ContentType", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"ContentType", 'DateTime'>
 }
     
 

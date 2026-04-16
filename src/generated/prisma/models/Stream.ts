@@ -20,24 +20,36 @@ export type StreamModel = runtime.Types.Result.DefaultSelection<Prisma.$StreamPa
 
 export type AggregateStream = {
   _count: StreamCountAggregateOutputType | null
+  _avg: StreamAvgAggregateOutputType | null
+  _sum: StreamSumAggregateOutputType | null
   _min: StreamMinAggregateOutputType | null
   _max: StreamMaxAggregateOutputType | null
 }
 
+export type StreamAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type StreamSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type StreamMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   title: string | null
   isLive: boolean | null
   startsAt: Date | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type StreamMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   title: string | null
   isLive: boolean | null
   startsAt: Date | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type StreamCountAggregateOutputType = {
@@ -46,9 +58,18 @@ export type StreamCountAggregateOutputType = {
   isLive: number
   startsAt: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
+
+export type StreamAvgAggregateInputType = {
+  id?: true
+}
+
+export type StreamSumAggregateInputType = {
+  id?: true
+}
 
 export type StreamMinAggregateInputType = {
   id?: true
@@ -56,6 +77,7 @@ export type StreamMinAggregateInputType = {
   isLive?: true
   startsAt?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type StreamMaxAggregateInputType = {
@@ -64,6 +86,7 @@ export type StreamMaxAggregateInputType = {
   isLive?: true
   startsAt?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type StreamCountAggregateInputType = {
@@ -72,6 +95,7 @@ export type StreamCountAggregateInputType = {
   isLive?: true
   startsAt?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -113,6 +137,18 @@ export type StreamAggregateArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: StreamAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: StreamSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: StreamMinAggregateInputType
@@ -143,17 +179,22 @@ export type StreamGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   _count?: StreamCountAggregateInputType | true
+  _avg?: StreamAvgAggregateInputType
+  _sum?: StreamSumAggregateInputType
   _min?: StreamMinAggregateInputType
   _max?: StreamMaxAggregateInputType
 }
 
 export type StreamGroupByOutputType = {
-  id: string
+  id: bigint
   title: string
   isLive: boolean
   startsAt: Date | null
   createdAt: Date
+  deletedAt: Date | null
   _count: StreamCountAggregateOutputType | null
+  _avg: StreamAvgAggregateOutputType | null
+  _sum: StreamSumAggregateOutputType | null
   _min: StreamMinAggregateOutputType | null
   _max: StreamMaxAggregateOutputType | null
 }
@@ -177,11 +218,12 @@ export type StreamWhereInput = {
   AND?: Prisma.StreamWhereInput | Prisma.StreamWhereInput[]
   OR?: Prisma.StreamWhereInput[]
   NOT?: Prisma.StreamWhereInput | Prisma.StreamWhereInput[]
-  id?: Prisma.StringFilter<"Stream"> | string
+  id?: Prisma.BigIntFilter<"Stream"> | bigint | number
   title?: Prisma.StringFilter<"Stream"> | string
   isLive?: Prisma.BoolFilter<"Stream"> | boolean
   startsAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   platforms?: Prisma.StreamPlatformListRelationFilter
 }
 
@@ -191,12 +233,13 @@ export type StreamOrderByWithRelationInput = {
   isLive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   platforms?: Prisma.StreamPlatformOrderByRelationAggregateInput
   _relevance?: Prisma.StreamOrderByRelevanceInput
 }
 
 export type StreamWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.StreamWhereInput | Prisma.StreamWhereInput[]
   OR?: Prisma.StreamWhereInput[]
   NOT?: Prisma.StreamWhereInput | Prisma.StreamWhereInput[]
@@ -204,6 +247,7 @@ export type StreamWhereUniqueInput = Prisma.AtLeast<{
   isLive?: Prisma.BoolFilter<"Stream"> | boolean
   startsAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Stream"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Stream"> | Date | string | null
   platforms?: Prisma.StreamPlatformListRelationFilter
 }, "id">
 
@@ -213,80 +257,91 @@ export type StreamOrderByWithAggregationInput = {
   isLive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.StreamCountOrderByAggregateInput
+  _avg?: Prisma.StreamAvgOrderByAggregateInput
   _max?: Prisma.StreamMaxOrderByAggregateInput
   _min?: Prisma.StreamMinOrderByAggregateInput
+  _sum?: Prisma.StreamSumOrderByAggregateInput
 }
 
 export type StreamScalarWhereWithAggregatesInput = {
   AND?: Prisma.StreamScalarWhereWithAggregatesInput | Prisma.StreamScalarWhereWithAggregatesInput[]
   OR?: Prisma.StreamScalarWhereWithAggregatesInput[]
   NOT?: Prisma.StreamScalarWhereWithAggregatesInput | Prisma.StreamScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Stream"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Stream"> | bigint | number
   title?: Prisma.StringWithAggregatesFilter<"Stream"> | string
   isLive?: Prisma.BoolWithAggregatesFilter<"Stream"> | boolean
   startsAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stream"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Stream"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Stream"> | Date | string | null
 }
 
 export type StreamCreateInput = {
-  id?: string
+  id?: bigint | number
   title: string
   isLive?: boolean
   startsAt?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   platforms?: Prisma.StreamPlatformCreateNestedManyWithoutStreamInput
 }
 
 export type StreamUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   title: string
   isLive?: boolean
   startsAt?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   platforms?: Prisma.StreamPlatformUncheckedCreateNestedManyWithoutStreamInput
 }
 
 export type StreamUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   platforms?: Prisma.StreamPlatformUpdateManyWithoutStreamNestedInput
 }
 
 export type StreamUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   platforms?: Prisma.StreamPlatformUncheckedUpdateManyWithoutStreamNestedInput
 }
 
 export type StreamCreateManyInput = {
-  id?: string
+  id?: bigint | number
   title: string
   isLive?: boolean
   startsAt?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type StreamUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StreamUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StreamOrderByRelevanceInput = {
@@ -301,6 +356,11 @@ export type StreamCountOrderByAggregateInput = {
   isLive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type StreamAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type StreamMaxOrderByAggregateInput = {
@@ -309,6 +369,7 @@ export type StreamMaxOrderByAggregateInput = {
   isLive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type StreamMinOrderByAggregateInput = {
@@ -317,6 +378,11 @@ export type StreamMinOrderByAggregateInput = {
   isLive?: Prisma.SortOrder
   startsAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type StreamSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 export type StreamScalarRelationFilter = {
@@ -339,19 +405,21 @@ export type StreamUpdateOneRequiredWithoutPlatformsNestedInput = {
 }
 
 export type StreamCreateWithoutPlatformsInput = {
-  id?: string
+  id?: bigint | number
   title: string
   isLive?: boolean
   startsAt?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type StreamUncheckedCreateWithoutPlatformsInput = {
-  id?: string
+  id?: bigint | number
   title: string
   isLive?: boolean
   startsAt?: Date | string | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type StreamCreateOrConnectWithoutPlatformsInput = {
@@ -371,19 +439,21 @@ export type StreamUpdateToOneWithWhereWithoutPlatformsInput = {
 }
 
 export type StreamUpdateWithoutPlatformsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type StreamUncheckedUpdateWithoutPlatformsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   isLive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -423,6 +493,7 @@ export type StreamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   isLive?: boolean
   startsAt?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
   platforms?: boolean | Prisma.Stream$platformsArgs<ExtArgs>
   _count?: boolean | Prisma.StreamCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["stream"]>
@@ -435,9 +506,10 @@ export type StreamSelectScalar = {
   isLive?: boolean
   startsAt?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type StreamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "isLive" | "startsAt" | "createdAt", ExtArgs["result"]["stream"]>
+export type StreamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "isLive" | "startsAt" | "createdAt" | "deletedAt", ExtArgs["result"]["stream"]>
 export type StreamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   platforms?: boolean | Prisma.Stream$platformsArgs<ExtArgs>
   _count?: boolean | Prisma.StreamCountOutputTypeDefaultArgs<ExtArgs>
@@ -449,11 +521,12 @@ export type $StreamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     platforms: Prisma.$StreamPlatformPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     title: string
     isLive: boolean
     startsAt: Date | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["stream"]>
   composites: {}
 }
@@ -824,11 +897,12 @@ export interface Prisma__StreamClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the Stream model
  */
 export interface StreamFieldRefs {
-  readonly id: Prisma.FieldRef<"Stream", 'String'>
+  readonly id: Prisma.FieldRef<"Stream", 'BigInt'>
   readonly title: Prisma.FieldRef<"Stream", 'String'>
   readonly isLive: Prisma.FieldRef<"Stream", 'Boolean'>
   readonly startsAt: Prisma.FieldRef<"Stream", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Stream", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Stream", 'DateTime'>
 }
     
 

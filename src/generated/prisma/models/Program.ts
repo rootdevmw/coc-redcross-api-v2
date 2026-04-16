@@ -20,24 +20,40 @@ export type ProgramModel = runtime.Types.Result.DefaultSelection<Prisma.$Program
 
 export type AggregateProgram = {
   _count: ProgramCountAggregateOutputType | null
+  _avg: ProgramAvgAggregateOutputType | null
+  _sum: ProgramSumAggregateOutputType | null
   _min: ProgramMinAggregateOutputType | null
   _max: ProgramMaxAggregateOutputType | null
 }
 
+export type ProgramAvgAggregateOutputType = {
+  id: number | null
+  typeId: number | null
+  homecellId: number | null
+}
+
+export type ProgramSumAggregateOutputType = {
+  id: bigint | null
+  typeId: bigint | null
+  homecellId: bigint | null
+}
+
 export type ProgramMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   date: Date | null
-  typeId: string | null
-  homecellId: string | null
+  typeId: bigint | null
+  homecellId: bigint | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ProgramMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   date: Date | null
-  typeId: string | null
-  homecellId: string | null
+  typeId: bigint | null
+  homecellId: bigint | null
   createdAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ProgramCountAggregateOutputType = {
@@ -46,9 +62,22 @@ export type ProgramCountAggregateOutputType = {
   typeId: number
   homecellId: number
   createdAt: number
+  deletedAt: number
   _all: number
 }
 
+
+export type ProgramAvgAggregateInputType = {
+  id?: true
+  typeId?: true
+  homecellId?: true
+}
+
+export type ProgramSumAggregateInputType = {
+  id?: true
+  typeId?: true
+  homecellId?: true
+}
 
 export type ProgramMinAggregateInputType = {
   id?: true
@@ -56,6 +85,7 @@ export type ProgramMinAggregateInputType = {
   typeId?: true
   homecellId?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type ProgramMaxAggregateInputType = {
@@ -64,6 +94,7 @@ export type ProgramMaxAggregateInputType = {
   typeId?: true
   homecellId?: true
   createdAt?: true
+  deletedAt?: true
 }
 
 export type ProgramCountAggregateInputType = {
@@ -72,6 +103,7 @@ export type ProgramCountAggregateInputType = {
   typeId?: true
   homecellId?: true
   createdAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -113,6 +145,18 @@ export type ProgramAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProgramAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProgramSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProgramMinAggregateInputType
@@ -143,17 +187,22 @@ export type ProgramGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: ProgramCountAggregateInputType | true
+  _avg?: ProgramAvgAggregateInputType
+  _sum?: ProgramSumAggregateInputType
   _min?: ProgramMinAggregateInputType
   _max?: ProgramMaxAggregateInputType
 }
 
 export type ProgramGroupByOutputType = {
-  id: string
+  id: bigint
   date: Date
-  typeId: string
-  homecellId: string | null
+  typeId: bigint
+  homecellId: bigint | null
   createdAt: Date
+  deletedAt: Date | null
   _count: ProgramCountAggregateOutputType | null
+  _avg: ProgramAvgAggregateOutputType | null
+  _sum: ProgramSumAggregateOutputType | null
   _min: ProgramMinAggregateOutputType | null
   _max: ProgramMaxAggregateOutputType | null
 }
@@ -177,11 +226,12 @@ export type ProgramWhereInput = {
   AND?: Prisma.ProgramWhereInput | Prisma.ProgramWhereInput[]
   OR?: Prisma.ProgramWhereInput[]
   NOT?: Prisma.ProgramWhereInput | Prisma.ProgramWhereInput[]
-  id?: Prisma.StringFilter<"Program"> | string
+  id?: Prisma.BigIntFilter<"Program"> | bigint | number
   date?: Prisma.DateTimeFilter<"Program"> | Date | string
-  typeId?: Prisma.StringFilter<"Program"> | string
-  homecellId?: Prisma.StringNullableFilter<"Program"> | string | null
+  typeId?: Prisma.BigIntFilter<"Program"> | bigint | number
+  homecellId?: Prisma.BigIntNullableFilter<"Program"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Program"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Program"> | Date | string | null
   type?: Prisma.XOR<Prisma.ProgramTypeScalarRelationFilter, Prisma.ProgramTypeWhereInput>
   homecell?: Prisma.XOR<Prisma.HomecellNullableScalarRelationFilter, Prisma.HomecellWhereInput> | null
   items?: Prisma.ProgramItemListRelationFilter
@@ -193,21 +243,22 @@ export type ProgramOrderByWithRelationInput = {
   typeId?: Prisma.SortOrder
   homecellId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.ProgramTypeOrderByWithRelationInput
   homecell?: Prisma.HomecellOrderByWithRelationInput
   items?: Prisma.ProgramItemOrderByRelationAggregateInput
-  _relevance?: Prisma.ProgramOrderByRelevanceInput
 }
 
 export type ProgramWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   AND?: Prisma.ProgramWhereInput | Prisma.ProgramWhereInput[]
   OR?: Prisma.ProgramWhereInput[]
   NOT?: Prisma.ProgramWhereInput | Prisma.ProgramWhereInput[]
   date?: Prisma.DateTimeFilter<"Program"> | Date | string
-  typeId?: Prisma.StringFilter<"Program"> | string
-  homecellId?: Prisma.StringNullableFilter<"Program"> | string | null
+  typeId?: Prisma.BigIntFilter<"Program"> | bigint | number
+  homecellId?: Prisma.BigIntNullableFilter<"Program"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Program"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Program"> | Date | string | null
   type?: Prisma.XOR<Prisma.ProgramTypeScalarRelationFilter, Prisma.ProgramTypeWhereInput>
   homecell?: Prisma.XOR<Prisma.HomecellNullableScalarRelationFilter, Prisma.HomecellWhereInput> | null
   items?: Prisma.ProgramItemListRelationFilter
@@ -219,78 +270,89 @@ export type ProgramOrderByWithAggregationInput = {
   typeId?: Prisma.SortOrder
   homecellId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProgramCountOrderByAggregateInput
+  _avg?: Prisma.ProgramAvgOrderByAggregateInput
   _max?: Prisma.ProgramMaxOrderByAggregateInput
   _min?: Prisma.ProgramMinOrderByAggregateInput
+  _sum?: Prisma.ProgramSumOrderByAggregateInput
 }
 
 export type ProgramScalarWhereWithAggregatesInput = {
   AND?: Prisma.ProgramScalarWhereWithAggregatesInput | Prisma.ProgramScalarWhereWithAggregatesInput[]
   OR?: Prisma.ProgramScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProgramScalarWhereWithAggregatesInput | Prisma.ProgramScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Program"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"Program"> | bigint | number
   date?: Prisma.DateTimeWithAggregatesFilter<"Program"> | Date | string
-  typeId?: Prisma.StringWithAggregatesFilter<"Program"> | string
-  homecellId?: Prisma.StringNullableWithAggregatesFilter<"Program"> | string | null
+  typeId?: Prisma.BigIntWithAggregatesFilter<"Program"> | bigint | number
+  homecellId?: Prisma.BigIntNullableWithAggregatesFilter<"Program"> | bigint | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Program"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Program"> | Date | string | null
 }
 
 export type ProgramCreateInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   type: Prisma.ProgramTypeCreateNestedOneWithoutProgramsInput
   homecell?: Prisma.HomecellCreateNestedOneWithoutProgramsInput
   items?: Prisma.ProgramItemCreateNestedManyWithoutProgramInput
 }
 
 export type ProgramUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  typeId: string
-  homecellId?: string | null
+  typeId: bigint | number
+  homecellId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ProgramItemUncheckedCreateNestedManyWithoutProgramInput
 }
 
 export type ProgramUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   type?: Prisma.ProgramTypeUpdateOneRequiredWithoutProgramsNestedInput
   homecell?: Prisma.HomecellUpdateOneWithoutProgramsNestedInput
   items?: Prisma.ProgramItemUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  typeId?: Prisma.StringFieldUpdateOperationsInput | string
-  homecellId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ProgramItemUncheckedUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramCreateManyInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  typeId: string
-  homecellId?: string | null
+  typeId: bigint | number
+  homecellId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ProgramUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  typeId?: Prisma.StringFieldUpdateOperationsInput | string
-  homecellId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramListRelationFilter = {
@@ -303,18 +365,19 @@ export type ProgramOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type ProgramOrderByRelevanceInput = {
-  fields: Prisma.ProgramOrderByRelevanceFieldEnum | Prisma.ProgramOrderByRelevanceFieldEnum[]
-  sort: Prisma.SortOrder
-  search: string
-}
-
 export type ProgramCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   date?: Prisma.SortOrder
   typeId?: Prisma.SortOrder
   homecellId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type ProgramAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  typeId?: Prisma.SortOrder
+  homecellId?: Prisma.SortOrder
 }
 
 export type ProgramMaxOrderByAggregateInput = {
@@ -323,6 +386,7 @@ export type ProgramMaxOrderByAggregateInput = {
   typeId?: Prisma.SortOrder
   homecellId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ProgramMinOrderByAggregateInput = {
@@ -331,6 +395,13 @@ export type ProgramMinOrderByAggregateInput = {
   typeId?: Prisma.SortOrder
   homecellId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+}
+
+export type ProgramSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  typeId?: Prisma.SortOrder
+  homecellId?: Prisma.SortOrder
 }
 
 export type ProgramScalarRelationFilter = {
@@ -437,18 +508,20 @@ export type ProgramUpdateOneRequiredWithoutItemsNestedInput = {
 }
 
 export type ProgramCreateWithoutHomecellInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   type: Prisma.ProgramTypeCreateNestedOneWithoutProgramsInput
   items?: Prisma.ProgramItemCreateNestedManyWithoutProgramInput
 }
 
 export type ProgramUncheckedCreateWithoutHomecellInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  typeId: string
+  typeId: bigint | number
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ProgramItemUncheckedCreateNestedManyWithoutProgramInput
 }
 
@@ -482,26 +555,29 @@ export type ProgramScalarWhereInput = {
   AND?: Prisma.ProgramScalarWhereInput | Prisma.ProgramScalarWhereInput[]
   OR?: Prisma.ProgramScalarWhereInput[]
   NOT?: Prisma.ProgramScalarWhereInput | Prisma.ProgramScalarWhereInput[]
-  id?: Prisma.StringFilter<"Program"> | string
+  id?: Prisma.BigIntFilter<"Program"> | bigint | number
   date?: Prisma.DateTimeFilter<"Program"> | Date | string
-  typeId?: Prisma.StringFilter<"Program"> | string
-  homecellId?: Prisma.StringNullableFilter<"Program"> | string | null
+  typeId?: Prisma.BigIntFilter<"Program"> | bigint | number
+  homecellId?: Prisma.BigIntNullableFilter<"Program"> | bigint | number | null
   createdAt?: Prisma.DateTimeFilter<"Program"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Program"> | Date | string | null
 }
 
 export type ProgramCreateWithoutTypeInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   homecell?: Prisma.HomecellCreateNestedOneWithoutProgramsInput
   items?: Prisma.ProgramItemCreateNestedManyWithoutProgramInput
 }
 
 export type ProgramUncheckedCreateWithoutTypeInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  homecellId?: string | null
+  homecellId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ProgramItemUncheckedCreateNestedManyWithoutProgramInput
 }
 
@@ -532,19 +608,21 @@ export type ProgramUpdateManyWithWhereWithoutTypeInput = {
 }
 
 export type ProgramCreateWithoutItemsInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
   createdAt?: Date | string
+  deletedAt?: Date | string | null
   type: Prisma.ProgramTypeCreateNestedOneWithoutProgramsInput
   homecell?: Prisma.HomecellCreateNestedOneWithoutProgramsInput
 }
 
 export type ProgramUncheckedCreateWithoutItemsInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  typeId: string
-  homecellId?: string | null
+  typeId: bigint | number
+  homecellId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ProgramCreateOrConnectWithoutItemsInput = {
@@ -564,79 +642,89 @@ export type ProgramUpdateToOneWithWhereWithoutItemsInput = {
 }
 
 export type ProgramUpdateWithoutItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   type?: Prisma.ProgramTypeUpdateOneRequiredWithoutProgramsNestedInput
   homecell?: Prisma.HomecellUpdateOneWithoutProgramsNestedInput
 }
 
 export type ProgramUncheckedUpdateWithoutItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  typeId?: Prisma.StringFieldUpdateOperationsInput | string
-  homecellId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramCreateManyHomecellInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  typeId: string
+  typeId: bigint | number
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ProgramUpdateWithoutHomecellInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   type?: Prisma.ProgramTypeUpdateOneRequiredWithoutProgramsNestedInput
   items?: Prisma.ProgramItemUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateWithoutHomecellInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  typeId?: Prisma.StringFieldUpdateOperationsInput | string
+  typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ProgramItemUncheckedUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateManyWithoutHomecellInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  typeId?: Prisma.StringFieldUpdateOperationsInput | string
+  typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProgramCreateManyTypeInput = {
-  id?: string
+  id?: bigint | number
   date: Date | string
-  homecellId?: string | null
+  homecellId?: bigint | number | null
   createdAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ProgramUpdateWithoutTypeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   homecell?: Prisma.HomecellUpdateOneWithoutProgramsNestedInput
   items?: Prisma.ProgramItemUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateWithoutTypeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  homecellId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ProgramItemUncheckedUpdateManyWithoutProgramNestedInput
 }
 
 export type ProgramUncheckedUpdateManyWithoutTypeInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  homecellId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -676,6 +764,7 @@ export type ProgramSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   typeId?: boolean
   homecellId?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
   type?: boolean | Prisma.ProgramTypeDefaultArgs<ExtArgs>
   homecell?: boolean | Prisma.Program$homecellArgs<ExtArgs>
   items?: boolean | Prisma.Program$itemsArgs<ExtArgs>
@@ -690,9 +779,10 @@ export type ProgramSelectScalar = {
   typeId?: boolean
   homecellId?: boolean
   createdAt?: boolean
+  deletedAt?: boolean
 }
 
-export type ProgramOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "typeId" | "homecellId" | "createdAt", ExtArgs["result"]["program"]>
+export type ProgramOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "typeId" | "homecellId" | "createdAt" | "deletedAt", ExtArgs["result"]["program"]>
 export type ProgramInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   type?: boolean | Prisma.ProgramTypeDefaultArgs<ExtArgs>
   homecell?: boolean | Prisma.Program$homecellArgs<ExtArgs>
@@ -708,11 +798,12 @@ export type $ProgramPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     items: Prisma.$ProgramItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     date: Date
-    typeId: string
-    homecellId: string | null
+    typeId: bigint
+    homecellId: bigint | null
     createdAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["program"]>
   composites: {}
 }
@@ -1085,11 +1176,12 @@ export interface Prisma__ProgramClient<T, Null = never, ExtArgs extends runtime.
  * Fields of the Program model
  */
 export interface ProgramFieldRefs {
-  readonly id: Prisma.FieldRef<"Program", 'String'>
+  readonly id: Prisma.FieldRef<"Program", 'BigInt'>
   readonly date: Prisma.FieldRef<"Program", 'DateTime'>
-  readonly typeId: Prisma.FieldRef<"Program", 'String'>
-  readonly homecellId: Prisma.FieldRef<"Program", 'String'>
+  readonly typeId: Prisma.FieldRef<"Program", 'BigInt'>
+  readonly homecellId: Prisma.FieldRef<"Program", 'BigInt'>
   readonly createdAt: Prisma.FieldRef<"Program", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Program", 'DateTime'>
 }
     
 

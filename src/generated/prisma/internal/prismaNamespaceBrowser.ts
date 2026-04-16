@@ -75,10 +75,13 @@ export const ModelName = {
   ProgramType: 'ProgramType',
   Program: 'Program',
   ProgramItem: 'ProgramItem',
+  ProgramTemplate: 'ProgramTemplate',
+  ProgramTemplateItem: 'ProgramTemplateItem',
   Stream: 'Stream',
   Platform: 'Platform',
   StreamPlatform: 'StreamPlatform',
-  Newsletter: 'Newsletter'
+  Newsletter: 'Newsletter',
+  Session: 'Session'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -101,7 +104,8 @@ export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   password: 'password',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -109,7 +113,8 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const RoleScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
@@ -133,6 +138,7 @@ export const MemberScalarFieldEnum = {
   baptismDate: 'baptismDate',
   location: 'location',
   createdAt: 'createdAt',
+  deletedAt: 'deletedAt',
   homecellId: 'homecellId'
 } as const
 
@@ -153,7 +159,8 @@ export const HomecellScalarFieldEnum = {
   location: 'location',
   leaderId: 'leaderId',
   overseerId: 'overseerId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type HomecellScalarFieldEnum = (typeof HomecellScalarFieldEnum)[keyof typeof HomecellScalarFieldEnum]
@@ -166,7 +173,8 @@ export const MinistryScalarFieldEnum = {
   leaderId: 'leaderId',
   overseerId: 'overseerId',
   slug: 'slug',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type MinistryScalarFieldEnum = (typeof MinistryScalarFieldEnum)[keyof typeof MinistryScalarFieldEnum]
@@ -174,7 +182,8 @@ export type MinistryScalarFieldEnum = (typeof MinistryScalarFieldEnum)[keyof typ
 
 export const ContentTypeScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ContentTypeScalarFieldEnum = (typeof ContentTypeScalarFieldEnum)[keyof typeof ContentTypeScalarFieldEnum]
@@ -189,6 +198,7 @@ export const ContentScalarFieldEnum = {
   status: 'status',
   publishedAt: 'publishedAt',
   createdAt: 'createdAt',
+  deletedAt: 'deletedAt',
   seriesId: 'seriesId'
 } as const
 
@@ -198,7 +208,8 @@ export type ContentScalarFieldEnum = (typeof ContentScalarFieldEnum)[keyof typeo
 export const MediaScalarFieldEnum = {
   id: 'id',
   url: 'url',
-  type: 'type'
+  type: 'type',
+  deletedAt: 'deletedAt'
 } as const
 
 export type MediaScalarFieldEnum = (typeof MediaScalarFieldEnum)[keyof typeof MediaScalarFieldEnum]
@@ -222,7 +233,8 @@ export type EventMediaScalarFieldEnum = (typeof EventMediaScalarFieldEnum)[keyof
 
 export const TagScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
@@ -241,7 +253,8 @@ export const SeriesScalarFieldEnum = {
   name: 'name',
   description: 'description',
   slug: 'slug',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type SeriesScalarFieldEnum = (typeof SeriesScalarFieldEnum)[keyof typeof SeriesScalarFieldEnum]
@@ -250,6 +263,7 @@ export type SeriesScalarFieldEnum = (typeof SeriesScalarFieldEnum)[keyof typeof 
 export const ScriptureRefScalarFieldEnum = {
   id: 'id',
   contentId: 'contentId',
+  deletedAt: 'deletedAt',
   book: 'book',
   chapter: 'chapter',
   verseFrom: 'verseFrom',
@@ -266,7 +280,8 @@ export const AnnouncementScalarFieldEnum = {
   body: 'body',
   priority: 'priority',
   expiryDate: 'expiryDate',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
@@ -284,7 +299,8 @@ export type AnnouncementTargetScalarFieldEnum = (typeof AnnouncementTargetScalar
 
 export const EventTypeScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type EventTypeScalarFieldEnum = (typeof EventTypeScalarFieldEnum)[keyof typeof EventTypeScalarFieldEnum]
@@ -300,6 +316,7 @@ export const EventScalarFieldEnum = {
   slug: 'slug',
   isCritical: 'isCritical',
   createdAt: 'createdAt',
+  deletedAt: 'deletedAt',
   typeId: 'typeId'
 } as const
 
@@ -316,7 +333,8 @@ export type EventMinistryScalarFieldEnum = (typeof EventMinistryScalarFieldEnum)
 
 export const ProgramTypeScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ProgramTypeScalarFieldEnum = (typeof ProgramTypeScalarFieldEnum)[keyof typeof ProgramTypeScalarFieldEnum]
@@ -327,7 +345,8 @@ export const ProgramScalarFieldEnum = {
   date: 'date',
   typeId: 'typeId',
   homecellId: 'homecellId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ProgramScalarFieldEnum = (typeof ProgramScalarFieldEnum)[keyof typeof ProgramScalarFieldEnum]
@@ -340,10 +359,37 @@ export const ProgramItemScalarFieldEnum = {
   description: 'description',
   time: 'time',
   sequence: 'sequence',
-  responsibleId: 'responsibleId'
+  responsibleId: 'responsibleId',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ProgramItemScalarFieldEnum = (typeof ProgramItemScalarFieldEnum)[keyof typeof ProgramItemScalarFieldEnum]
+
+
+export const ProgramTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  typeId: 'typeId',
+  homecellId: 'homecellId',
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ProgramTemplateScalarFieldEnum = (typeof ProgramTemplateScalarFieldEnum)[keyof typeof ProgramTemplateScalarFieldEnum]
+
+
+export const ProgramTemplateItemScalarFieldEnum = {
+  id: 'id',
+  templateId: 'templateId',
+  title: 'title',
+  description: 'description',
+  time: 'time',
+  sequence: 'sequence',
+  responsibleId: 'responsibleId',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ProgramTemplateItemScalarFieldEnum = (typeof ProgramTemplateItemScalarFieldEnum)[keyof typeof ProgramTemplateItemScalarFieldEnum]
 
 
 export const StreamScalarFieldEnum = {
@@ -351,7 +397,8 @@ export const StreamScalarFieldEnum = {
   title: 'title',
   isLive: 'isLive',
   startsAt: 'startsAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type StreamScalarFieldEnum = (typeof StreamScalarFieldEnum)[keyof typeof StreamScalarFieldEnum]
@@ -360,7 +407,8 @@ export type StreamScalarFieldEnum = (typeof StreamScalarFieldEnum)[keyof typeof 
 export const PlatformScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  url: 'url'
+  url: 'url',
+  deletedAt: 'deletedAt'
 } as const
 
 export type PlatformScalarFieldEnum = (typeof PlatformScalarFieldEnum)[keyof typeof PlatformScalarFieldEnum]
@@ -380,10 +428,21 @@ export const NewsletterScalarFieldEnum = {
   fileUrl: 'fileUrl',
   description: 'description',
   publishedAt: 'publishedAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type NewsletterScalarFieldEnum = (typeof NewsletterScalarFieldEnum)[keyof typeof NewsletterScalarFieldEnum]
+
+
+export const SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt'
+} as const
+
+export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -394,31 +453,6 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  email: 'email',
-  password: 'password'
-} as const
-
-export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
-
-
-export const RoleOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name'
-} as const
-
-export type RoleOrderByRelevanceFieldEnum = (typeof RoleOrderByRelevanceFieldEnum)[keyof typeof RoleOrderByRelevanceFieldEnum]
-
-
-export const UserRoleOrderByRelevanceFieldEnum = {
-  userId: 'userId',
-  roleId: 'roleId'
-} as const
-
-export type UserRoleOrderByRelevanceFieldEnum = (typeof UserRoleOrderByRelevanceFieldEnum)[keyof typeof UserRoleOrderByRelevanceFieldEnum]
-
-
 export const NullsOrder = {
   first: 'first',
   last: 'last'
@@ -427,45 +461,43 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+export const UserOrderByRelevanceFieldEnum = {
+  email: 'email',
+  password: 'password'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const RoleOrderByRelevanceFieldEnum = {
+  name: 'name'
+} as const
+
+export type RoleOrderByRelevanceFieldEnum = (typeof RoleOrderByRelevanceFieldEnum)[keyof typeof RoleOrderByRelevanceFieldEnum]
+
+
 export const MemberOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
   firstName: 'firstName',
   lastName: 'lastName',
   phone: 'phone',
   status: 'status',
-  location: 'location',
-  homecellId: 'homecellId'
+  location: 'location'
 } as const
 
 export type MemberOrderByRelevanceFieldEnum = (typeof MemberOrderByRelevanceFieldEnum)[keyof typeof MemberOrderByRelevanceFieldEnum]
 
 
-export const MemberMinistryOrderByRelevanceFieldEnum = {
-  memberId: 'memberId',
-  ministryId: 'ministryId'
-} as const
-
-export type MemberMinistryOrderByRelevanceFieldEnum = (typeof MemberMinistryOrderByRelevanceFieldEnum)[keyof typeof MemberMinistryOrderByRelevanceFieldEnum]
-
-
 export const HomecellOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name',
-  location: 'location',
-  leaderId: 'leaderId',
-  overseerId: 'overseerId'
+  location: 'location'
 } as const
 
 export type HomecellOrderByRelevanceFieldEnum = (typeof HomecellOrderByRelevanceFieldEnum)[keyof typeof HomecellOrderByRelevanceFieldEnum]
 
 
 export const MinistryOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name',
   description: 'description',
-  leaderId: 'leaderId',
-  overseerId: 'overseerId',
   slug: 'slug'
 } as const
 
@@ -473,7 +505,6 @@ export type MinistryOrderByRelevanceFieldEnum = (typeof MinistryOrderByRelevance
 
 
 export const ContentTypeOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name'
 } as const
 
@@ -481,20 +512,15 @@ export type ContentTypeOrderByRelevanceFieldEnum = (typeof ContentTypeOrderByRel
 
 
 export const ContentOrderByRelevanceFieldEnum = {
-  id: 'id',
   title: 'title',
   body: 'body',
-  typeId: 'typeId',
-  authorId: 'authorId',
-  status: 'status',
-  seriesId: 'seriesId'
+  status: 'status'
 } as const
 
 export type ContentOrderByRelevanceFieldEnum = (typeof ContentOrderByRelevanceFieldEnum)[keyof typeof ContentOrderByRelevanceFieldEnum]
 
 
 export const MediaOrderByRelevanceFieldEnum = {
-  id: 'id',
   url: 'url',
   type: 'type'
 } as const
@@ -502,40 +528,14 @@ export const MediaOrderByRelevanceFieldEnum = {
 export type MediaOrderByRelevanceFieldEnum = (typeof MediaOrderByRelevanceFieldEnum)[keyof typeof MediaOrderByRelevanceFieldEnum]
 
 
-export const ContentMediaOrderByRelevanceFieldEnum = {
-  contentId: 'contentId',
-  mediaId: 'mediaId'
-} as const
-
-export type ContentMediaOrderByRelevanceFieldEnum = (typeof ContentMediaOrderByRelevanceFieldEnum)[keyof typeof ContentMediaOrderByRelevanceFieldEnum]
-
-
-export const EventMediaOrderByRelevanceFieldEnum = {
-  eventId: 'eventId',
-  mediaId: 'mediaId'
-} as const
-
-export type EventMediaOrderByRelevanceFieldEnum = (typeof EventMediaOrderByRelevanceFieldEnum)[keyof typeof EventMediaOrderByRelevanceFieldEnum]
-
-
 export const TagOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name'
 } as const
 
 export type TagOrderByRelevanceFieldEnum = (typeof TagOrderByRelevanceFieldEnum)[keyof typeof TagOrderByRelevanceFieldEnum]
 
 
-export const ContentTagOrderByRelevanceFieldEnum = {
-  contentId: 'contentId',
-  tagId: 'tagId'
-} as const
-
-export type ContentTagOrderByRelevanceFieldEnum = (typeof ContentTagOrderByRelevanceFieldEnum)[keyof typeof ContentTagOrderByRelevanceFieldEnum]
-
-
 export const SeriesOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name',
   description: 'description',
   slug: 'slug'
@@ -545,8 +545,6 @@ export type SeriesOrderByRelevanceFieldEnum = (typeof SeriesOrderByRelevanceFiel
 
 
 export const ScriptureRefOrderByRelevanceFieldEnum = {
-  id: 'id',
-  contentId: 'contentId',
   book: 'book',
   version: 'version'
 } as const
@@ -555,7 +553,6 @@ export type ScriptureRefOrderByRelevanceFieldEnum = (typeof ScriptureRefOrderByR
 
 
 export const AnnouncementOrderByRelevanceFieldEnum = {
-  id: 'id',
   title: 'title',
   body: 'body'
 } as const
@@ -564,17 +561,13 @@ export type AnnouncementOrderByRelevanceFieldEnum = (typeof AnnouncementOrderByR
 
 
 export const AnnouncementTargetOrderByRelevanceFieldEnum = {
-  id: 'id',
-  announcementId: 'announcementId',
-  targetType: 'targetType',
-  targetId: 'targetId'
+  targetType: 'targetType'
 } as const
 
 export type AnnouncementTargetOrderByRelevanceFieldEnum = (typeof AnnouncementTargetOrderByRelevanceFieldEnum)[keyof typeof AnnouncementTargetOrderByRelevanceFieldEnum]
 
 
 export const EventTypeOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name'
 } as const
 
@@ -582,56 +575,48 @@ export type EventTypeOrderByRelevanceFieldEnum = (typeof EventTypeOrderByRelevan
 
 
 export const EventOrderByRelevanceFieldEnum = {
-  id: 'id',
   title: 'title',
   description: 'description',
   location: 'location',
-  slug: 'slug',
-  typeId: 'typeId'
+  slug: 'slug'
 } as const
 
 export type EventOrderByRelevanceFieldEnum = (typeof EventOrderByRelevanceFieldEnum)[keyof typeof EventOrderByRelevanceFieldEnum]
 
 
-export const EventMinistryOrderByRelevanceFieldEnum = {
-  eventId: 'eventId',
-  ministryId: 'ministryId'
-} as const
-
-export type EventMinistryOrderByRelevanceFieldEnum = (typeof EventMinistryOrderByRelevanceFieldEnum)[keyof typeof EventMinistryOrderByRelevanceFieldEnum]
-
-
 export const ProgramTypeOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name'
 } as const
 
 export type ProgramTypeOrderByRelevanceFieldEnum = (typeof ProgramTypeOrderByRelevanceFieldEnum)[keyof typeof ProgramTypeOrderByRelevanceFieldEnum]
 
 
-export const ProgramOrderByRelevanceFieldEnum = {
-  id: 'id',
-  typeId: 'typeId',
-  homecellId: 'homecellId'
-} as const
-
-export type ProgramOrderByRelevanceFieldEnum = (typeof ProgramOrderByRelevanceFieldEnum)[keyof typeof ProgramOrderByRelevanceFieldEnum]
-
-
 export const ProgramItemOrderByRelevanceFieldEnum = {
-  id: 'id',
-  programId: 'programId',
   title: 'title',
   description: 'description',
-  time: 'time',
-  responsibleId: 'responsibleId'
+  time: 'time'
 } as const
 
 export type ProgramItemOrderByRelevanceFieldEnum = (typeof ProgramItemOrderByRelevanceFieldEnum)[keyof typeof ProgramItemOrderByRelevanceFieldEnum]
 
 
+export const ProgramTemplateOrderByRelevanceFieldEnum = {
+  name: 'name'
+} as const
+
+export type ProgramTemplateOrderByRelevanceFieldEnum = (typeof ProgramTemplateOrderByRelevanceFieldEnum)[keyof typeof ProgramTemplateOrderByRelevanceFieldEnum]
+
+
+export const ProgramTemplateItemOrderByRelevanceFieldEnum = {
+  title: 'title',
+  description: 'description',
+  time: 'time'
+} as const
+
+export type ProgramTemplateItemOrderByRelevanceFieldEnum = (typeof ProgramTemplateItemOrderByRelevanceFieldEnum)[keyof typeof ProgramTemplateItemOrderByRelevanceFieldEnum]
+
+
 export const StreamOrderByRelevanceFieldEnum = {
-  id: 'id',
   title: 'title'
 } as const
 
@@ -639,7 +624,6 @@ export type StreamOrderByRelevanceFieldEnum = (typeof StreamOrderByRelevanceFiel
 
 
 export const PlatformOrderByRelevanceFieldEnum = {
-  id: 'id',
   name: 'name',
   url: 'url'
 } as const
@@ -647,20 +631,18 @@ export const PlatformOrderByRelevanceFieldEnum = {
 export type PlatformOrderByRelevanceFieldEnum = (typeof PlatformOrderByRelevanceFieldEnum)[keyof typeof PlatformOrderByRelevanceFieldEnum]
 
 
-export const StreamPlatformOrderByRelevanceFieldEnum = {
-  streamId: 'streamId',
-  platformId: 'platformId'
-} as const
-
-export type StreamPlatformOrderByRelevanceFieldEnum = (typeof StreamPlatformOrderByRelevanceFieldEnum)[keyof typeof StreamPlatformOrderByRelevanceFieldEnum]
-
-
 export const NewsletterOrderByRelevanceFieldEnum = {
-  id: 'id',
   title: 'title',
   fileUrl: 'fileUrl',
   description: 'description'
 } as const
 
 export type NewsletterOrderByRelevanceFieldEnum = (typeof NewsletterOrderByRelevanceFieldEnum)[keyof typeof NewsletterOrderByRelevanceFieldEnum]
+
+
+export const SessionOrderByRelevanceFieldEnum = {
+  id: 'id'
+} as const
+
+export type SessionOrderByRelevanceFieldEnum = (typeof SessionOrderByRelevanceFieldEnum)[keyof typeof SessionOrderByRelevanceFieldEnum]
 

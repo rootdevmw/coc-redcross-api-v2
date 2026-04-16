@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMinistryDto } from './dto/create-ministry.dto';
 import { UpdateMinistryDto } from './dto/update-ministry.dto';
 import { QueryMinistryDto } from './dto/query-ministry.dto';
+import { toBigInt } from 'src/common/utils/to-bigint';
 
 @Injectable()
 export class MinistriesService {
@@ -14,7 +15,12 @@ export class MinistriesService {
     this.logger.log(`Creating ministry: ${dto.name}`);
 
     const ministry = await this.prisma.ministry.create({
-      data: dto,
+      data: {
+        name: dto.name,
+        description: dto.description,
+        leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
+        overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
+      },
     });
 
     this.logger.log(`Ministry created: ${ministry.name}`);
@@ -32,12 +38,23 @@ export class MinistriesService {
 
     this.logger.log(`Fetching ministries (page=${page}, limit=${limit})`);
 
-    const where: any = {};
+    const where: any = {
+      deletedAt: null,
+    };
 
     if (query.search) {
       where.name = {
         contains: query.search,
+        mode: 'insensitive',
       };
+    }
+
+    if (query.leaderId) {
+      where.leaderId = BigInt(query.leaderId);
+    }
+
+    if (query.overseerId) {
+      where.overseerId = BigInt(query.overseerId);
     }
 
     const [data, total] = await Promise.all([
@@ -48,8 +65,10 @@ export class MinistriesService {
         orderBy: { createdAt: 'desc' },
         include: {
           leader: true,
+          overseer: true,
         },
       }),
+
       this.prisma.ministry.count({ where }),
     ]);
 
@@ -58,16 +77,24 @@ export class MinistriesService {
     return {
       success: true,
       data,
-      meta: { page, limit, total },
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
-
   async findOne(id: string) {
-    const ministry = await this.prisma.ministry.findUnique({
-      where: { id },
+    const ministry = await this.prisma.ministry.findFirst({
+      where: { id: toBigInt(id) },
       include: {
         leader: true,
+        overseer: true,
         members: {
+          where: {
+            member: { deletedAt: null },
+          },
           include: {
             member: true,
           },
@@ -90,8 +117,13 @@ export class MinistriesService {
 
   async update(id: string, dto: UpdateMinistryDto) {
     const ministry = await this.prisma.ministry.update({
-      where: { id },
-      data: dto,
+      where: { id: toBigInt(id) },
+      data: {
+        name: dto.name,
+        description: dto.description,
+        leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
+        overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
+      },
     });
     this.logger.log(`Updating ministry: ${ministry.name}`);
 
@@ -102,11 +134,26 @@ export class MinistriesService {
     };
   }
 
+  async remove(id: string) {
+    await this.prisma.ministry.delete({
+      where: { id: toBigInt(id) },
+    });
+
+    return {
+      success: true,
+      data: {},
+      meta: {},
+    };
+  }
+
   async getMembers(ministryId: string) {
     this.logger.log(`Fetching members for ministry: ${ministryId}`);
 
     const members = await this.prisma.memberMinistry.findMany({
-      where: { ministryId },
+      where: {
+        ministryId: toBigInt(ministryId),
+        member: { deletedAt: null },
+      },
       include: {
         member: true,
       },
@@ -122,8 +169,8 @@ export class MinistriesService {
   async assignMember(memberId: string, ministryId: string) {
     this.logger.log(`Assigning member ${memberId} to ministry ${ministryId}`);
 
-    const member = await this.prisma.member.findUnique({
-      where: { id: memberId },
+    const member = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId) },
     });
 
     if (!member) {
@@ -131,8 +178,8 @@ export class MinistriesService {
       throw new NotFoundException(`Member with id ${memberId} not found`);
     }
 
-    const ministry = await this.prisma.ministry.findUnique({
-      where: { id: ministryId },
+    const ministry = await this.prisma.ministry.findFirst({
+      where: { id: toBigInt(ministryId) },
     });
 
     if (!ministry) {
@@ -142,8 +189,8 @@ export class MinistriesService {
 
     await this.prisma.memberMinistry.create({
       data: {
-        memberId,
-        ministryId,
+        memberId: toBigInt(memberId),
+        ministryId: toBigInt(ministryId),
       },
     });
     this.logger.log(
@@ -162,8 +209,8 @@ export class MinistriesService {
     await this.prisma.memberMinistry.delete({
       where: {
         memberId_ministryId: {
-          memberId,
-          ministryId,
+          memberId: toBigInt(memberId),
+          ministryId: toBigInt(ministryId),
         },
       },
     });

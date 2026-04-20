@@ -13,6 +13,7 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { SessionAuthGuard } from './guard/session.guard';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -38,6 +39,7 @@ export class AuthController {
   // REGISTER
   // -----------------------------
   @Post('register')
+  @Public()
   register(@Body() dto: any) {
     return this.service.register(dto);
   }
@@ -46,6 +48,7 @@ export class AuthController {
   // LOGIN (SET COOKIE)
   // -----------------------------
   @Post('login')
+  @Public()
   async login(@Body() dto: any, @Res({ passthrough: true }) res: Response) {
     const result = await this.service.login(dto);
     res.cookie(
@@ -64,6 +67,7 @@ export class AuthController {
   // LOGOUT
   // -----------------------------
   @Post('logout')
+  @Public()
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     const result = await this.service.logout(req.cookies?.session_id);
 

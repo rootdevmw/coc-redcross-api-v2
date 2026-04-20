@@ -17,6 +17,22 @@ import { NewslettersService } from './newsletters.service';
 export class NewslettersController {
   constructor(private service: NewslettersService) {}
 
+  // -----------------------------
+  // PUBLISH
+  // -----------------------------
+  @Patch(':id/publish')
+  publish(@Param('id') id: string) {
+    return this.service.publish(id);
+  }
+
+  // -----------------------------
+  // UNPUBLISH
+  // -----------------------------
+  @Patch(':id/unpublish')
+  unpublish(@Param('id') id: string) {
+    return this.service.unpublish(id);
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   create(@UploadedFile() file: Express.Multer.File, @Body() dto: any) {

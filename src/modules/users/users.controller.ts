@@ -1,31 +1,47 @@
 import {
   Controller,
   Get,
-  Post,
   Patch,
   Delete,
   Param,
   Body,
   Query,
   UseGuards,
+  Post,
 } from '@nestjs/common';
-import { RolesService } from './roles.service';
+import { UsersService } from './users.service';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { SessionAuthGuard } from '../auth/guard/session.guard';
 
-@Controller('roles')
+@Controller('users')
 @UseGuards(SessionAuthGuard, RolesGuard)
-export class RolesController {
-  constructor(private service: RolesService) {}
+export class UsersController {
+  constructor(private service: UsersService) {}
 
-  // 🔒 Only ADMIN can manage roles
-  @Post()
+  // -----------------------------
+  // LINK USER → MEMBER
+  // -----------------------------
+  @Post(':id/member')
+  @Roles('ADMIN')
+  linkMember(@Param('id') userId: string, @Body('memberId') memberId: string) {
+    return this.service.linkMember(userId, memberId);
+  }
+
+  // -----------------------------
+  // UNLINK USER → MEMBER
+  // -----------------------------
+  @Delete(':id/member')
+  @Roles('ADMIN')
+  unlinkMember(@Param('id') userId: string) {
+    return this.service.unlinkMember(userId);
+  }
+
+  //  Only ADMIN can manage users  @Post()
   @Roles('ADMIN')
   create(@Body() dto: any) {
     return this.service.create(dto);
   }
-
   @Get()
   @Roles('ADMIN')
   findAll(@Query() query: any) {

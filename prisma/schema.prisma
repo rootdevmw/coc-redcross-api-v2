@@ -18,7 +18,7 @@ model User {
   createdAt DateTime @default(now())
   deletedAt DateTime? 
   roles  UserRole[]
-  member Member?
+  member   Member?  @relation("UserMember")
 
   sessions Session[]
 
@@ -61,7 +61,7 @@ model Member {
   deletedAt DateTime?
   homecellId   BigInt?
 
-  user         User? @relation(fields: [userId], references: [id])
+  user   User? @relation("UserMember", fields: [userId], references: [id])
   ministries   MemberMinistry[]
   programItems ProgramItem[]
   contents     Content[]
@@ -147,7 +147,7 @@ model ContentType {
 model Content {
   id          BigInt   @id @default(autoincrement())
   title       String
-  body        String
+  body        String @db.Text
   typeId      BigInt
   authorId    BigInt?
   status      String
@@ -171,7 +171,7 @@ model Content {
 
 model Media {
   id   BigInt @id @default(autoincrement())
-  url  String
+  url  String @unique
   type String
   deletedAt DateTime?
   events Event[]

@@ -108,7 +108,7 @@ export class ProgramsService {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    const where: any = {};
+    const where: any = { deletedAt: null };
 
     if (query.homecellId) {
       where.homecellId = query.homecellId;
@@ -118,27 +118,26 @@ export class ProgramsService {
       const start = new Date(query.date);
       const end = new Date(query.date);
       end.setHours(23, 59, 59, 999);
-
-      where.date = {
-        gte: start,
-        lte: end,
-      };
+      where.date = { gte: start, lte: end };
+    } else if (query.fromDate) {
+      where.date = { gte: new Date(query.fromDate) };
     }
+
+    // upcoming programs sort asc, recent/admin sort desc
+    const orderDir: 'asc' | 'desc' = query.fromDate ? 'asc' : 'desc';
 
     const [data, total] = await Promise.all([
       this.prisma.program.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { date: 'desc' },
+        orderBy: { date: orderDir },
         include: {
           type: true,
           homecell: true,
           items: {
             where: { deletedAt: null },
-            include: {
-              responsible: true,
-            },
+            include: { responsible: true },
             orderBy: { sequence: 'asc' },
           },
         },
@@ -149,7 +148,7 @@ export class ProgramsService {
     return {
       success: true,
       data,
-      meta: { page, limit, total },
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
 
@@ -194,8 +193,8 @@ export class ProgramsService {
       where: { id: toBigIntOptional(id) },
       data: {
         date: dto.date ? new Date(dto.date) : undefined,
-        typeId: dto.typeId,
-        homecellId: dto.homecellId,
+        typeId: dto.typeId || undefined,
+        homecellId: dto.homecellId || undefined,
 
         items: dto.items
           ? {
@@ -204,7 +203,7 @@ export class ProgramsService {
                 description: item.description,
                 time: item.time,
                 sequence: item.sequence,
-                responsibleId: item.responsibleId,
+                responsibleId: item.responsibleId || undefined,
               })),
             }
           : undefined,

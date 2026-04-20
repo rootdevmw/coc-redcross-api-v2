@@ -48,13 +48,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() dto: any, @Res({ passthrough: true }) res: Response) {
     const result = await this.service.login(dto);
-
     res.cookie(
       this.getCookieName(),
       result.data.sessionId,
       this.getCookieOptions(),
     );
-
     return {
       success: true,
       data: result.data.user,
@@ -77,7 +75,11 @@ export class AuthController {
   // -----------------------------
   // ASSIGN ROLE
   // -----------------------------
+  // -----------------------------
+  // ASSIGN ROLE
+  // -----------------------------
   @Post('assign-role/:userId/:roleId')
+  @UseGuards(SessionAuthGuard)
   assignRole(@Param('userId') userId: string, @Param('roleId') roleId: string) {
     return this.service.assignRole(userId, roleId);
   }

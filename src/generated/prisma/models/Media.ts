@@ -226,16 +226,16 @@ export type MediaOrderByWithRelationInput = {
 
 export type MediaWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
+  url?: string
   AND?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
   OR?: Prisma.MediaWhereInput[]
   NOT?: Prisma.MediaWhereInput | Prisma.MediaWhereInput[]
-  url?: Prisma.StringFilter<"Media"> | string
   type?: Prisma.StringFilter<"Media"> | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Media"> | Date | string | null
   events?: Prisma.EventListRelationFilter
   contentMedia?: Prisma.ContentMediaListRelationFilter
   eventMedia?: Prisma.EventMediaListRelationFilter
-}, "id">
+}, "id" | "url">
 
 export type MediaOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

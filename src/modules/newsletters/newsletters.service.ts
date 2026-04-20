@@ -3,12 +3,19 @@ import { PrismaService } from '../../prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class NewslettersService {
   private readonly logger = new Logger(NewslettersService.name);
+  private readonly config: ConfigService;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    config: ConfigService,
+  ) {
+    this.config = config;
+  }
 
   // -----------------------------
   // CREATE
@@ -47,23 +54,22 @@ export class NewslettersService {
 
     this.logger.log(`Fetching newsletters`);
 
+    const where = { deletedAt: null, publishedAt: { not: null } };
+
     const [data, total] = await Promise.all([
       this.prisma.newsletter.findMany({
+        where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { publishedAt: 'desc' },
       }),
-      this.prisma.newsletter.count(),
+      this.prisma.newsletter.count({ where }),
     ]);
 
     return {
       success: true,
       data,
-      meta: {
-        page,
-        limit,
-        total,
-      },
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
 
@@ -90,7 +96,7 @@ export class NewslettersService {
   // UPDATE
   // -----------------------------
   async update(id: string, dto: any, file?: Express.Multer.File) {
-    this.logger.log(`Updating newsletter ${id}`);
+    this.logger.log(`Updating newsletter ${dto.publishedAt}`);
 
     let fileUrl: string | undefined;
 
@@ -104,7 +110,52 @@ export class NewslettersService {
         title: dto.title,
         description: dto.description,
         fileUrl: fileUrl ?? undefined,
-        publishedAt: dto.publishedAt ? new Date(dto.publishedAt) : undefined,
+        publishedAt:
+          dto.publishedAt !== undefined
+            ? dto.publishedAt === null
+              ? null
+              : new Date(dto.publishedAt)
+            : undefined,
+      },
+    });
+
+    return {
+      success: true,
+      data: newsletter,
+      meta: {},
+    };
+  }
+
+  // -----------------------------
+  // PUBLISH
+  // -----------------------------
+  async publish(id: string) {
+    this.logger.log(`Publishing newsletter ${id}`);
+
+    const newsletter = await this.prisma.newsletter.update({
+      where: { id: toBigIntOptional(id) },
+      data: {
+        publishedAt: new Date(),
+      },
+    });
+
+    return {
+      success: true,
+      data: newsletter,
+      meta: {},
+    };
+  }
+
+  // -----------------------------
+  // UNPUBLISH
+  // -----------------------------
+  async unpublish(id: string) {
+    this.logger.log(`Unpublishing newsletter ${id}`);
+
+    const newsletter = await this.prisma.newsletter.update({
+      where: { id: toBigIntOptional(id) },
+      data: {
+        publishedAt: null,
       },
     });
 
@@ -149,6 +200,11 @@ export class NewslettersService {
     fs.writeFileSync(filePath, file.buffer);
 
     // return public path
-    return `/uploads/newsletters/${fileName}`;
+    return this.buildPublicUrl(`/uploads/newsletters/${fileName}`);
+  }
+
+  private buildPublicUrl(path: string): string {
+    const baseUrl = this.config.get<string>('APP_URL');
+    return `${baseUrl}${path}`;
   }
 }

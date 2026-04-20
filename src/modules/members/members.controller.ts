@@ -7,11 +7,13 @@ import {
   Body,
   Query,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
+import { SessionAuthGuard } from '../auth/guard/session.guard';
 
 @Controller('members')
 export class MembersController {
@@ -22,6 +24,7 @@ export class MembersController {
     return this.service.create(dto);
   }
 
+  @UseGuards(SessionAuthGuard)
   @Get()
   findAll(@Query() query: QueryMemberDto) {
     return this.service.findAll(query);

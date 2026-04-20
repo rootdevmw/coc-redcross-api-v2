@@ -49,7 +49,7 @@ export class EventsService {
 
     this.logger.log(`Fetching events`);
 
-    const where: any = {};
+    const where: any = { deletedAt: null };
 
     if (query.typeId) where.typeId = query.typeId;
 
@@ -69,28 +69,18 @@ export class EventsService {
         include: {
           type: true,
           ministries: {
-            where: {
-              ministry: { deletedAt: null },
-            },
-            include: {
-              ministry: true,
-            },
+            where: { ministry: { deletedAt: null } },
+            include: { ministry: true },
           },
         },
       }),
       this.prisma.event.count({ where }),
     ]);
 
-    //  Flatten ministries
-    const formatted = data.map((event) => ({
-      ...event,
-      ministries: event.ministries.map((m) => m.ministry),
-    }));
-
     return {
       success: true,
       data,
-      meta: { page, limit, total },
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
 

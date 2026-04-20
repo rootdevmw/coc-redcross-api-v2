@@ -23,8 +23,6 @@ export class MinistriesService {
       },
     });
 
-    this.logger.log(`Ministry created: ${ministry.name}`);
-
     return {
       success: true,
       data: ministry,
@@ -68,11 +66,8 @@ export class MinistriesService {
           overseer: true,
         },
       }),
-
       this.prisma.ministry.count({ where }),
     ]);
-
-    this.logger.log(`Fetched ${data.length} ministries`);
 
     return {
       success: true,
@@ -85,12 +80,19 @@ export class MinistriesService {
       },
     };
   }
+
   async findOne(id: string) {
+    this.logger.log(`Fetching ministry: ${id}`);
+
     const ministry = await this.prisma.ministry.findFirst({
-      where: { id: toBigInt(id) },
+      where: {
+        id: toBigInt(id),
+        deletedAt: null,
+      },
       include: {
         leader: true,
         overseer: true,
+
         members: {
           where: {
             member: { deletedAt: null },
@@ -99,6 +101,27 @@ export class MinistriesService {
             member: true,
           },
         },
+
+        // 🔥 JOIN TABLE → EVENT
+        events: {
+          include: {
+            event: true,
+          },
+          where: {
+            event: {
+              deletedAt: null,
+              startTime: {
+                gte: new Date(), // upcoming only
+              },
+            },
+          },
+          orderBy: {
+            event: {
+              startTime: 'asc',
+            },
+          },
+          take: 5, // limit for frontend
+        },
       },
     });
 
@@ -106,11 +129,16 @@ export class MinistriesService {
       this.logger.warn(`Ministry not found: ${id}`);
       throw new NotFoundException('Ministry not found');
     }
-    this.logger.log(`Fetching ministry: ${ministry.name}`);
+
+    //  FLATTEN EVENTS
+    const flattenedEvents = ministry.events.map((e) => e.event);
 
     return {
       success: true,
-      data: ministry,
+      data: {
+        ...ministry,
+        events: flattenedEvents, //  CLEAN STRUCTURE
+      },
       meta: {},
     };
   }
@@ -125,7 +153,6 @@ export class MinistriesService {
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
       },
     });
-    this.logger.log(`Updating ministry: ${ministry.name}`);
 
     return {
       success: true,
@@ -174,7 +201,6 @@ export class MinistriesService {
     });
 
     if (!member) {
-      this.logger.warn(`Member not found: ${memberId}`);
       throw new NotFoundException(`Member with id ${memberId} not found`);
     }
 
@@ -183,7 +209,6 @@ export class MinistriesService {
     });
 
     if (!ministry) {
-      this.logger.warn(`Ministry not found: ${ministryId}`);
       throw new NotFoundException(`Ministry with id ${ministryId} not found`);
     }
 
@@ -193,9 +218,7 @@ export class MinistriesService {
         ministryId: toBigInt(ministryId),
       },
     });
-    this.logger.log(
-      `Member ${member.firstName} ${member.lastName} assigned to ministry ${ministry.name} success`,
-    );
+
     return {
       success: true,
       message: 'Member assigned to ministry',
@@ -217,7 +240,7 @@ export class MinistriesService {
 
     return {
       success: true,
-      message: `Member with id ${memberId} removed from ministry ${ministryId}`,
+      message: `Member removed from ministry`,
       meta: {},
     };
   }

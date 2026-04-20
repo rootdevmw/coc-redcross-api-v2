@@ -11,8 +11,62 @@ export class ContentService {
 
   constructor(private prisma: PrismaService) {}
 
+  // MEDIA EXTRACTION (INLINE — no import issues)
+  private extractMediaUrls(html: string) {
+    const results: { url: string; type: string }[] = [];
+
+    if (!html) return results;
+
+    const patterns = [
+      { regex: /<img[^>]+src="([^"]+)"/g, type: 'image' },
+      { regex: /<video[^>]+src="([^"]+)"/g, type: 'video' },
+      { regex: /<audio[^>]+src="([^"]+)"/g, type: 'audio' },
+      { regex: /<source[^>]+src="([^"]+)"/g, type: 'video' },
+      { regex: /<iframe[^>]+src="([^"]+)"/g, type: 'video' },
+    ];
+
+    for (const { regex, type } of patterns) {
+      let match;
+      while ((match = regex.exec(html))) {
+        results.push({ url: match[1], type });
+      }
+    }
+
+    //  dedupe
+    return Array.from(new Map(results.map((m) => [m.url, m])).values());
+  }
+
+  // MAP MEDIA → RELATIONS
+  private async buildMediaRelations(html: string) {
+    const extracted = this.extractMediaUrls(html);
+
+    if (!extracted.length) return [];
+
+    const mediaRecords = await Promise.all(
+      extracted.map((m) =>
+        this.prisma.media.upsert({
+          where: { url: m.url },
+          update: {},
+          create: {
+            url: m.url,
+            type: m.type,
+          },
+        }),
+      ),
+    );
+
+    return mediaRecords.map((media) => ({
+      media: {
+        connect: { id: media.id },
+      },
+    }));
+  }
+
+  // CREATE
   async create(dto: CreateContentDto) {
     this.logger.log(`Creating content: ${dto.title}`);
+
+    const mediaRelations = await this.buildMediaRelations(dto.body);
 
     const content = await this.prisma.content.create({
       data: {
@@ -22,7 +76,7 @@ export class ContentService {
         authorId: toBigInt(dto.authorId),
         status: 'Draft',
 
-        tags: dto.tags
+        tags: dto.tags?.length
           ? {
               create: dto.tags.map((name) => ({
                 tag: {
@@ -35,10 +89,15 @@ export class ContentService {
             }
           : undefined,
 
-        scriptures: dto.scriptures
+        scriptures: dto.scriptures?.length
           ? {
               create: dto.scriptures,
             }
+          : undefined,
+
+        // CORRECT RELATION
+        contentMedia: mediaRelations.length
+          ? { create: mediaRelations }
           : undefined,
       },
     });
@@ -46,15 +105,14 @@ export class ContentService {
     return { success: true, data: content, meta: {} };
   }
 
+  //  FIND ALL
   async findAll(query: QueryContentDto) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    this.logger.log(`Fetching content (page=${page})`);
+    const where: any = { deletedAt: null };
 
-    const where: any = {};
-
-    if (query.typeId) where.typeId = query.typeId;
+    if (query.typeId) where.typeId = toBigInt(query.typeId);
     if (query.status) where.status = query.status;
 
     if (query.search) {
@@ -70,15 +128,15 @@ export class ContentService {
         include: {
           author: true,
           tags: {
-            where: {
-              tag: { deletedAt: null },
-            },
+            where: { tag: { deletedAt: null } },
             include: { tag: true },
           },
           scriptures: {
             where: { deletedAt: null },
           },
-          contentMedia: true,
+          contentMedia: {
+            include: { media: true },
+          },
         },
       }),
       this.prisma.content.count({ where }),
@@ -87,49 +145,88 @@ export class ContentService {
     return {
       success: true,
       data,
-      meta: { page, limit, total },
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
 
+  //  FIND ONE
   async findOne(id: string) {
     const content = await this.prisma.content.findFirst({
       where: { id: toBigInt(id) },
       include: {
+        type: true,
         author: true,
         tags: {
-          where: {
-            tag: { deletedAt: null },
-          },
+          where: { tag: { deletedAt: null } },
           include: { tag: true },
         },
         scriptures: {
           where: { deletedAt: null },
         },
-        contentMedia: true,
+        contentMedia: {
+          include: {
+            media: true, //  IMPORTANT
+          },
+        },
       },
     });
 
-    if (!content)
+    if (!content) {
       throw new NotFoundException(`Content with id ${id} not found`);
+    }
 
     return { success: true, data: content, meta: {} };
   }
 
+  //  UPDATE (FULL SYNC)
   async update(id: string, dto: UpdateContentDto) {
     this.logger.log(`Updating content: ${id}`);
+
+    const mediaRelations = await this.buildMediaRelations(dto.body || '');
+
+    const tags = dto.tags?.length
+      ? {
+          deleteMany: {},
+          create: dto.tags.map((name) => ({
+            tag: {
+              connectOrCreate: {
+                where: { name },
+                create: { name },
+              },
+            },
+          })),
+        }
+      : dto.tags
+        ? { deleteMany: {} }
+        : undefined;
+
+    const scriptures = dto.scriptures
+      ? {
+          deleteMany: {},
+          create: dto.scriptures,
+        }
+      : undefined;
 
     const content = await this.prisma.content.update({
       where: { id: toBigInt(id) },
       data: {
         title: dto.title,
         body: dto.body,
-        typeId: toBigInt(dto.typeId!),
+        typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
+        authorId: dto.authorId ? toBigInt(dto.authorId) : undefined,
+        tags,
+        scriptures,
+        contentMedia: {
+          deleteMany: {}, // remove old
+          create: mediaRelations,
+        },
       },
     });
 
     return { success: true, data: content, meta: {} };
   }
 
+  //  REMOVE
   async remove(id: string) {
     await this.prisma.content.delete({
       where: { id: toBigInt(id) },
@@ -138,9 +235,8 @@ export class ContentService {
     return { success: true, data: {}, meta: {} };
   }
 
+  //  PUBLISH
   async publish(id: string, status: string) {
-    this.logger.log(`Publishing content ${id} → ${status}`);
-
     const content = await this.prisma.content.update({
       where: { id: toBigInt(id) },
       data: {
@@ -148,15 +244,12 @@ export class ContentService {
         publishedAt: status === 'Published' ? new Date() : null,
       },
     });
-    this.logger.log(
-      `Content titled ${content.title} published with status: ${status}`,
-    );
+
     return { success: true, data: content, meta: {} };
   }
 
+  //  TYPES
   async createType(name: string) {
-    this.logger.log(`Creating content type: ${name}`);
-
     const type = await this.prisma.contentType.create({
       data: { name },
     });
@@ -165,8 +258,6 @@ export class ContentService {
   }
 
   async getTypes() {
-    this.logger.log('Fetching content types');
-
     const types = await this.prisma.contentType.findMany({
       orderBy: { name: 'asc' },
     });

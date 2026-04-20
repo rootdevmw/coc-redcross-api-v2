@@ -25,6 +25,7 @@ export class AuthService {
     });
 
     if (existing) {
+      this.logger.log(`Registration failed: ${dto.email} already in use`);
       throw new UnauthorizedException('Email already in use');
     }
 
@@ -36,6 +37,8 @@ export class AuthService {
         password: hashed,
       },
     });
+
+    this.logger.log(`User registered successfully: ${dto.email}`);
 
     const { password, ...safeUser } = user;
 
@@ -50,15 +53,31 @@ export class AuthService {
   // LOGIN
   // -----------------------------
   async login(dto: any) {
+    this.logger.log(`Login attempt for user: ${dto?.email}`);
+
+    if (!dto || !dto.email || !dto.password) {
+      this.logger.log(`Login failed: missing email or password in dto`);
+      throw new UnauthorizedException('Email and password are required');
+    }
+
     const user = await this.prisma.user.findFirst({
       where: { email: dto.email },
       include: { roles: { include: { role: true } } },
     });
 
-    if (!user) throw new UnauthorizedException();
+    this.logger.log(
+      `User lookup result for ${dto.email}: ${user ? 'found' : 'not found'}`,
+    );
+    if (!user) {
+      this.logger.log(`Login failed: user not found for ${dto.email}`);
+      throw new UnauthorizedException();
+    }
 
     const valid = await bcrypt.compare(dto.password, user.password);
-    if (!valid) throw new UnauthorizedException();
+    if (!valid) {
+      this.logger.log(`Login failed: invalid password for ${dto.email}`);
+      throw new UnauthorizedException();
+    }
 
     const sessionId = this.generateSessionId();
 
@@ -71,6 +90,8 @@ export class AuthService {
         ),
       },
     });
+
+    this.logger.log(`User logged in successfully: ${dto.email}`);
 
     return {
       success: true,
@@ -90,6 +111,7 @@ export class AuthService {
     this.logger.log(`Logout attempt`);
 
     if (!sessionId) {
+      this.logger.log(`Logout skipped: no session ID provided`);
       return {
         success: true,
         data: {},
@@ -100,6 +122,8 @@ export class AuthService {
     await this.prisma.session.deleteMany({
       where: { id: sessionId },
     });
+
+    this.logger.log(`Session invalidated: ${sessionId}`);
 
     return {
       success: true,
@@ -112,6 +136,8 @@ export class AuthService {
   // ASSIGN ROLE
   // -----------------------------
   async assignRole(userId: string, roleId: string) {
+    this.logger.log(`Assigning role ${roleId} to user ${userId}`);
+
     const rel = await this.prisma.userRole.upsert({
       where: {
         userId_roleId: { userId: toBigInt(userId), roleId: toBigInt(roleId) },
@@ -119,6 +145,8 @@ export class AuthService {
       update: {},
       create: { userId: toBigInt(userId), roleId: toBigInt(roleId) },
     });
+
+    this.logger.log(`Role assigned: ${roleId} -> ${userId}`);
 
     return {
       success: true,

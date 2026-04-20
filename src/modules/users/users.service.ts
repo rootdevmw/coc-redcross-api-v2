@@ -9,6 +9,7 @@ import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EmailService } from '../email/email.service';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,7 @@ export class UsersService {
   constructor(
     private prisma: PrismaService,
     private emailService: EmailService,
+    private config: ConfigService,
   ) {}
 
   // -----------------------------
@@ -54,11 +56,15 @@ export class UsersService {
       .update(rawToken)
       .digest('hex');
 
+    const ttl =
+      Number(this.config.get<string>('PASSWORD_SET_TOKEN_TTL')) ||
+      1000 * 60 * 60 * 24; // fallback 24h
+
     await this.prisma.passwordResetToken.create({
       data: {
         email,
         token: hashedToken,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour
+        expiresAt: new Date(Date.now() + ttl),
       },
     });
 

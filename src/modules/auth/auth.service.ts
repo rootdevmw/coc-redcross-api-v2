@@ -113,11 +113,15 @@ export class AuthService {
       where: { email: normalizedEmail },
     });
 
+    const ttl =
+      Number(this.config.get<string>('PASSWORD_RESET_TOKEN_TTL')) ||
+      1000 * 60 * 15; // fallback 24h
+
     await this.prisma.passwordResetToken.create({
       data: {
         email: normalizedEmail,
         token: hashedToken,
-        expiresAt: new Date(Date.now() + 1000 * 60 * 15),
+        expiresAt: new Date(Date.now() + ttl),
       },
     });
 

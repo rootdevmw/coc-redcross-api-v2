@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 import sgMail from '@sendgrid/mail';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
-  constructor() {
+  constructor(private config: ConfigService) {
     if (!process.env.SENDGRID_API_KEY) {
       this.logger.error('SENDGRID_API_KEY is not set');
     } else {
@@ -14,12 +15,32 @@ export class EmailService {
     }
   }
 
+  private getExpiryText(ttl: number): string {
+    const minutes = Math.floor(ttl / (1000 * 60));
+
+    if (minutes < 60) {
+      return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+
+    if (hours < 24) {
+      return `${hours} hour${hours === 1 ? '' : 's'}`;
+    }
+
+    const days = Math.floor(hours / 24);
+    return `${days} day${days === 1 ? '' : 's'}`;
+  }
+
   // --------------------------------------------------
   // SET PASSWORD (NEW USER INVITE)
   // --------------------------------------------------
   async sendSetPassword(email: string, token: string) {
     const link = `${process.env.FRONTEND_URL}/set-password?token=${token}`;
-
+    const ttl =
+      Number(this.config.get<string>('PASSWORD_SET_TOKEN_TTL')) ||
+      1000 * 60 * 60 * 24; // default 24h
+    const expiry = this.getExpiryText(ttl);
     this.logger.log(`Sending set password email → ${email}`);
 
     await sgMail.send({
@@ -85,7 +106,7 @@ export class EmailService {
           font-size:12px;
           color:#6b7280;
         ">
-          This link expires in 1 hour. If you did not expect this email, you can ignore it.
+          This link expires in ${expiry}. If you did not expect this email, you can ignore it.
         </p>
       `),
     });
@@ -96,6 +117,10 @@ export class EmailService {
   // --------------------------------------------------
   async sendResetPassword(email: string, token: string) {
     const link = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const ttl =
+      Number(this.config.get<string>('PASSWORD_RESET_TOKEN_TTL')) ||
+      1000 * 60 * 15; // default 15 mins
+    const expiry = this.getExpiryText(ttl);
 
     this.logger.log(`Sending reset password email → ${email}`);
 
@@ -162,7 +187,7 @@ export class EmailService {
           font-size:12px;
           color:#6b7280;
         ">
-          This link expires in 1 hour. If you did not request this, you can ignore this email.
+          This link expires in ${expiry}. If you did not request this, you can ignore this email.
         </p>
       `),
     });

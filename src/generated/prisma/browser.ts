@@ -172,3 +172,8 @@ export type Newsletter = Prisma.NewsletterModel
  * 
  */
 export type Session = Prisma.SessionModel
+/**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel

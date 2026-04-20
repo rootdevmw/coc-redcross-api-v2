@@ -42,6 +42,7 @@
     "@nestjs/platform-express": "^11.1.18",
     "@prisma/adapter-mariadb": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "@sendgrid/mail": "^8.1.6",
     "@tanstack/react-query": "^5.99.0",
     "axios": "^1.15.0",
     "axios-cookiejar-support": "^6.0.5",

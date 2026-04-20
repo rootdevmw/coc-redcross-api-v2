@@ -37,7 +37,8 @@ export class UsersController {
     return this.service.unlinkMember(userId);
   }
 
-  //  Only ADMIN can manage users  @Post()
+  //  Only ADMIN can manage users
+  @Post()
   @Roles('ADMIN')
   create(@Body() dto: any) {
     return this.service.create(dto);

@@ -18,6 +18,7 @@ import { UsersModule } from './modules/users/users.module';
 import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
 import { SessionAuthGuard } from './modules/auth/guard/session.guard';
 import { APP_GUARD } from '@nestjs/core/constants';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { APP_GUARD } from '@nestjs/core/constants';
     RolesModule,
     UsersModule,
     ProgramTemplatesModule,
+    EmailModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

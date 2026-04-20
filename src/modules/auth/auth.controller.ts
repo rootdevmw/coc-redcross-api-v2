@@ -36,26 +36,19 @@ export class AuthController {
   }
 
   // -----------------------------
-  // REGISTER
-  // -----------------------------
-  @Post('register')
-  @Public()
-  register(@Body() dto: any) {
-    return this.service.register(dto);
-  }
-
-  // -----------------------------
-  // LOGIN (SET COOKIE)
+  // LOGIN
   // -----------------------------
   @Post('login')
   @Public()
   async login(@Body() dto: any, @Res({ passthrough: true }) res: Response) {
     const result = await this.service.login(dto);
+
     res.cookie(
       this.getCookieName(),
       result.data.sessionId,
       this.getCookieOptions(),
     );
+
     return {
       success: true,
       data: result.data.user,
@@ -77,8 +70,44 @@ export class AuthController {
   }
 
   // -----------------------------
-  // ASSIGN ROLE
+  // REQUEST PASSWORD RESET
   // -----------------------------
+  @Post('request-password-reset')
+  @Public()
+  requestReset(@Body('email') email: string) {
+    return this.service.requestPasswordReset(email);
+  }
+
+  // -----------------------------
+  // SET PASSWORD (FIRST TIME)
+  // -----------------------------
+  @Post('set-password')
+  @Public()
+  setPassword(@Body() dto: { token: string; password: string }) {
+    return this.service.setPassword(dto);
+  }
+
+  // -----------------------------
+  // RESET PASSWORD (FORGOT PASSWORD)
+  // -----------------------------
+  @Post('reset-password')
+  @Public()
+  resetPassword(@Body() dto: { token: string; password: string }) {
+    return this.service.resetPassword(dto);
+  }
+
+  // -----------------------------
+  // CHANGE PASSWORD (AUTH REQUIRED)
+  // -----------------------------
+  @Post('change-password')
+  @UseGuards(SessionAuthGuard)
+  changePassword(
+    @Request() req: any,
+    @Body() dto: { currentPassword: string; newPassword: string },
+  ) {
+    return this.service.changePassword(req.user.id, dto);
+  }
+
   // -----------------------------
   // ASSIGN ROLE
   // -----------------------------
@@ -89,10 +118,10 @@ export class AuthController {
   }
 
   // -----------------------------
-  // GET CURRENT USER
+  // CURRENT USER
   // -----------------------------
-  @UseGuards(SessionAuthGuard)
   @Get('me')
+  @UseGuards(SessionAuthGuard)
   me(@Request() req: any) {
     return {
       success: true,

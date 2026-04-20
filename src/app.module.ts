@@ -16,6 +16,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
+import { SessionAuthGuard } from './modules/auth/guard/session.guard';
+import { APP_GUARD } from '@nestjs/core/constants';
 
 @Module({
   imports: [
@@ -38,6 +40,6 @@ import { ProgramTemplatesModule } from './modules/program-templates/program-temp
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: SessionAuthGuard }],
 })
 export class AppModule {}

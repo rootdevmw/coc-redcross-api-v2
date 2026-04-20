@@ -8,7 +8,18 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
-    const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
+    const rawUrl = process.env.DATABASE_URL;
+    if (!rawUrl)
+      throw new Error('DATABASE_URL environment variable is not set');
+
+    const url = new URL(rawUrl);
+    const adapter = new PrismaMariaDb({
+      host: url.hostname,
+      port: Number(url.port) || 3306,
+      user: url.username,
+      password: url.password,
+      database: url.pathname.slice(1),
+    });
 
     super({
       adapter,

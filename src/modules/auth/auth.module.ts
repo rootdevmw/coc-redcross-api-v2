@@ -6,7 +6,6 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { JwtStrategy } from './strategies/jwt-strategy';
 import { RolesGuard } from './guard/roles.guard';
 
 @Module({
@@ -16,7 +15,6 @@ import { RolesGuard } from './guard/roles.guard';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET')!, //  assert exists
         signOptions: {
           expiresIn: config.get<string>('JWT_EXPIRES_IN')! as any, //  cast
         },
@@ -26,7 +24,7 @@ import { RolesGuard } from './guard/roles.guard';
 
   controllers: [AuthController],
 
-  providers: [AuthService, PrismaService, JwtStrategy, RolesGuard],
+  providers: [AuthService, PrismaService, RolesGuard],
 
   exports: [AuthService, JwtModule],
 })

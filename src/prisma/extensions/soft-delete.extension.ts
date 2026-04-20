@@ -1,5 +1,4 @@
-import { Prisma } from 'src/generated/prisma/client';
-import { PrismaClient } from 'src/generated/prisma/client';
+import { Prisma, PrismaClient } from '../../generated/prisma/client';
 
 const SOFT_DELETE_MODELS = new Set([
   'User',

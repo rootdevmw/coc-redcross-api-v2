@@ -16,4 +16,8 @@ export class QueryProgramDto {
   @IsOptional()
   @IsString()
   date?: string;
+
+  @IsOptional()
+  @IsString()
+  type?: string;
 }

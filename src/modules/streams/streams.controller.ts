@@ -22,6 +22,11 @@ export class StreamsController {
     return this.service.createPlatform(dto);
   }
 
+  @Patch('platforms/:id')
+  updatePlatform(@Param('id') id: string, @Body() dto: any) {
+    return this.service.updatePlatform({ ...dto, id });
+  }
+
   @Get('platforms')
   getPlatforms() {
     return this.service.getPlatforms();

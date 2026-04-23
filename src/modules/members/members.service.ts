@@ -18,10 +18,12 @@ export class MembersService {
       data: {
         firstName: dto.firstName,
         lastName: dto.lastName,
+        prefix: dto.prefix,
         phone: dto.phone,
         status: dto.status,
         location: dto.location,
         homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
+        baptized: dto.isBaptized,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : null,
       },
     });
@@ -42,9 +44,15 @@ export class MembersService {
 
     const where: any = {};
 
-    if (query.status) where.status = query.status;
+    if (query.status && query.status !== '') {
+      where.status = query.status;
+    }
 
     if (query.homecellId) where.homecellId = query.homecellId;
+
+    if (query.prefix && query.prefix !== '') {
+      where.prefix = query.prefix;
+    }
 
     if (query.search) {
       where.OR = [
@@ -117,8 +125,10 @@ export class MembersService {
       data: {
         firstName: dto.firstName,
         lastName: dto.lastName,
+        prefix: dto.prefix,
         phone: dto.phone,
         status: dto.status,
+        baptized: dto.isBaptized,
         location: dto.location,
         homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : undefined,

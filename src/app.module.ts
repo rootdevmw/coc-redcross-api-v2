@@ -19,6 +19,7 @@ import { ProgramTemplatesModule } from './modules/program-templates/program-temp
 import { SessionAuthGuard } from './modules/auth/guard/session.guard';
 import { APP_GUARD } from '@nestjs/core/constants';
 import { EmailModule } from './modules/email/email.module';
+import { AttentionModule } from './modules/attention/attention.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { EmailModule } from './modules/email/email.module';
     AuthModule,
     RolesModule,
     UsersModule,
+    AttentionModule,
     ProgramTemplatesModule,
     EmailModule,
     ConfigModule.forRoot({

@@ -251,6 +251,24 @@ export class StreamsService {
     };
   }
 
+  async updatePlatform(dto: any) {
+    this.logger.log(`Updating platform ${dto.id}`);
+
+    const platform = await this.prisma.platform.update({
+      where: { id: toBigIntOptional(dto.id) },
+      data: {
+        name: dto.name,
+        url: dto.url,
+      },
+    });
+
+    return {
+      success: true,
+      data: platform,
+      meta: {},
+    };
+  }
+
   // -----------------------------
   // GET PLATFORMS
   // -----------------------------

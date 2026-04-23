@@ -82,7 +82,10 @@ export const ModelName = {
   StreamPlatform: 'StreamPlatform',
   Newsletter: 'Newsletter',
   Session: 'Session',
-  PasswordResetToken: 'PasswordResetToken'
+  PasswordResetToken: 'PasswordResetToken',
+  PrayerRequest: 'PrayerRequest',
+  Visitor: 'Visitor',
+  AttentionAction: 'AttentionAction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -132,10 +135,12 @@ export type UserRoleScalarFieldEnum = (typeof UserRoleScalarFieldEnum)[keyof typ
 export const MemberScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  prefix: 'prefix',
   firstName: 'firstName',
   lastName: 'lastName',
   phone: 'phone',
   status: 'status',
+  baptized: 'baptized',
   baptismDate: 'baptismDate',
   location: 'location',
   createdAt: 'createdAt',
@@ -457,6 +462,56 @@ export const PasswordResetTokenScalarFieldEnum = {
 export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
+export const PrayerRequestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  requestType: 'requestType',
+  prayerFor: 'prayerFor',
+  request: 'request',
+  isUrgent: 'isUrgent',
+  shareWithElders: 'shareWithElders',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status'
+} as const
+
+export type PrayerRequestScalarFieldEnum = (typeof PrayerRequestScalarFieldEnum)[keyof typeof PrayerRequestScalarFieldEnum]
+
+
+export const VisitorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  visitDate: 'visitDate',
+  groupSize: 'groupSize',
+  isChurchOfChrist: 'isChurchOfChrist',
+  language: 'language',
+  hasSpecialNeeds: 'hasSpecialNeeds',
+  specialNeedsDetails: 'specialNeedsDetails',
+  message: 'message',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status'
+} as const
+
+export type VisitorScalarFieldEnum = (typeof VisitorScalarFieldEnum)[keyof typeof VisitorScalarFieldEnum]
+
+
+export const AttentionActionScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  referenceId: 'referenceId',
+  action: 'action',
+  performedById: 'performedById',
+  createdAt: 'createdAt'
+} as const
+
+export type AttentionActionScalarFieldEnum = (typeof AttentionActionScalarFieldEnum)[keyof typeof AttentionActionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -489,6 +544,7 @@ export type RoleOrderByRelevanceFieldEnum = (typeof RoleOrderByRelevanceFieldEnu
 
 
 export const MemberOrderByRelevanceFieldEnum = {
+  prefix: 'prefix',
   firstName: 'firstName',
   lastName: 'lastName',
   phone: 'phone',
@@ -660,10 +716,43 @@ export type SessionOrderByRelevanceFieldEnum = (typeof SessionOrderByRelevanceFi
 
 
 export const PasswordResetTokenOrderByRelevanceFieldEnum = {
-  id: 'id',
   email: 'email',
   token: 'token'
 } as const
 
 export type PasswordResetTokenOrderByRelevanceFieldEnum = (typeof PasswordResetTokenOrderByRelevanceFieldEnum)[keyof typeof PasswordResetTokenOrderByRelevanceFieldEnum]
+
+
+export const PrayerRequestOrderByRelevanceFieldEnum = {
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  requestType: 'requestType',
+  prayerFor: 'prayerFor',
+  request: 'request'
+} as const
+
+export type PrayerRequestOrderByRelevanceFieldEnum = (typeof PrayerRequestOrderByRelevanceFieldEnum)[keyof typeof PrayerRequestOrderByRelevanceFieldEnum]
+
+
+export const VisitorOrderByRelevanceFieldEnum = {
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  groupSize: 'groupSize',
+  isChurchOfChrist: 'isChurchOfChrist',
+  language: 'language',
+  specialNeedsDetails: 'specialNeedsDetails',
+  message: 'message'
+} as const
+
+export type VisitorOrderByRelevanceFieldEnum = (typeof VisitorOrderByRelevanceFieldEnum)[keyof typeof VisitorOrderByRelevanceFieldEnum]
+
+
+export const AttentionActionOrderByRelevanceFieldEnum = {
+  referenceId: 'referenceId',
+  action: 'action'
+} as const
+
+export type AttentionActionOrderByRelevanceFieldEnum = (typeof AttentionActionOrderByRelevanceFieldEnum)[keyof typeof AttentionActionOrderByRelevanceFieldEnum]
 

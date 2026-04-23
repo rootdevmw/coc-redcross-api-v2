@@ -626,10 +626,6 @@ export type EventUncheckedUpdateManyWithoutTypeNestedInput = {
   deleteMany?: Prisma.EventScalarWhereInput | Prisma.EventScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type EventCreateNestedOneWithoutMinistriesInput = {
   create?: Prisma.XOR<Prisma.EventCreateWithoutMinistriesInput, Prisma.EventUncheckedCreateWithoutMinistriesInput>
   connectOrCreate?: Prisma.EventCreateOrConnectWithoutMinistriesInput

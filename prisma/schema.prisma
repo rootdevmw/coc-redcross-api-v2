@@ -51,14 +51,19 @@ model UserRole {
 model Member {
   id           BigInt   @id @default(autoincrement())
   userId       BigInt?  @unique
+
+  prefix       String
   firstName    String
   lastName     String
   phone        String?
   status       String
+
+  baptized     Boolean  @default(false)
   baptismDate  DateTime?
+
   location     String?
   createdAt    DateTime @default(now())
-  deletedAt DateTime?
+  deletedAt    DateTime?
   homecellId   BigInt?
 
   user   User? @relation("UserMember", fields: [userId], references: [id])
@@ -75,6 +80,7 @@ model Member {
 
   @@index([deletedAt])
   programTemplateItems ProgramTemplateItem[]
+  attentionActions AttentionAction[]
 }
 
 model MemberMinistry {
@@ -455,7 +461,7 @@ model Newsletter {
 }
 
 model Session {
-  id        String   @id 
+  id          String   @id 
   userId    BigInt
   createdAt DateTime @default(now())
   expiresAt DateTime
@@ -466,9 +472,87 @@ model Session {
 }
 
 model PasswordResetToken {
-  id        String   @id @default(uuid())
+  id          BigInt   @id @default(autoincrement())
   email     String
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model PrayerRequest {
+  id          BigInt   @id @default(autoincrement())
+
+  name              String?
+  phone             String?
+  email             String?
+
+  requestType       String?
+  prayerFor         String
+  request           String
+
+  isUrgent          Boolean  @default(false)
+  shareWithElders   Boolean  @default(true)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  status            PrayerRequestStatus @default(PENDING)
+}
+
+enum PrayerRequestStatus {
+  PENDING
+  REVIEWED
+  PRAYED_FOR
+}
+
+model Visitor {
+  id          BigInt   @id @default(autoincrement())
+
+  name                 String
+  phone                String?
+  email                String?
+
+  visitDate            DateTime
+  groupSize            String
+
+  isChurchOfChrist     String?
+  language             String?
+
+  hasSpecialNeeds      Boolean  @default(false)
+  specialNeedsDetails  String?
+
+  message              String?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  status              VisitorStatus @default(PENDING)
+}
+
+enum VisitorStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+}
+
+model AttentionAction {
+  id          BigInt   @id @default(autoincrement())
+
+  type          AttentionType
+  referenceId   String
+
+  action        String   // "PRAYED_FOR" | "ACKNOWLEDGED"
+
+  performedById BigInt
+  performedBy   Member   @relation(fields: [performedById], references: [id])
+
+  createdAt     DateTime @default(now())
+
+  @@index([referenceId, type])
+  @@index([performedById])
+}
+
+enum AttentionType {
+  PRAYER_REQUEST
+  VISITOR
 }

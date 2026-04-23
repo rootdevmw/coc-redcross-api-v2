@@ -127,6 +127,7 @@ export class ContentService {
         orderBy: { createdAt: 'desc' },
         include: {
           author: true,
+          type:true,
           tags: {
             where: { tag: { deletedAt: null } },
             include: { tag: true },

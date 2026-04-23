@@ -20,12 +20,22 @@ export type PasswordResetTokenModel = runtime.Types.Result.DefaultSelection<Pris
 
 export type AggregatePasswordResetToken = {
   _count: PasswordResetTokenCountAggregateOutputType | null
+  _avg: PasswordResetTokenAvgAggregateOutputType | null
+  _sum: PasswordResetTokenSumAggregateOutputType | null
   _min: PasswordResetTokenMinAggregateOutputType | null
   _max: PasswordResetTokenMaxAggregateOutputType | null
 }
 
+export type PasswordResetTokenAvgAggregateOutputType = {
+  id: number | null
+}
+
+export type PasswordResetTokenSumAggregateOutputType = {
+  id: bigint | null
+}
+
 export type PasswordResetTokenMinAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   email: string | null
   token: string | null
   expiresAt: Date | null
@@ -33,7 +43,7 @@ export type PasswordResetTokenMinAggregateOutputType = {
 }
 
 export type PasswordResetTokenMaxAggregateOutputType = {
-  id: string | null
+  id: bigint | null
   email: string | null
   token: string | null
   expiresAt: Date | null
@@ -49,6 +59,14 @@ export type PasswordResetTokenCountAggregateOutputType = {
   _all: number
 }
 
+
+export type PasswordResetTokenAvgAggregateInputType = {
+  id?: true
+}
+
+export type PasswordResetTokenSumAggregateInputType = {
+  id?: true
+}
 
 export type PasswordResetTokenMinAggregateInputType = {
   id?: true
@@ -113,6 +131,18 @@ export type PasswordResetTokenAggregateArgs<ExtArgs extends runtime.Types.Extens
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: PasswordResetTokenAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: PasswordResetTokenSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: PasswordResetTokenMinAggregateInputType
@@ -143,17 +173,21 @@ export type PasswordResetTokenGroupByArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   _count?: PasswordResetTokenCountAggregateInputType | true
+  _avg?: PasswordResetTokenAvgAggregateInputType
+  _sum?: PasswordResetTokenSumAggregateInputType
   _min?: PasswordResetTokenMinAggregateInputType
   _max?: PasswordResetTokenMaxAggregateInputType
 }
 
 export type PasswordResetTokenGroupByOutputType = {
-  id: string
+  id: bigint
   email: string
   token: string
   expiresAt: Date
   createdAt: Date
   _count: PasswordResetTokenCountAggregateOutputType | null
+  _avg: PasswordResetTokenAvgAggregateOutputType | null
+  _sum: PasswordResetTokenSumAggregateOutputType | null
   _min: PasswordResetTokenMinAggregateOutputType | null
   _max: PasswordResetTokenMaxAggregateOutputType | null
 }
@@ -177,7 +211,7 @@ export type PasswordResetTokenWhereInput = {
   AND?: Prisma.PasswordResetTokenWhereInput | Prisma.PasswordResetTokenWhereInput[]
   OR?: Prisma.PasswordResetTokenWhereInput[]
   NOT?: Prisma.PasswordResetTokenWhereInput | Prisma.PasswordResetTokenWhereInput[]
-  id?: Prisma.StringFilter<"PasswordResetToken"> | string
+  id?: Prisma.BigIntFilter<"PasswordResetToken"> | bigint | number
   email?: Prisma.StringFilter<"PasswordResetToken"> | string
   token?: Prisma.StringFilter<"PasswordResetToken"> | string
   expiresAt?: Prisma.DateTimeFilter<"PasswordResetToken"> | Date | string
@@ -194,7 +228,7 @@ export type PasswordResetTokenOrderByWithRelationInput = {
 }
 
 export type PasswordResetTokenWhereUniqueInput = Prisma.AtLeast<{
-  id?: string
+  id?: bigint | number
   token?: string
   AND?: Prisma.PasswordResetTokenWhereInput | Prisma.PasswordResetTokenWhereInput[]
   OR?: Prisma.PasswordResetTokenWhereInput[]
@@ -211,15 +245,17 @@ export type PasswordResetTokenOrderByWithAggregationInput = {
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PasswordResetTokenCountOrderByAggregateInput
+  _avg?: Prisma.PasswordResetTokenAvgOrderByAggregateInput
   _max?: Prisma.PasswordResetTokenMaxOrderByAggregateInput
   _min?: Prisma.PasswordResetTokenMinOrderByAggregateInput
+  _sum?: Prisma.PasswordResetTokenSumOrderByAggregateInput
 }
 
 export type PasswordResetTokenScalarWhereWithAggregatesInput = {
   AND?: Prisma.PasswordResetTokenScalarWhereWithAggregatesInput | Prisma.PasswordResetTokenScalarWhereWithAggregatesInput[]
   OR?: Prisma.PasswordResetTokenScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PasswordResetTokenScalarWhereWithAggregatesInput | Prisma.PasswordResetTokenScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"PasswordResetToken"> | string
+  id?: Prisma.BigIntWithAggregatesFilter<"PasswordResetToken"> | bigint | number
   email?: Prisma.StringWithAggregatesFilter<"PasswordResetToken"> | string
   token?: Prisma.StringWithAggregatesFilter<"PasswordResetToken"> | string
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
@@ -227,7 +263,7 @@ export type PasswordResetTokenScalarWhereWithAggregatesInput = {
 }
 
 export type PasswordResetTokenCreateInput = {
-  id?: string
+  id?: bigint | number
   email: string
   token: string
   expiresAt: Date | string
@@ -235,7 +271,7 @@ export type PasswordResetTokenCreateInput = {
 }
 
 export type PasswordResetTokenUncheckedCreateInput = {
-  id?: string
+  id?: bigint | number
   email: string
   token: string
   expiresAt: Date | string
@@ -243,7 +279,7 @@ export type PasswordResetTokenUncheckedCreateInput = {
 }
 
 export type PasswordResetTokenUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   email?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -251,7 +287,7 @@ export type PasswordResetTokenUpdateInput = {
 }
 
 export type PasswordResetTokenUncheckedUpdateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   email?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -259,7 +295,7 @@ export type PasswordResetTokenUncheckedUpdateInput = {
 }
 
 export type PasswordResetTokenCreateManyInput = {
-  id?: string
+  id?: bigint | number
   email: string
   token: string
   expiresAt: Date | string
@@ -267,7 +303,7 @@ export type PasswordResetTokenCreateManyInput = {
 }
 
 export type PasswordResetTokenUpdateManyMutationInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   email?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -275,7 +311,7 @@ export type PasswordResetTokenUpdateManyMutationInput = {
 }
 
 export type PasswordResetTokenUncheckedUpdateManyInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   email?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -296,6 +332,10 @@ export type PasswordResetTokenCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type PasswordResetTokenAvgOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+}
+
 export type PasswordResetTokenMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
@@ -310,6 +350,10 @@ export type PasswordResetTokenMinOrderByAggregateInput = {
   token?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type PasswordResetTokenSumOrderByAggregateInput = {
+  id?: Prisma.SortOrder
 }
 
 
@@ -338,7 +382,7 @@ export type $PasswordResetTokenPayload<ExtArgs extends runtime.Types.Extensions.
   name: "PasswordResetToken"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    id: string
+    id: bigint
     email: string
     token: string
     expiresAt: Date
@@ -712,7 +756,7 @@ export interface Prisma__PasswordResetTokenClient<T, Null = never, ExtArgs exten
  * Fields of the PasswordResetToken model
  */
 export interface PasswordResetTokenFieldRefs {
-  readonly id: Prisma.FieldRef<"PasswordResetToken", 'String'>
+  readonly id: Prisma.FieldRef<"PasswordResetToken", 'BigInt'>
   readonly email: Prisma.FieldRef<"PasswordResetToken", 'String'>
   readonly token: Prisma.FieldRef<"PasswordResetToken", 'String'>
   readonly expiresAt: Prisma.FieldRef<"PasswordResetToken", 'DateTime'>

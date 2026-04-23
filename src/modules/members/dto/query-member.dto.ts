@@ -20,4 +20,8 @@ export class QueryMemberDto {
   @IsOptional()
   @IsString()
   homecellId?: string;
+
+  @IsOptional()
+  @IsString()
+  prefix?: string;
 }

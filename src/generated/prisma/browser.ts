@@ -177,3 +177,18 @@ export type Session = Prisma.SessionModel
  * 
  */
 export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
+ * Model PrayerRequest
+ * 
+ */
+export type PrayerRequest = Prisma.PrayerRequestModel
+/**
+ * Model Visitor
+ * 
+ */
+export type Visitor = Prisma.VisitorModel
+/**
+ * Model AttentionAction
+ * 
+ */
+export type AttentionAction = Prisma.AttentionActionModel

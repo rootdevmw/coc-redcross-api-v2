@@ -46,6 +46,7 @@ export class SessionAuthGuard implements CanActivate {
         user: {
           include: {
             roles: { include: { role: true } },
+            member: true,
           },
         },
       },
@@ -60,6 +61,12 @@ export class SessionAuthGuard implements CanActivate {
       id: session.user.id,
       email: session.user.email,
       roles: session.user.roles.map((r) => r.role.name),
+      member: {
+        id: session.user.member?.id,
+        firstName: session.user.member?.firstName,
+        lastName: session.user.member?.lastName,
+        prefix: session.user.member?.prefix,
+      },
     };
 
     return true;

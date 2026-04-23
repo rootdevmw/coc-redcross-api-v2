@@ -9,7 +9,27 @@
 * 🟢 You can import this file directly.
 */
 
+export const PrayerRequestStatus = {
+  PENDING: 'PENDING',
+  REVIEWED: 'REVIEWED',
+  PRAYED_FOR: 'PRAYED_FOR'
+} as const
+
+export type PrayerRequestStatus = (typeof PrayerRequestStatus)[keyof typeof PrayerRequestStatus]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const VisitorStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type VisitorStatus = (typeof VisitorStatus)[keyof typeof VisitorStatus]
+
+
+export const AttentionType = {
+  PRAYER_REQUEST: 'PRAYER_REQUEST',
+  VISITOR: 'VISITOR'
+} as const
+
+export type AttentionType = (typeof AttentionType)[keyof typeof AttentionType]

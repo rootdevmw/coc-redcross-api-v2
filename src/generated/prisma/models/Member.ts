@@ -41,10 +41,12 @@ export type MemberSumAggregateOutputType = {
 export type MemberMinAggregateOutputType = {
   id: bigint | null
   userId: bigint | null
+  prefix: string | null
   firstName: string | null
   lastName: string | null
   phone: string | null
   status: string | null
+  baptized: boolean | null
   baptismDate: Date | null
   location: string | null
   createdAt: Date | null
@@ -55,10 +57,12 @@ export type MemberMinAggregateOutputType = {
 export type MemberMaxAggregateOutputType = {
   id: bigint | null
   userId: bigint | null
+  prefix: string | null
   firstName: string | null
   lastName: string | null
   phone: string | null
   status: string | null
+  baptized: boolean | null
   baptismDate: Date | null
   location: string | null
   createdAt: Date | null
@@ -69,10 +73,12 @@ export type MemberMaxAggregateOutputType = {
 export type MemberCountAggregateOutputType = {
   id: number
   userId: number
+  prefix: number
   firstName: number
   lastName: number
   phone: number
   status: number
+  baptized: number
   baptismDate: number
   location: number
   createdAt: number
@@ -97,10 +103,12 @@ export type MemberSumAggregateInputType = {
 export type MemberMinAggregateInputType = {
   id?: true
   userId?: true
+  prefix?: true
   firstName?: true
   lastName?: true
   phone?: true
   status?: true
+  baptized?: true
   baptismDate?: true
   location?: true
   createdAt?: true
@@ -111,10 +119,12 @@ export type MemberMinAggregateInputType = {
 export type MemberMaxAggregateInputType = {
   id?: true
   userId?: true
+  prefix?: true
   firstName?: true
   lastName?: true
   phone?: true
   status?: true
+  baptized?: true
   baptismDate?: true
   location?: true
   createdAt?: true
@@ -125,10 +135,12 @@ export type MemberMaxAggregateInputType = {
 export type MemberCountAggregateInputType = {
   id?: true
   userId?: true
+  prefix?: true
   firstName?: true
   lastName?: true
   phone?: true
   status?: true
+  baptized?: true
   baptismDate?: true
   location?: true
   createdAt?: true
@@ -226,10 +238,12 @@ export type MemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 export type MemberGroupByOutputType = {
   id: bigint
   userId: bigint | null
+  prefix: string
   firstName: string
   lastName: string
   phone: string | null
   status: string
+  baptized: boolean
   baptismDate: Date | null
   location: string | null
   createdAt: Date
@@ -263,10 +277,12 @@ export type MemberWhereInput = {
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   id?: Prisma.BigIntFilter<"Member"> | bigint | number
   userId?: Prisma.BigIntNullableFilter<"Member"> | bigint | number | null
+  prefix?: Prisma.StringFilter<"Member"> | string
   firstName?: Prisma.StringFilter<"Member"> | string
   lastName?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   status?: Prisma.StringFilter<"Member"> | string
+  baptized?: Prisma.BoolFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableFilter<"Member"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
@@ -282,15 +298,18 @@ export type MemberWhereInput = {
   homecells?: Prisma.HomecellListRelationFilter
   overseeingMinistries?: Prisma.MinistryListRelationFilter
   programTemplateItems?: Prisma.ProgramTemplateItemListRelationFilter
+  attentionActions?: Prisma.AttentionActionListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  prefix?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -306,6 +325,7 @@ export type MemberOrderByWithRelationInput = {
   homecells?: Prisma.HomecellOrderByRelationAggregateInput
   overseeingMinistries?: Prisma.MinistryOrderByRelationAggregateInput
   programTemplateItems?: Prisma.ProgramTemplateItemOrderByRelationAggregateInput
+  attentionActions?: Prisma.AttentionActionOrderByRelationAggregateInput
   _relevance?: Prisma.MemberOrderByRelevanceInput
 }
 
@@ -315,10 +335,12 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   OR?: Prisma.MemberWhereInput[]
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
+  prefix?: Prisma.StringFilter<"Member"> | string
   firstName?: Prisma.StringFilter<"Member"> | string
   lastName?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   status?: Prisma.StringFilter<"Member"> | string
+  baptized?: Prisma.BoolFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableFilter<"Member"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
@@ -334,15 +356,18 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   homecells?: Prisma.HomecellListRelationFilter
   overseeingMinistries?: Prisma.MinistryListRelationFilter
   programTemplateItems?: Prisma.ProgramTemplateItemListRelationFilter
+  attentionActions?: Prisma.AttentionActionListRelationFilter
 }, "id" | "userId">
 
 export type MemberOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  prefix?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -361,10 +386,12 @@ export type MemberScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MemberScalarWhereWithAggregatesInput | Prisma.MemberScalarWhereWithAggregatesInput[]
   id?: Prisma.BigIntWithAggregatesFilter<"Member"> | bigint | number
   userId?: Prisma.BigIntNullableWithAggregatesFilter<"Member"> | bigint | number | null
+  prefix?: Prisma.StringWithAggregatesFilter<"Member"> | string
   firstName?: Prisma.StringWithAggregatesFilter<"Member"> | string
   lastName?: Prisma.StringWithAggregatesFilter<"Member"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"Member"> | string
+  baptized?: Prisma.BoolWithAggregatesFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Member"> | Date | string
@@ -374,10 +401,12 @@ export type MemberScalarWhereWithAggregatesInput = {
 
 export type MemberCreateInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -392,15 +421,18 @@ export type MemberCreateInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -414,14 +446,17 @@ export type MemberUncheckedCreateInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUpdateInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -436,15 +471,18 @@ export type MemberUpdateInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -458,15 +496,18 @@ export type MemberUncheckedUpdateInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberCreateManyInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -476,10 +517,12 @@ export type MemberCreateManyInput = {
 
 export type MemberUpdateManyMutationInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -489,10 +532,12 @@ export type MemberUpdateManyMutationInput = {
 export type MemberUncheckedUpdateManyInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -514,10 +559,12 @@ export type MemberOrderByRelevanceInput = {
 export type MemberCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrder
   location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -534,10 +581,12 @@ export type MemberAvgOrderByAggregateInput = {
 export type MemberMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrder
   location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -548,10 +597,12 @@ export type MemberMaxOrderByAggregateInput = {
 export type MemberMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  prefix?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrder
   location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -614,6 +665,10 @@ export type MemberUncheckedUpdateOneWithoutUserNestedInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type NullableBigIntFieldUpdateOperationsInput = {
@@ -792,12 +847,28 @@ export type MemberUpdateOneWithoutProgramTemplateItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutProgramTemplateItemsInput, Prisma.MemberUpdateWithoutProgramTemplateItemsInput>, Prisma.MemberUncheckedUpdateWithoutProgramTemplateItemsInput>
 }
 
+export type MemberCreateNestedOneWithoutAttentionActionsInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutAttentionActionsInput, Prisma.MemberUncheckedCreateWithoutAttentionActionsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutAttentionActionsInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneRequiredWithoutAttentionActionsNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutAttentionActionsInput, Prisma.MemberUncheckedCreateWithoutAttentionActionsInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutAttentionActionsInput
+  upsert?: Prisma.MemberUpsertWithoutAttentionActionsInput
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutAttentionActionsInput, Prisma.MemberUpdateWithoutAttentionActionsInput>, Prisma.MemberUncheckedUpdateWithoutAttentionActionsInput>
+}
+
 export type MemberCreateWithoutUserInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -811,14 +882,17 @@ export type MemberCreateWithoutUserInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutUserInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -832,6 +906,7 @@ export type MemberUncheckedCreateWithoutUserInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutUserInput = {
@@ -852,10 +927,12 @@ export type MemberUpdateToOneWithWhereWithoutUserInput = {
 
 export type MemberUpdateWithoutUserInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -869,14 +946,17 @@ export type MemberUpdateWithoutUserInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutUserInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -890,14 +970,17 @@ export type MemberUncheckedUpdateWithoutUserInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberCreateWithoutMinistriesInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -911,15 +994,18 @@ export type MemberCreateWithoutMinistriesInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutMinistriesInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -932,6 +1018,7 @@ export type MemberUncheckedCreateWithoutMinistriesInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutMinistriesInput = {
@@ -952,10 +1039,12 @@ export type MemberUpdateToOneWithWhereWithoutMinistriesInput = {
 
 export type MemberUpdateWithoutMinistriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -969,15 +1058,18 @@ export type MemberUpdateWithoutMinistriesInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutMinistriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -990,14 +1082,17 @@ export type MemberUncheckedUpdateWithoutMinistriesInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberCreateWithoutLeadingHomecellsInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1011,15 +1106,18 @@ export type MemberCreateWithoutLeadingHomecellsInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutLeadingHomecellsInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1032,6 +1130,7 @@ export type MemberUncheckedCreateWithoutLeadingHomecellsInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutLeadingHomecellsInput = {
@@ -1041,10 +1140,12 @@ export type MemberCreateOrConnectWithoutLeadingHomecellsInput = {
 
 export type MemberCreateWithoutHomecellsInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1058,15 +1159,18 @@ export type MemberCreateWithoutHomecellsInput = {
   leadingMinistries?: Prisma.MinistryCreateNestedManyWithoutLeaderInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutHomecellsInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1079,6 +1183,7 @@ export type MemberUncheckedCreateWithoutHomecellsInput = {
   leadingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutLeaderInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutHomecellsInput = {
@@ -1088,10 +1193,12 @@ export type MemberCreateOrConnectWithoutHomecellsInput = {
 
 export type MemberCreateWithoutHomecellInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1105,15 +1212,18 @@ export type MemberCreateWithoutHomecellInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutHomecellInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1126,6 +1236,7 @@ export type MemberUncheckedCreateWithoutHomecellInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutHomecellInput = {
@@ -1151,10 +1262,12 @@ export type MemberUpdateToOneWithWhereWithoutLeadingHomecellsInput = {
 
 export type MemberUpdateWithoutLeadingHomecellsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1168,15 +1281,18 @@ export type MemberUpdateWithoutLeadingHomecellsInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutLeadingHomecellsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1189,6 +1305,7 @@ export type MemberUncheckedUpdateWithoutLeadingHomecellsInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUpsertWithoutHomecellsInput = {
@@ -1204,10 +1321,12 @@ export type MemberUpdateToOneWithWhereWithoutHomecellsInput = {
 
 export type MemberUpdateWithoutHomecellsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1221,15 +1340,18 @@ export type MemberUpdateWithoutHomecellsInput = {
   leadingMinistries?: Prisma.MinistryUpdateManyWithoutLeaderNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutHomecellsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1242,6 +1364,7 @@ export type MemberUncheckedUpdateWithoutHomecellsInput = {
   leadingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutLeaderNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUpsertWithWhereUniqueWithoutHomecellInput = {
@@ -1266,10 +1389,12 @@ export type MemberScalarWhereInput = {
   NOT?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
   id?: Prisma.BigIntFilter<"Member"> | bigint | number
   userId?: Prisma.BigIntNullableFilter<"Member"> | bigint | number | null
+  prefix?: Prisma.StringFilter<"Member"> | string
   firstName?: Prisma.StringFilter<"Member"> | string
   lastName?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   status?: Prisma.StringFilter<"Member"> | string
+  baptized?: Prisma.BoolFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableFilter<"Member"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
@@ -1279,10 +1404,12 @@ export type MemberScalarWhereInput = {
 
 export type MemberCreateWithoutLeadingMinistriesInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1296,15 +1423,18 @@ export type MemberCreateWithoutLeadingMinistriesInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutLeadingMinistriesInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1317,6 +1447,7 @@ export type MemberUncheckedCreateWithoutLeadingMinistriesInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutLeadingMinistriesInput = {
@@ -1326,10 +1457,12 @@ export type MemberCreateOrConnectWithoutLeadingMinistriesInput = {
 
 export type MemberCreateWithoutOverseeingMinistriesInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1343,15 +1476,18 @@ export type MemberCreateWithoutOverseeingMinistriesInput = {
   leadingMinistries?: Prisma.MinistryCreateNestedManyWithoutLeaderInput
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutOverseeingMinistriesInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1364,6 +1500,7 @@ export type MemberUncheckedCreateWithoutOverseeingMinistriesInput = {
   leadingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutLeaderInput
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutOverseeingMinistriesInput = {
@@ -1384,10 +1521,12 @@ export type MemberUpdateToOneWithWhereWithoutLeadingMinistriesInput = {
 
 export type MemberUpdateWithoutLeadingMinistriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1401,15 +1540,18 @@ export type MemberUpdateWithoutLeadingMinistriesInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutLeadingMinistriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1422,6 +1564,7 @@ export type MemberUncheckedUpdateWithoutLeadingMinistriesInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUpsertWithoutOverseeingMinistriesInput = {
@@ -1437,10 +1580,12 @@ export type MemberUpdateToOneWithWhereWithoutOverseeingMinistriesInput = {
 
 export type MemberUpdateWithoutOverseeingMinistriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1454,15 +1599,18 @@ export type MemberUpdateWithoutOverseeingMinistriesInput = {
   leadingMinistries?: Prisma.MinistryUpdateManyWithoutLeaderNestedInput
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOverseeingMinistriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1475,14 +1623,17 @@ export type MemberUncheckedUpdateWithoutOverseeingMinistriesInput = {
   leadingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutLeaderNestedInput
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberCreateWithoutContentsInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1496,15 +1647,18 @@ export type MemberCreateWithoutContentsInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutContentsInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1517,6 +1671,7 @@ export type MemberUncheckedCreateWithoutContentsInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutContentsInput = {
@@ -1537,10 +1692,12 @@ export type MemberUpdateToOneWithWhereWithoutContentsInput = {
 
 export type MemberUpdateWithoutContentsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1554,15 +1711,18 @@ export type MemberUpdateWithoutContentsInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutContentsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1575,14 +1735,17 @@ export type MemberUncheckedUpdateWithoutContentsInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberCreateWithoutProgramItemsInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1596,15 +1759,18 @@ export type MemberCreateWithoutProgramItemsInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutProgramItemsInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1617,6 +1783,7 @@ export type MemberUncheckedCreateWithoutProgramItemsInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutProgramItemsInput = {
@@ -1637,10 +1804,12 @@ export type MemberUpdateToOneWithWhereWithoutProgramItemsInput = {
 
 export type MemberUpdateWithoutProgramItemsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1654,15 +1823,18 @@ export type MemberUpdateWithoutProgramItemsInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutProgramItemsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1675,14 +1847,17 @@ export type MemberUncheckedUpdateWithoutProgramItemsInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberCreateWithoutProgramTemplateItemsInput = {
   id?: bigint | number
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1696,15 +1871,18 @@ export type MemberCreateWithoutProgramTemplateItemsInput = {
   leadingMinistries?: Prisma.MinistryCreateNestedManyWithoutLeaderInput
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberUncheckedCreateWithoutProgramTemplateItemsInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1717,6 +1895,7 @@ export type MemberUncheckedCreateWithoutProgramTemplateItemsInput = {
   leadingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutLeaderInput
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type MemberCreateOrConnectWithoutProgramTemplateItemsInput = {
@@ -1737,10 +1916,12 @@ export type MemberUpdateToOneWithWhereWithoutProgramTemplateItemsInput = {
 
 export type MemberUpdateWithoutProgramTemplateItemsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1754,15 +1935,18 @@ export type MemberUpdateWithoutProgramTemplateItemsInput = {
   leadingMinistries?: Prisma.MinistryUpdateManyWithoutLeaderNestedInput
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutProgramTemplateItemsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1775,15 +1959,130 @@ export type MemberUncheckedUpdateWithoutProgramTemplateItemsInput = {
   leadingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutLeaderNestedInput
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+}
+
+export type MemberCreateWithoutAttentionActionsInput = {
+  id?: bigint | number
+  prefix: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  status: string
+  baptized?: boolean
+  baptismDate?: Date | string | null
+  location?: string | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  user?: Prisma.UserCreateNestedOneWithoutMemberInput
+  ministries?: Prisma.MemberMinistryCreateNestedManyWithoutMemberInput
+  programItems?: Prisma.ProgramItemCreateNestedManyWithoutResponsibleInput
+  contents?: Prisma.ContentCreateNestedManyWithoutAuthorInput
+  homecell?: Prisma.HomecellCreateNestedOneWithoutMembersInput
+  leadingHomecells?: Prisma.HomecellCreateNestedManyWithoutLeaderInput
+  leadingMinistries?: Prisma.MinistryCreateNestedManyWithoutLeaderInput
+  homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
+  overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
+  programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+}
+
+export type MemberUncheckedCreateWithoutAttentionActionsInput = {
+  id?: bigint | number
+  userId?: bigint | number | null
+  prefix: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  status: string
+  baptized?: boolean
+  baptismDate?: Date | string | null
+  location?: string | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  homecellId?: bigint | number | null
+  ministries?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMemberInput
+  programItems?: Prisma.ProgramItemUncheckedCreateNestedManyWithoutResponsibleInput
+  contents?: Prisma.ContentUncheckedCreateNestedManyWithoutAuthorInput
+  leadingHomecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutLeaderInput
+  leadingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutLeaderInput
+  homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
+  overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
+  programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+}
+
+export type MemberCreateOrConnectWithoutAttentionActionsInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutAttentionActionsInput, Prisma.MemberUncheckedCreateWithoutAttentionActionsInput>
+}
+
+export type MemberUpsertWithoutAttentionActionsInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutAttentionActionsInput, Prisma.MemberUncheckedUpdateWithoutAttentionActionsInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutAttentionActionsInput, Prisma.MemberUncheckedCreateWithoutAttentionActionsInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutAttentionActionsInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutAttentionActionsInput, Prisma.MemberUncheckedUpdateWithoutAttentionActionsInput>
+}
+
+export type MemberUpdateWithoutAttentionActionsInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneWithoutMemberNestedInput
+  ministries?: Prisma.MemberMinistryUpdateManyWithoutMemberNestedInput
+  programItems?: Prisma.ProgramItemUpdateManyWithoutResponsibleNestedInput
+  contents?: Prisma.ContentUpdateManyWithoutAuthorNestedInput
+  homecell?: Prisma.HomecellUpdateOneWithoutMembersNestedInput
+  leadingHomecells?: Prisma.HomecellUpdateManyWithoutLeaderNestedInput
+  leadingMinistries?: Prisma.MinistryUpdateManyWithoutLeaderNestedInput
+  homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
+  overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
+  programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutAttentionActionsInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ministries?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMemberNestedInput
+  programItems?: Prisma.ProgramItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  contents?: Prisma.ContentUncheckedUpdateManyWithoutAuthorNestedInput
+  leadingHomecells?: Prisma.HomecellUncheckedUpdateManyWithoutLeaderNestedInput
+  leadingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutLeaderNestedInput
+  homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
+  overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
+  programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
 }
 
 export type MemberCreateManyHomecellInput = {
   id?: bigint | number
   userId?: bigint | number | null
+  prefix: string
   firstName: string
   lastName: string
   phone?: string | null
   status: string
+  baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
   createdAt?: Date | string
@@ -1792,10 +2091,12 @@ export type MemberCreateManyHomecellInput = {
 
 export type MemberUpdateWithoutHomecellInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1809,15 +2110,18 @@ export type MemberUpdateWithoutHomecellInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutHomecellInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1830,15 +2134,18 @@ export type MemberUncheckedUpdateWithoutHomecellInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type MemberUncheckedUpdateManyWithoutHomecellInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1859,6 +2166,7 @@ export type MemberCountOutputType = {
   homecells: number
   overseeingMinistries: number
   programTemplateItems: number
+  attentionActions: number
 }
 
 export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1870,6 +2178,7 @@ export type MemberCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   homecells?: boolean | MemberCountOutputTypeCountHomecellsArgs
   overseeingMinistries?: boolean | MemberCountOutputTypeCountOverseeingMinistriesArgs
   programTemplateItems?: boolean | MemberCountOutputTypeCountProgramTemplateItemsArgs
+  attentionActions?: boolean | MemberCountOutputTypeCountAttentionActionsArgs
 }
 
 /**
@@ -1938,14 +2247,23 @@ export type MemberCountOutputTypeCountProgramTemplateItemsArgs<ExtArgs extends r
   where?: Prisma.ProgramTemplateItemWhereInput
 }
 
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountAttentionActionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttentionActionWhereInput
+}
+
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  prefix?: boolean
   firstName?: boolean
   lastName?: boolean
   phone?: boolean
   status?: boolean
+  baptized?: boolean
   baptismDate?: boolean
   location?: boolean
   createdAt?: boolean
@@ -1961,6 +2279,7 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   homecells?: boolean | Prisma.Member$homecellsArgs<ExtArgs>
   overseeingMinistries?: boolean | Prisma.Member$overseeingMinistriesArgs<ExtArgs>
   programTemplateItems?: boolean | Prisma.Member$programTemplateItemsArgs<ExtArgs>
+  attentionActions?: boolean | Prisma.Member$attentionActionsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
@@ -1969,10 +2288,12 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 export type MemberSelectScalar = {
   id?: boolean
   userId?: boolean
+  prefix?: boolean
   firstName?: boolean
   lastName?: boolean
   phone?: boolean
   status?: boolean
+  baptized?: boolean
   baptismDate?: boolean
   location?: boolean
   createdAt?: boolean
@@ -1980,7 +2301,7 @@ export type MemberSelectScalar = {
   homecellId?: boolean
 }
 
-export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "phone" | "status" | "baptismDate" | "location" | "createdAt" | "deletedAt" | "homecellId", ExtArgs["result"]["member"]>
+export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "prefix" | "firstName" | "lastName" | "phone" | "status" | "baptized" | "baptismDate" | "location" | "createdAt" | "deletedAt" | "homecellId", ExtArgs["result"]["member"]>
 export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
   ministries?: boolean | Prisma.Member$ministriesArgs<ExtArgs>
@@ -1992,6 +2313,7 @@ export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   homecells?: boolean | Prisma.Member$homecellsArgs<ExtArgs>
   overseeingMinistries?: boolean | Prisma.Member$overseeingMinistriesArgs<ExtArgs>
   programTemplateItems?: boolean | Prisma.Member$programTemplateItemsArgs<ExtArgs>
+  attentionActions?: boolean | Prisma.Member$attentionActionsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -2008,14 +2330,17 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     homecells: Prisma.$HomecellPayload<ExtArgs>[]
     overseeingMinistries: Prisma.$MinistryPayload<ExtArgs>[]
     programTemplateItems: Prisma.$ProgramTemplateItemPayload<ExtArgs>[]
+    attentionActions: Prisma.$AttentionActionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: bigint
     userId: bigint | null
+    prefix: string
     firstName: string
     lastName: string
     phone: string | null
     status: string
+    baptized: boolean
     baptismDate: Date | null
     location: string | null
     createdAt: Date
@@ -2371,6 +2696,7 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
   homecells<T extends Prisma.Member$homecellsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$homecellsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HomecellPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   overseeingMinistries<T extends Prisma.Member$overseeingMinistriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$overseeingMinistriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MinistryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   programTemplateItems<T extends Prisma.Member$programTemplateItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$programTemplateItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramTemplateItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attentionActions<T extends Prisma.Member$attentionActionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$attentionActionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttentionActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2402,10 +2728,12 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
 export interface MemberFieldRefs {
   readonly id: Prisma.FieldRef<"Member", 'BigInt'>
   readonly userId: Prisma.FieldRef<"Member", 'BigInt'>
+  readonly prefix: Prisma.FieldRef<"Member", 'String'>
   readonly firstName: Prisma.FieldRef<"Member", 'String'>
   readonly lastName: Prisma.FieldRef<"Member", 'String'>
   readonly phone: Prisma.FieldRef<"Member", 'String'>
   readonly status: Prisma.FieldRef<"Member", 'String'>
+  readonly baptized: Prisma.FieldRef<"Member", 'Boolean'>
   readonly baptismDate: Prisma.FieldRef<"Member", 'DateTime'>
   readonly location: Prisma.FieldRef<"Member", 'String'>
   readonly createdAt: Prisma.FieldRef<"Member", 'DateTime'>
@@ -2986,6 +3314,30 @@ export type Member$programTemplateItemsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.ProgramTemplateItemScalarFieldEnum | Prisma.ProgramTemplateItemScalarFieldEnum[]
+}
+
+/**
+ * Member.attentionActions
+ */
+export type Member$attentionActionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttentionAction
+   */
+  select?: Prisma.AttentionActionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttentionAction
+   */
+  omit?: Prisma.AttentionActionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttentionActionInclude<ExtArgs> | null
+  where?: Prisma.AttentionActionWhereInput
+  orderBy?: Prisma.AttentionActionOrderByWithRelationInput | Prisma.AttentionActionOrderByWithRelationInput[]
+  cursor?: Prisma.AttentionActionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttentionActionScalarFieldEnum | Prisma.AttentionActionScalarFieldEnum[]
 }
 
 /**

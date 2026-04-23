@@ -113,6 +113,9 @@ export class ProgramsService {
     if (query.homecellId) {
       where.homecellId = query.homecellId;
     }
+    if (query.typeId) {
+      where.typeId = query.typeId;
+    }
 
     if (query.date) {
       const start = new Date(query.date);

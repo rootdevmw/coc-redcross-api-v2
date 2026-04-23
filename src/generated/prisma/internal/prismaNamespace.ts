@@ -415,7 +415,10 @@ export const ModelName = {
   StreamPlatform: 'StreamPlatform',
   Newsletter: 'Newsletter',
   Session: 'Session',
-  PasswordResetToken: 'PasswordResetToken'
+  PasswordResetToken: 'PasswordResetToken',
+  PrayerRequest: 'PrayerRequest',
+  Visitor: 'Visitor',
+  AttentionAction: 'AttentionAction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -431,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "member" | "memberMinistry" | "homecell" | "ministry" | "contentType" | "content" | "media" | "contentMedia" | "eventMedia" | "tag" | "contentTag" | "series" | "scriptureRef" | "announcement" | "announcementTarget" | "eventType" | "event" | "eventMinistry" | "programType" | "program" | "programItem" | "programTemplate" | "programTemplateItem" | "stream" | "platform" | "streamPlatform" | "newsletter" | "session" | "passwordResetToken"
+    modelProps: "user" | "role" | "userRole" | "member" | "memberMinistry" | "homecell" | "ministry" | "contentType" | "content" | "media" | "contentMedia" | "eventMedia" | "tag" | "contentTag" | "series" | "scriptureRef" | "announcement" | "announcementTarget" | "eventType" | "event" | "eventMinistry" | "programType" | "program" | "programItem" | "programTemplate" | "programTemplateItem" | "stream" | "platform" | "streamPlatform" | "newsletter" | "session" | "passwordResetToken" | "prayerRequest" | "visitor" | "attentionAction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2547,6 +2550,204 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PrayerRequest: {
+      payload: Prisma.$PrayerRequestPayload<ExtArgs>
+      fields: Prisma.PrayerRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PrayerRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PrayerRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.PrayerRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PrayerRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>
+        }
+        findMany: {
+          args: Prisma.PrayerRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>[]
+        }
+        create: {
+          args: Prisma.PrayerRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>
+        }
+        createMany: {
+          args: Prisma.PrayerRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.PrayerRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>
+        }
+        update: {
+          args: Prisma.PrayerRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.PrayerRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PrayerRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.PrayerRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.PrayerRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePrayerRequest>
+        }
+        groupBy: {
+          args: Prisma.PrayerRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrayerRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PrayerRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrayerRequestCountAggregateOutputType> | number
+        }
+      }
+    }
+    Visitor: {
+      payload: Prisma.$VisitorPayload<ExtArgs>
+      fields: Prisma.VisitorFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.VisitorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.VisitorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+        }
+        findFirst: {
+          args: Prisma.VisitorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.VisitorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+        }
+        findMany: {
+          args: Prisma.VisitorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>[]
+        }
+        create: {
+          args: Prisma.VisitorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+        }
+        createMany: {
+          args: Prisma.VisitorCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.VisitorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+        }
+        update: {
+          args: Prisma.VisitorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+        }
+        deleteMany: {
+          args: Prisma.VisitorDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.VisitorUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.VisitorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VisitorPayload>
+        }
+        aggregate: {
+          args: Prisma.VisitorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVisitor>
+        }
+        groupBy: {
+          args: Prisma.VisitorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VisitorGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.VisitorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VisitorCountAggregateOutputType> | number
+        }
+      }
+    }
+    AttentionAction: {
+      payload: Prisma.$AttentionActionPayload<ExtArgs>
+      fields: Prisma.AttentionActionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AttentionActionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AttentionActionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>
+        }
+        findFirst: {
+          args: Prisma.AttentionActionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AttentionActionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>
+        }
+        findMany: {
+          args: Prisma.AttentionActionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>[]
+        }
+        create: {
+          args: Prisma.AttentionActionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>
+        }
+        createMany: {
+          args: Prisma.AttentionActionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.AttentionActionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>
+        }
+        update: {
+          args: Prisma.AttentionActionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>
+        }
+        deleteMany: {
+          args: Prisma.AttentionActionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AttentionActionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.AttentionActionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttentionActionPayload>
+        }
+        aggregate: {
+          args: Prisma.AttentionActionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAttentionAction>
+        }
+        groupBy: {
+          args: Prisma.AttentionActionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttentionActionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AttentionActionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttentionActionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2617,10 +2818,12 @@ export type UserRoleScalarFieldEnum = (typeof UserRoleScalarFieldEnum)[keyof typ
 export const MemberScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  prefix: 'prefix',
   firstName: 'firstName',
   lastName: 'lastName',
   phone: 'phone',
   status: 'status',
+  baptized: 'baptized',
   baptismDate: 'baptismDate',
   location: 'location',
   createdAt: 'createdAt',
@@ -2942,6 +3145,56 @@ export const PasswordResetTokenScalarFieldEnum = {
 export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
+export const PrayerRequestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  requestType: 'requestType',
+  prayerFor: 'prayerFor',
+  request: 'request',
+  isUrgent: 'isUrgent',
+  shareWithElders: 'shareWithElders',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status'
+} as const
+
+export type PrayerRequestScalarFieldEnum = (typeof PrayerRequestScalarFieldEnum)[keyof typeof PrayerRequestScalarFieldEnum]
+
+
+export const VisitorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  visitDate: 'visitDate',
+  groupSize: 'groupSize',
+  isChurchOfChrist: 'isChurchOfChrist',
+  language: 'language',
+  hasSpecialNeeds: 'hasSpecialNeeds',
+  specialNeedsDetails: 'specialNeedsDetails',
+  message: 'message',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  status: 'status'
+} as const
+
+export type VisitorScalarFieldEnum = (typeof VisitorScalarFieldEnum)[keyof typeof VisitorScalarFieldEnum]
+
+
+export const AttentionActionScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  referenceId: 'referenceId',
+  action: 'action',
+  performedById: 'performedById',
+  createdAt: 'createdAt'
+} as const
+
+export type AttentionActionScalarFieldEnum = (typeof AttentionActionScalarFieldEnum)[keyof typeof AttentionActionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2974,6 +3227,7 @@ export type RoleOrderByRelevanceFieldEnum = (typeof RoleOrderByRelevanceFieldEnu
 
 
 export const MemberOrderByRelevanceFieldEnum = {
+  prefix: 'prefix',
   firstName: 'firstName',
   lastName: 'lastName',
   phone: 'phone',
@@ -3145,12 +3399,45 @@ export type SessionOrderByRelevanceFieldEnum = (typeof SessionOrderByRelevanceFi
 
 
 export const PasswordResetTokenOrderByRelevanceFieldEnum = {
-  id: 'id',
   email: 'email',
   token: 'token'
 } as const
 
 export type PasswordResetTokenOrderByRelevanceFieldEnum = (typeof PasswordResetTokenOrderByRelevanceFieldEnum)[keyof typeof PasswordResetTokenOrderByRelevanceFieldEnum]
+
+
+export const PrayerRequestOrderByRelevanceFieldEnum = {
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  requestType: 'requestType',
+  prayerFor: 'prayerFor',
+  request: 'request'
+} as const
+
+export type PrayerRequestOrderByRelevanceFieldEnum = (typeof PrayerRequestOrderByRelevanceFieldEnum)[keyof typeof PrayerRequestOrderByRelevanceFieldEnum]
+
+
+export const VisitorOrderByRelevanceFieldEnum = {
+  name: 'name',
+  phone: 'phone',
+  email: 'email',
+  groupSize: 'groupSize',
+  isChurchOfChrist: 'isChurchOfChrist',
+  language: 'language',
+  specialNeedsDetails: 'specialNeedsDetails',
+  message: 'message'
+} as const
+
+export type VisitorOrderByRelevanceFieldEnum = (typeof VisitorOrderByRelevanceFieldEnum)[keyof typeof VisitorOrderByRelevanceFieldEnum]
+
+
+export const AttentionActionOrderByRelevanceFieldEnum = {
+  referenceId: 'referenceId',
+  action: 'action'
+} as const
+
+export type AttentionActionOrderByRelevanceFieldEnum = (typeof AttentionActionOrderByRelevanceFieldEnum)[keyof typeof AttentionActionOrderByRelevanceFieldEnum]
 
 
 
@@ -3181,6 +3468,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -3188,9 +3482,23 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
 
 
 /**
- * Reference to a field of type 'Boolean'
+ * Reference to a field of type 'PrayerRequestStatus'
  */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+export type EnumPrayerRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrayerRequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'VisitorStatus'
+ */
+export type EnumVisitorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VisitorStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'AttentionType'
+ */
+export type EnumAttentionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttentionType'>
     
 
 
@@ -3327,6 +3635,9 @@ export type GlobalOmitConfig = {
   newsletter?: Prisma.NewsletterOmit
   session?: Prisma.SessionOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
+  prayerRequest?: Prisma.PrayerRequestOmit
+  visitor?: Prisma.VisitorOmit
+  attentionAction?: Prisma.AttentionActionOmit
 }
 
 /* Types for Logging */

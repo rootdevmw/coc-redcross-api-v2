@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsDateString, IsBoolean } from 'class-validator';
 
 export class CreateMemberDto {
   @IsString()
@@ -7,12 +7,18 @@ export class CreateMemberDto {
   @IsString()
   lastName!: string;
 
+  @IsString()
+  prefix!: string; //PASTOR, DEACON, SISTER, BROTHER
+
   @IsOptional()
   @IsString()
   phone?: string;
 
   @IsString()
-  status!: string; // Visitor | Member | Baptized
+  status!: string; // Visitor | Member
+
+  @IsBoolean()
+  isBaptized!: boolean;
 
   @IsOptional()
   @IsDateString()

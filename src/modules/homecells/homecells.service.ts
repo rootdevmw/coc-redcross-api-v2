@@ -3,15 +3,19 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateHomecellDto } from './dto/create-homecell.dto';
 import { UpdateHomecellDto } from './dto/update-homecell.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class HomecellsService {
   private readonly logger = new Logger(HomecellsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   async create(dto: CreateHomecellDto) {
-    this.logger.log('Creating homecell');
+    this.logger.log('CREATE_HOMECELL_STARTED');
 
     const homecell = await this.prisma.homecell.create({
       data: {
@@ -22,7 +26,14 @@ export class HomecellsService {
       },
     });
 
-    this.logger.log(`Created homecell ${homecell.name}`);
+    await this.auditService.log({
+      action: 'HOMECELL_CREATED',
+      entity: 'Homecell',
+      entityId: homecell.id.toString(),
+      after: homecell,
+    });
+
+    this.logger.log(`CREATE_HOMECELL_SUCCESS: ${homecell.name}`);
 
     return {
       success: true,
@@ -111,10 +122,18 @@ export class HomecellsService {
   }
 
   async update(id: string, dto: UpdateHomecellDto) {
-    this.logger.log(`Updating homecell ${id}`);
+    this.logger.log(`UPDATE_HOMECELL_STARTED: ${id}`);
 
-    const homecell = await this.prisma.homecell.update({
-      where: { id: toBigInt(id) },
+    const homecellId = toBigInt(id);
+
+    const before = await this.prisma.homecell.findFirst({
+      where: { id: homecellId },
+    });
+
+    if (!before) throw new NotFoundException('Homecell not found');
+
+    const after = await this.prisma.homecell.update({
+      where: { id: homecellId },
       data: {
         name: dto.name,
         location: dto.location,
@@ -123,19 +142,46 @@ export class HomecellsService {
       },
     });
 
-    this.logger.log(`Updated homecell ${homecell.id}`);
+    await this.auditService.log({
+      action: 'HOMECELL_UPDATED',
+      entity: 'Homecell',
+      entityId: id,
+      before,
+      after,
+    });
+
+    this.logger.log(`UPDATE_HOMECELL_SUCCESS: ${id}`);
 
     return {
       success: true,
-      data: homecell,
+      data: after,
       meta: {},
     };
   }
 
   async remove(id: string) {
-    await this.prisma.homecell.delete({
-      where: { id: toBigInt(id) },
+    const homecellId = toBigInt(id);
+
+    this.logger.warn(`DELETE_HOMECELL_STARTED: ${id}`);
+
+    const before = await this.prisma.homecell.findFirst({
+      where: { id: homecellId },
     });
+
+    if (!before) throw new NotFoundException('Homecell not found');
+
+    await this.prisma.homecell.delete({
+      where: { id: homecellId },
+    });
+
+    await this.auditService.log({
+      action: 'HOMECELL_DELETED',
+      entity: 'Homecell',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_HOMECELL_SUCCESS: ${id}`);
 
     return {
       success: true,
@@ -149,24 +195,26 @@ export class HomecellsService {
    * → This overrides previous assignment
    */
   async assignMember(homecellId: string, memberId: string) {
-    // Ensure homecell exists
     const homecell = await this.prisma.homecell.findFirst({
       where: { id: toBigInt(homecellId) },
     });
 
     if (!homecell) throw new NotFoundException('Homecell not found');
 
-    // Ensure member exists
     const member = await this.prisma.member.findFirst({
       where: { id: toBigInt(memberId) },
     });
-    this.logger.log(
-      `Assigning member ${member?.firstName} ${member?.lastName} to homecell ${homecell.name}`,
-    );
 
     if (!member) throw new NotFoundException('Member not found');
 
-    //KEY LOGIC: override previous homecell
+    const before = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId) },
+    });
+
+    this.logger.log(
+      `ASSIGN_MEMBER → ${member.firstName} ${member.lastName} → ${homecell.name}`,
+    );
+
     await this.prisma.member.update({
       where: { id: toBigInt(memberId) },
       data: {
@@ -174,7 +222,19 @@ export class HomecellsService {
       },
     });
 
-    this.logger.log('member assigned successfully');
+    const after = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId) },
+    });
+
+    await this.auditService.log({
+      action: 'MEMBER_ASSIGNED_TO_HOMECELL',
+      entity: 'Member',
+      entityId: memberId,
+      before,
+      after,
+    });
+
+    this.logger.log('MEMBER_ASSIGNMENT_SUCCESS');
 
     return {
       success: true,
@@ -209,34 +269,45 @@ export class HomecellsService {
   }
 
   async removeMember(homecellId: string, memberId: string) {
-    this.logger.log(`Removing member ${memberId} from homecell ${homecellId}`);
+    this.logger.log(`REMOVE_MEMBER_STARTED: ${memberId}`);
 
-    // Ensure homecell exists
     const homecell = await this.prisma.homecell.findFirst({
       where: { id: toBigInt(homecellId) },
     });
 
-    if (!homecell)
-      throw new NotFoundException('Homecell with ID ${homecellId} not found');
+    if (!homecell) throw new NotFoundException(`Homecell not found`);
 
-    // Ensure member exists and is in this homecell
     const member = await this.prisma.member.findFirst({
-      where: { id: toBigInt(memberId), homecellId: toBigInt(homecellId) },
+      where: {
+        id: toBigInt(memberId),
+        homecellId: toBigInt(homecellId),
+      },
     });
 
     if (!member)
-      throw new NotFoundException(
-        'Member with ID ${memberId} not found in this homecell',
-      );
+      throw new NotFoundException(`Member not found in this homecell`);
 
-    // Remove by setting homecellId to null
+    const before = member;
+
     await this.prisma.member.update({
       where: { id: toBigInt(memberId) },
       data: { homecellId: null },
     });
 
+    const after = await this.prisma.member.findFirst({
+      where: { id: toBigInt(memberId) },
+    });
+
+    await this.auditService.log({
+      action: 'MEMBER_REMOVED_FROM_HOMECELL',
+      entity: 'Member',
+      entityId: memberId,
+      before,
+      after,
+    });
+
     this.logger.log(
-      `Removed member ${member.firstName} ${member.lastName} from homecell ${homecell.name}`,
+      `REMOVE_MEMBER_SUCCESS: ${member.firstName} ${member.lastName}`,
     );
 
     return {

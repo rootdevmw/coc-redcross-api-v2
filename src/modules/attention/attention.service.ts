@@ -3,18 +3,22 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePrayerRequestDto } from './dto/createPrayerRequestDto';
 import { CreateVisitorDto } from './dto/createVisitorsDto';
 import { toBigInt } from 'src/common/utils/to-bigint';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AttentionService {
   private readonly logger = new Logger(AttentionService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // ─────────────────────────────
   // PRAYER REQUEST
   // ─────────────────────────────
   async createPrayerRequest(dto: CreatePrayerRequestDto) {
-    this.logger.log('Creating prayer request');
+    this.logger.log('CREATE_PRAYER_REQUEST_STARTED');
 
     const data = await this.prisma.prayerRequest.create({
       data: {
@@ -29,11 +33,16 @@ export class AttentionService {
       },
     });
 
-    return {
-      success: true,
-      data,
-      meta: {},
-    };
+    await this.auditService.log({
+      action: 'PRAYER_REQUEST_CREATED',
+      entity: 'PrayerRequest',
+      entityId: data.id.toString(),
+      after: data,
+    });
+
+    this.logger.log(`CREATE_PRAYER_REQUEST_SUCCESS: ${data.id}`);
+
+    return { success: true, data, meta: {} };
   }
 
   async getPrayerRequests() {
@@ -54,7 +63,7 @@ export class AttentionService {
   // VISITORS
   // ─────────────────────────────
   async createVisitor(dto: CreateVisitorDto) {
-    this.logger.log('Creating visitor');
+    this.logger.log('CREATE_VISITOR_STARTED');
 
     const data = await this.prisma.visitor.create({
       data: {
@@ -71,11 +80,16 @@ export class AttentionService {
       },
     });
 
-    return {
-      success: true,
-      data,
-      meta: {},
-    };
+    await this.auditService.log({
+      action: 'VISITOR_CREATED',
+      entity: 'Visitor',
+      entityId: data.id.toString(),
+      after: data,
+    });
+
+    this.logger.log(`CREATE_VISITOR_SUCCESS: ${data.id}`);
+
+    return { success: true, data, meta: {} };
   }
 
   async getVisitors() {
@@ -101,7 +115,11 @@ export class AttentionService {
       throw new Error('User is not linked to a member');
     }
 
-    this.logger.log(`Marking prayer ${id} as prayed`);
+    this.logger.log(`MARK_PRAYER_PRAYED_STARTED: ${id}`);
+
+    const before = await this.prisma.prayerRequest.findFirst({
+      where: { id: toBigInt(id) },
+    });
 
     const [updated] = await this.prisma.$transaction([
       this.prisma.prayerRequest.update({
@@ -121,19 +139,33 @@ export class AttentionService {
       }),
     ]);
 
+    await this.auditService.log({
+      action: 'PRAYER_MARKED_PRAYED',
+      entity: 'PrayerRequest',
+      entityId: id,
+      before,
+      after: updated,
+      userId: user.member.id,
+    });
+
+    this.logger.log(`MARK_PRAYER_PRAYED_SUCCESS: ${id}`);
+
     return {
       success: true,
       data: updated,
       meta: {},
     };
   }
-
   async acknowledgeVisitor(id: string, user: any) {
     if (!user?.member?.id) {
       throw new Error('User is not linked to a member');
     }
 
-    this.logger.log(`Acknowledging visitor ${id}`);
+    this.logger.log(`ACKNOWLEDGE_VISITOR_STARTED: ${id}`);
+
+    const before = await this.prisma.visitor.findFirst({
+      where: { id: toBigInt(id) },
+    });
 
     const [updated] = await this.prisma.$transaction([
       this.prisma.visitor.update({
@@ -152,6 +184,17 @@ export class AttentionService {
         },
       }),
     ]);
+
+    await this.auditService.log({
+      action: 'VISITOR_ACKNOWLEDGED',
+      entity: 'Visitor',
+      entityId: id,
+      before,
+      after: updated,
+      userId: user.member.id,
+    });
+
+    this.logger.log(`ACKNOWLEDGE_VISITOR_SUCCESS: ${id}`);
 
     return {
       success: true,

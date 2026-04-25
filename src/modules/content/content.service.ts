@@ -13,6 +13,7 @@ import { CreateContentDto } from './dto/create-content.dto';
 import { QueryContentDto } from './dto/query-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 import { ConfigService } from '@nestjs/config';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ContentService {
@@ -24,6 +25,7 @@ export class ContentService {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
+    private auditService: AuditService,
   ) {}
 
   // -----------------------------
@@ -186,7 +188,7 @@ export class ContentService {
   // CREATE CONTENT
   // -----------------------------
   async create(dto: CreateContentDto) {
-    this.logger.log(`Creating content: ${dto.title}`);
+    this.logger.log(`CREATE_CONTENT_STARTED: ${dto.title}`);
 
     const mediaRelations = await this.syncMedia(dto.body);
 
@@ -220,9 +222,21 @@ export class ContentService {
           ? { create: mediaRelations }
           : undefined,
       },
+      include: {
+        tags: true,
+        scriptures: true,
+        contentMedia: true,
+      },
     });
 
-    this.logger.log(`Content created with id=${content.id}`);
+    await this.auditService.log({
+      action: 'CONTENT_CREATED',
+      entity: 'Content',
+      entityId: content.id.toString(),
+      after: content,
+    });
+
+    this.logger.log(`CREATE_CONTENT_SUCCESS: ${content.id}`);
 
     return { success: true, data: content, meta: {} };
   }
@@ -325,17 +339,29 @@ export class ContentService {
   async update(id: string, dto: UpdateContentDto) {
     const contentId = toBigInt(id);
 
-    this.logger.log(`Updating content id=${id}`);
+    this.logger.log(`UPDATE_CONTENT_STARTED: ${id}`);
+
+    const before = await this.prisma.content.findFirst({
+      where: { id: contentId },
+      include: {
+        tags: { include: { tag: true } },
+        scriptures: true,
+        contentMedia: { include: { media: true } },
+      },
+    });
+
+    if (!before) throw new NotFoundException('Content not found');
 
     const mediaRelations = await this.syncMedia(dto.body || '', contentId);
 
-    const content = await this.prisma.content.update({
+    const after = await this.prisma.content.update({
       where: { id: contentId },
       data: {
         title: dto.title,
         body: dto.body,
         typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
         authorId: dto.authorId ? toBigInt(dto.authorId) : undefined,
+
         tags: dto.tags
           ? {
               deleteMany: {},
@@ -349,33 +375,70 @@ export class ContentService {
               })),
             }
           : undefined,
+
         scriptures: dto.scriptures
           ? {
               deleteMany: {},
               create: dto.scriptures,
             }
           : undefined,
+
         contentMedia: {
           deleteMany: {},
           create: mediaRelations,
         },
       },
+      include: {
+        tags: true,
+        scriptures: true,
+        contentMedia: true,
+      },
     });
 
-    this.logger.log(`Content updated id=${id}`);
+    await this.auditService.log({
+      action: 'CONTENT_UPDATED',
+      entity: 'Content',
+      entityId: id,
+      before,
+      after,
+    });
 
-    return { success: true, data: content, meta: {} };
+    this.logger.log(`UPDATE_CONTENT_SUCCESS: ${id}`);
+
+    return { success: true, data: after, meta: {} };
   }
 
   // -----------------------------
   // REMOVE
   // -----------------------------
   async remove(id: string) {
-    this.logger.warn(`Deleting content id=${id}`);
+    const contentId = toBigInt(id);
+
+    this.logger.warn(`DELETE_CONTENT_STARTED: ${id}`);
+
+    const before = await this.prisma.content.findFirst({
+      where: { id: contentId },
+      include: {
+        tags: true,
+        scriptures: true,
+        contentMedia: true,
+      },
+    });
+
+    if (!before) throw new NotFoundException('Content not found');
 
     await this.prisma.content.delete({
-      where: { id: toBigInt(id) },
+      where: { id: contentId },
     });
+
+    await this.auditService.log({
+      action: 'CONTENT_DELETED',
+      entity: 'Content',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_CONTENT_SUCCESS: ${id}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -384,15 +447,32 @@ export class ContentService {
   // PUBLISH
   // -----------------------------
   async publish(id: string, status: string) {
-    this.logger.log(`Publishing content id=${id} → ${status}`);
+    this.logger.log(`PUBLISH_CONTENT_STARTED: ${id} → ${status}`);
+
+    const contentId = toBigInt(id);
+
+    const before = await this.prisma.content.findFirst({
+      where: { id: contentId },
+    });
 
     const content = await this.prisma.content.update({
-      where: { id: toBigInt(id) },
+      where: { id: contentId },
       data: {
         status,
         publishedAt: status === 'Published' ? new Date() : null,
       },
     });
+
+    await this.auditService.log({
+      action:
+        status === 'Published' ? 'CONTENT_PUBLISHED' : 'CONTENT_UNPUBLISHED',
+      entity: 'Content',
+      entityId: id,
+      before,
+      after: content,
+    });
+
+    this.logger.log(`PUBLISH_CONTENT_SUCCESS: ${id}`);
 
     return { success: true, data: content, meta: {} };
   }
@@ -401,11 +481,18 @@ export class ContentService {
   // TYPES
   // -----------------------------
   async createType(name: string) {
+    this.logger.log(`CREATE_CONTENT_TYPE: ${name}`);
+
     const type = await this.prisma.contentType.create({
       data: { name },
     });
 
-    this.logger.log(`Created content type: ${name}`);
+    await this.auditService.log({
+      action: 'CONTENT_TYPE_CREATED',
+      entity: 'ContentType',
+      entityId: type.id.toString(),
+      after: type,
+    });
 
     return { success: true, data: type, meta: {} };
   }

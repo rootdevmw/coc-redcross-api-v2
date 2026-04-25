@@ -11,6 +11,7 @@ import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from '../email/email.service';
 import { toBigInt, toBigIntOptional } from 'src/common/utils/to-bigint';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private prisma: PrismaService,
     private config: ConfigService,
     private emailService: EmailService,
+    private auditService: AuditService,
   ) {}
 
   // -----------------------------
@@ -28,10 +30,18 @@ export class AuthService {
   async login(dto: any) {
     const email = dto.email?.toLowerCase().trim();
 
-    this.logger.log(`Login attempt → ${email || 'NO_EMAIL'}`);
+    this.logger.log(`LOGIN_ATTEMPT → ${email || 'NO_EMAIL'}`);
 
     if (!email || !dto.password) {
-      this.logger.warn(`Login failed: missing credentials`);
+      this.logger.warn(`LOGIN_FAILED: missing credentials`);
+
+      await this.auditService.log({
+        action: 'LOGIN_FAILED',
+        entity: 'User',
+        entityId: '',
+        after: { email, reason: 'missing_credentials' },
+      });
+
       throw new UnauthorizedException('Email and password are required');
     }
 
@@ -41,14 +51,30 @@ export class AuthService {
     });
 
     if (!user) {
-      this.logger.warn(`Login failed: user not found → ${email}`);
+      this.logger.warn(`LOGIN_FAILED: user not found → ${email}`);
+
+      await this.auditService.log({
+        action: 'LOGIN_FAILED',
+        entity: 'User',
+        entityId: '',
+        after: { email, reason: 'user_not_found' },
+      });
+
       throw new UnauthorizedException();
     }
 
     const valid = await bcrypt.compare(dto.password, user.password);
 
     if (!valid) {
-      this.logger.warn(`Login failed: invalid password → ${email}`);
+      this.logger.warn(`LOGIN_FAILED: invalid password → ${email}`);
+
+      await this.auditService.log({
+        action: 'LOGIN_FAILED',
+        entity: 'User',
+        entityId: user.id.toString(),
+        after: { email, reason: 'invalid_password' },
+      });
+
       throw new UnauthorizedException();
     }
 
@@ -64,11 +90,18 @@ export class AuthService {
       },
     });
 
-    this.logger.log(
-      `Login success → ${email} | roles: ${user.roles
-        .map((r) => r.role.name)
-        .join(', ')}`,
-    );
+    await this.auditService.log({
+      action: 'LOGIN_SUCCESS',
+      entity: 'User',
+      entityId: user.id.toString(),
+      after: {
+        email: user.email,
+        roles: user.roles.map((r) => r.role.name),
+        sessionId,
+      },
+    });
+
+    this.logger.log(`LOGIN_SUCCESS → ${email}`);
 
     return {
       success: true,
@@ -90,16 +123,24 @@ export class AuthService {
   async requestPasswordReset(email: string) {
     const normalizedEmail = email.toLowerCase().trim();
 
-    this.logger.log(`Password reset requested → ${normalizedEmail}`);
+    this.logger.log(`PASSWORD_RESET_REQUEST → ${normalizedEmail}`);
 
     const user = await this.prisma.user.findFirst({
       where: { email: normalizedEmail, deletedAt: null },
     });
 
+    await this.auditService.log({
+      action: 'PASSWORD_RESET_REQUESTED',
+      entity: 'User',
+      entityId: user?.id?.toString() ?? '',
+      after: {
+        email: normalizedEmail,
+        exists: !!user,
+      },
+    });
+
     if (!user) {
-      this.logger.warn(
-        `Password reset requested for non-existent user → ${normalizedEmail}`,
-      );
+      this.logger.warn(`RESET_REQUEST_UNKNOWN_USER → ${normalizedEmail}`);
       return { success: true, data: {}, meta: {} };
     }
 
@@ -115,7 +156,7 @@ export class AuthService {
 
     const ttl =
       Number(this.config.get<string>('PASSWORD_RESET_TOKEN_TTL')) ||
-      1000 * 60 * 15; // fallback 24h
+      1000 * 60 * 15;
 
     await this.prisma.passwordResetToken.create({
       data: {
@@ -125,11 +166,9 @@ export class AuthService {
       },
     });
 
-    this.logger.log(`Reset token generated → ${normalizedEmail}`);
-
     await this.emailService.sendResetPassword(normalizedEmail, rawToken);
 
-    this.logger.log(`Reset email sent → ${normalizedEmail}`);
+    this.logger.log(`RESET_EMAIL_SENT → ${normalizedEmail}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -138,7 +177,7 @@ export class AuthService {
   // SET PASSWORD
   // -----------------------------
   async setPassword(dto: { token: string; password: string }) {
-    this.logger.log(`Set password attempt`);
+    this.logger.log(`SET_PASSWORD_ATTEMPT`);
 
     const hashedToken = crypto
       .createHash('sha256')
@@ -150,13 +189,21 @@ export class AuthService {
     });
 
     if (!record || record.expiresAt < new Date()) {
-      this.logger.warn(`Set password failed: invalid/expired token`);
+      this.logger.warn(`SET_PASSWORD_FAILED: invalid/expired token`);
+
+      await this.auditService.log({
+        action: 'PASSWORD_RESET_FAILED',
+        entity: 'User',
+        entityId: '',
+        after: { reason: 'invalid_or_expired_token' },
+      });
+
       throw new NotFoundException('Invalid or expired token');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    await this.prisma.user.update({
+    const user = await this.prisma.user.update({
       where: { email: record.email },
       data: { password: hashedPassword },
     });
@@ -165,7 +212,14 @@ export class AuthService {
       where: { token: hashedToken },
     });
 
-    this.logger.log(`Password set successfully → ${record.email}`);
+    await this.auditService.log({
+      action: 'PASSWORD_CHANGED_VIA_RESET',
+      entity: 'User',
+      entityId: user.id.toString(),
+      after: { email: user.email },
+    });
+
+    this.logger.log(`PASSWORD_SET_SUCCESS → ${record.email}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -184,23 +238,30 @@ export class AuthService {
     userId: string,
     dto: { currentPassword: string; newPassword: string },
   ) {
-    this.logger.log(`Change password → user ${userId}`);
+    this.logger.log(`CHANGE_PASSWORD → user ${userId}`);
 
     const user = await this.prisma.user.findUnique({
       where: { id: toBigIntOptional(userId) },
     });
 
     if (!user) {
-      this.logger.warn(`Change password failed: user not found → ${userId}`);
+      this.logger.warn(`CHANGE_PASSWORD_FAILED: user not found`);
+
       throw new NotFoundException();
     }
 
     const valid = await bcrypt.compare(dto.currentPassword, user.password);
 
     if (!valid) {
-      this.logger.warn(
-        `Change password failed: incorrect current password → ${user.email}`,
-      );
+      this.logger.warn(`CHANGE_PASSWORD_FAILED: incorrect password`);
+
+      await this.auditService.log({
+        action: 'PASSWORD_CHANGE_FAILED',
+        entity: 'User',
+        entityId: user.id.toString(),
+        after: { reason: 'incorrect_current_password' },
+      });
+
       throw new ConflictException('Incorrect password');
     }
 
@@ -211,7 +272,13 @@ export class AuthService {
       data: { password: hashed },
     });
 
-    this.logger.log(`Password changed → ${user.email}`);
+    await this.auditService.log({
+      action: 'PASSWORD_CHANGED',
+      entity: 'User',
+      entityId: user.id.toString(),
+    });
+
+    this.logger.log(`PASSWORD_CHANGED_SUCCESS → ${user.email}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -220,10 +287,11 @@ export class AuthService {
   // LOGOUT
   // -----------------------------
   async logout(sessionId?: string) {
-    this.logger.log(`Logout attempt`);
+    this.logger.log(`LOGOUT_ATTEMPT`);
 
     if (!sessionId) {
-      this.logger.warn(`Logout skipped: no session ID`);
+      this.logger.warn(`LOGOUT_SKIPPED: no session`);
+
       return { success: true, data: {}, meta: {} };
     }
 
@@ -231,7 +299,13 @@ export class AuthService {
       where: { id: sessionId },
     });
 
-    this.logger.log(`Session invalidated → ${sessionId}`);
+    await this.auditService.log({
+      action: 'LOGOUT',
+      entity: 'Session',
+      entityId: sessionId,
+    });
+
+    this.logger.log(`SESSION_INVALIDATED → ${sessionId}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -240,7 +314,7 @@ export class AuthService {
   // ASSIGN ROLE
   // -----------------------------
   async assignRole(userId: string, roleId: string) {
-    this.logger.log(`Assigning role ${roleId} → user ${userId}`);
+    this.logger.log(`ASSIGN_ROLE → user=${userId}, role=${roleId}`);
 
     const rel = await this.prisma.userRole.upsert({
       where: {
@@ -250,7 +324,14 @@ export class AuthService {
       create: { userId: toBigInt(userId), roleId: toBigInt(roleId) },
     });
 
-    this.logger.log(`Role assigned successfully → ${roleId} -> ${userId}`);
+    await this.auditService.log({
+      action: 'ROLE_ASSIGNED',
+      entity: 'UserRole',
+      entityId: `${userId}:${roleId}`,
+      after: { userId, roleId },
+    });
+
+    this.logger.log(`ROLE_ASSIGNED_SUCCESS`);
 
     return { success: true, data: rel, meta: {} };
   }

@@ -219,9 +219,29 @@ export class AnnouncementsService {
   }
 
   async remove(id: string) {
-    await this.prisma.announcement.delete({
-      where: { id: toBigInt(id) },
+    this.logger.log(`DELETE_ANNOUNCEMENT_STARTED: ${id}`);
+
+    const announcementId = toBigInt(id);
+
+    const before = await this.prisma.announcement.findFirst({
+      where: { id: announcementId },
+      include: { targets: true },
     });
+
+    if (!before) throw new NotFoundException('Announcement not found');
+
+    await this.prisma.announcement.delete({
+      where: { id: announcementId },
+    });
+
+    await this.auditService.log({
+      action: 'ANNOUNCEMENT_DELETED',
+      entity: 'Announcement',
+      entityId: id,
+      before,
+    });
+
+    this.logger.log(`DELETE_ANNOUNCEMENT_SUCCESS: ${id}`);
 
     return {
       success: true,

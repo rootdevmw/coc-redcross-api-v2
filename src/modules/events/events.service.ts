@@ -4,15 +4,19 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { QueryEventDto } from './dto/query-event.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class EventsService {
   private readonly logger = new Logger(EventsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   async create(dto: CreateEventDto) {
-    this.logger.log(`Creating event: ${dto.title}`);
+    this.logger.log(`CREATE_EVENT_STARTED: ${dto.title}`);
 
     const event = await this.prisma.event.create({
       data: {
@@ -32,13 +36,18 @@ export class EventsService {
           : undefined,
       },
       include: {
-        ministries: {
-          include: {
-            ministry: true,
-          },
-        },
+        ministries: { include: { ministry: true } },
       },
     });
+
+    await this.auditService.log({
+      action: 'EVENT_CREATED',
+      entity: 'Event',
+      entityId: event.id.toString(),
+      after: event,
+    });
+
+    this.logger.log(`CREATE_EVENT_SUCCESS: ${event.id}`);
 
     return { success: true, data: event, meta: {} };
   }
@@ -104,22 +113,33 @@ export class EventsService {
   }
 
   async update(id: string, dto: UpdateEventDto) {
-    this.logger.log(`Updating event: ${id}`);
+    const eventId = toBigInt(id);
 
-    // Replace ministries if provided
+    this.logger.log(`UPDATE_EVENT_STARTED: ${id}`);
+
+    const before = await this.prisma.event.findFirst({
+      where: { id: eventId },
+      include: {
+        ministries: true,
+      },
+    });
+
+    if (!before) throw new NotFoundException(`Event not found`);
+
+    // replace ministries if provided
     if (dto.ministryIds) {
       await this.prisma.eventMinistry.deleteMany({
-        where: { eventId: toBigInt(id) },
+        where: { eventId },
       });
     }
 
-    const event = await this.prisma.event.update({
-      where: { id: toBigInt(id) },
+    const after = await this.prisma.event.update({
+      where: { id: eventId },
       data: {
         title: dto.title,
         description: dto.description,
         location: dto.location,
-        typeId: toBigInt(dto.typeId!),
+        typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
         startTime: dto.startTime ? new Date(dto.startTime) : undefined,
         endTime: dto.endTime ? new Date(dto.endTime) : undefined,
 
@@ -132,33 +152,70 @@ export class EventsService {
           : undefined,
       },
       include: {
-        ministries: {
-          where: {
-            ministry: { deletedAt: null },
-          },
-          include: {
-            ministry: true,
-          },
-        },
+        ministries: { include: { ministry: true } },
       },
     });
 
-    return { success: true, data: event, meta: {} };
+    //  SPECIAL CASE: detect reschedule
+    const wasRescheduled =
+      before.startTime.getTime() !== after.startTime.getTime() ||
+      before.endTime.getTime() !== after.endTime.getTime();
+
+    await this.auditService.log({
+      action: wasRescheduled ? 'EVENT_RESCHEDULED' : 'EVENT_UPDATED',
+      entity: 'Event',
+      entityId: id,
+      before,
+      after,
+    });
+
+    this.logger.log(`UPDATE_EVENT_SUCCESS: ${id}`);
+
+    return { success: true, data: after, meta: {} };
   }
 
   async remove(id: string) {
-    await this.prisma.event.delete({
-      where: { id: toBigInt(id) },
+    const eventId = toBigInt(id);
+
+    this.logger.warn(`DELETE_EVENT_STARTED: ${id}`);
+
+    const before = await this.prisma.event.findFirst({
+      where: { id: eventId },
+      include: {
+        ministries: true,
+      },
     });
+
+    if (!before) throw new NotFoundException(`Event not found`);
+
+    await this.prisma.event.delete({
+      where: { id: eventId },
+    });
+
+    await this.auditService.log({
+      action: 'EVENT_DELETED',
+      entity: 'Event',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_EVENT_SUCCESS: ${id}`);
 
     return { success: true, data: {}, meta: {} };
   }
 
   async createType(name: string) {
-    this.logger.log(`Creating event type: ${name}`);
+    this.logger.log(`CREATE_EVENT_TYPE: ${name}`);
 
     const type = await this.prisma.eventType.create({
       data: { name },
+    });
+
+    await this.auditService.log({
+      action: 'EVENT_TYPE_CREATED',
+      entity: 'EventType',
+      entityId: type.id.toString(),
+      after: type,
     });
 
     return { success: true, data: type, meta: {} };

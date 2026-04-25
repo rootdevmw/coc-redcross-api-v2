@@ -17,10 +17,11 @@ import { RolesModule } from './modules/roles/roles.module';
 import { UsersModule } from './modules/users/users.module';
 import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
 import { SessionAuthGuard } from './modules/auth/guard/session.guard';
-import { APP_GUARD } from '@nestjs/core/constants';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core/constants';
 import { EmailModule } from './modules/email/email.module';
 import { AttentionModule } from './modules/attention/attention.module';
 import { AuditService } from './modules/audit/audit.service';
+import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 
 @Module({
   imports: [
@@ -46,6 +47,10 @@ import { AuditService } from './modules/audit/audit.service';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_GUARD, useClass: SessionAuthGuard }],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: SessionAuthGuard },
+    { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },
+  ],
 })
 export class AppModule {}

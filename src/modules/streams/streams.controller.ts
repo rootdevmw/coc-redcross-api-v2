@@ -9,9 +9,11 @@ import {
   Query,
   Delete,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { StreamsService } from './streams.service';
 
 @Controller('streams')
+@Roles('MEDIA')
 export class StreamsController {
   constructor(private service: StreamsService) {}
 

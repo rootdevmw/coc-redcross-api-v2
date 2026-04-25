@@ -1,7 +1,9 @@
 import { Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { AttentionService } from './attention.service';
 
 @Controller('attention')
+@Roles('DEACON')
 export class AttentionController {
   constructor(private readonly attentionService: AttentionService) {}
 

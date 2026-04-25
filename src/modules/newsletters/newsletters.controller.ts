@@ -12,9 +12,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { NewslettersService } from './newsletters.service';
 
 @Controller('newsletters')
+@Roles('MEDIA')
 export class NewslettersController {
   constructor(private service: NewslettersService) {}
 

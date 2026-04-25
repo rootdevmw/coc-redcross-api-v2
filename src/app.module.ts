@@ -7,6 +7,7 @@ import { AnnouncementsModule } from './modules/announcements/announcements.modul
 import { AttentionModule } from './modules/attention/attention.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RolesGuard } from './modules/auth/guard/roles.guard';
 import { SessionAuthGuard } from './modules/auth/guard/session.guard';
 import { ContentModule } from './modules/content/content.module';
 import { EmailModule } from './modules/email/email.module';
@@ -46,6 +47,10 @@ import { PrismaModule } from './prisma/prisma.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_GUARD, useClass: SessionAuthGuard }],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: SessionAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
 })
 export class AppModule {}

@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { ContentService } from './content.service';
 import { CreateContentTypeDto } from './dto/create-content-type.dto';
 import { CreateContentDto } from './dto/create-content.dto';
@@ -20,6 +21,7 @@ import { QueryContentDto } from './dto/query-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
 
 @Controller('content')
+@Roles('MEDIA')
 export class ContentController {
   constructor(private service: ContentService) {}
 

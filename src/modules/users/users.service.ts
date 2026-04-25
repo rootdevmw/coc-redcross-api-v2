@@ -39,6 +39,14 @@ export class UsersService {
       throw new ConflictException(`User ${email} already exists`);
     }
 
+    const visitorRole = await this.prisma.role.findFirst({
+      where: { name: 'VISITOR' },
+    });
+
+    if (!visitorRole) {
+      throw new Error('VISITOR role not found. Seed roles first.');
+    }
+
     const tempPassword = await bcrypt.hash(
       crypto.randomBytes(16).toString('hex'),
       10,
@@ -48,6 +56,13 @@ export class UsersService {
       data: {
         email,
         password: tempPassword,
+      },
+    });
+
+    await this.prisma.userRole.create({
+      data: {
+        userId: user.id,
+        roleId: visitorRole.id,
       },
     });
 

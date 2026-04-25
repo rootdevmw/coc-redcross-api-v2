@@ -9,12 +9,14 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { AnnouncementsService } from './announcements.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { QueryAnnouncementDto } from './dto/query-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 
 @Controller('announcements')
+@Roles('DEACON')
 export class AnnouncementsController {
   constructor(private service: AnnouncementsService) {}
 

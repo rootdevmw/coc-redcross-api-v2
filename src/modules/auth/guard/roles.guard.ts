@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorator/roles.decorator';
+import { hasRequiredRole } from '../utils/role-hierarchy';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -29,7 +30,7 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('Access denied');
     }
 
-    const hasRole = requiredRoles.some((role) => user.roles.includes(role));
+    const hasRole = hasRequiredRole(user.roles, requiredRoles);
 
     if (!hasRole) {
       throw new ForbiddenException('Insufficient permissions');

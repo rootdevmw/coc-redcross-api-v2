@@ -1,7 +1,9 @@
 import { Controller, Get, Query, Param } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { AuditReaderService } from './audit.reader.service';
 
 @Controller('audit')
+@Roles('ADMIN')
 export class AuditController {
   constructor(private auditReader: AuditReaderService) {}
 

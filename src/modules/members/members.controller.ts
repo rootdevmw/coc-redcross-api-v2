@@ -10,6 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -17,6 +18,7 @@ import { QueryMemberDto } from './dto/query-member.dto';
 import { SessionAuthGuard } from '../auth/guard/session.guard';
 
 @Controller('members')
+@Roles('DEACON')
 export class MembersController {
   constructor(private service: MembersService) {}
 

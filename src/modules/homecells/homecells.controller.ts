@@ -8,12 +8,14 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { HomecellsService } from './homecells.service';
 import { CreateHomecellDto } from './dto/create-homecell.dto';
 import { UpdateHomecellDto } from './dto/update-homecell.dto';
 import { AssignMemberDto } from './dto/assign-member.dto';
 
 @Controller('homecells')
+@Roles('DEACON')
 export class HomecellsController {
   constructor(private service: HomecellsService) {}
 

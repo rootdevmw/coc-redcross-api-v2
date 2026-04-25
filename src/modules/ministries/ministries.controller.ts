@@ -9,12 +9,14 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { MinistriesService } from './ministries.service';
 import { CreateMinistryDto } from './dto/create-ministry.dto';
 import { UpdateMinistryDto } from './dto/update-ministry.dto';
 import { QueryMinistryDto } from './dto/query-ministry.dto';
 
 @Controller('ministries')
+@Roles('DEACON')
 export class MinistriesController {
   constructor(private service: MinistriesService) {}
 

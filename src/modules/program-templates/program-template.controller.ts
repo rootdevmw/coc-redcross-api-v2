@@ -9,11 +9,13 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { ProgramTemplatesService } from './program-template.service';
 import { CreateProgramTemplateDto } from './dto/create-program-template.dto';
 import { UpdateProgramTemplateDto } from './dto/update-program-template.dto';
 
 @Controller('program-templates')
+@Roles('DEACON')
 export class ProgramTemplatesController {
   constructor(private service: ProgramTemplatesService) {}
 

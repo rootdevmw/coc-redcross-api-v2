@@ -9,10 +9,12 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { ProgramsService } from './programs.service';
 import { CreateProgramFromTemplateDto } from './dto/create-from-template.dto';
 
 @Controller('programs')
+@Roles('DEACON')
 export class ProgramsController {
   constructor(private service: ProgramsService) {}
 

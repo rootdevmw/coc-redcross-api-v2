@@ -8,12 +8,14 @@ import {
   Param,
   Res,
   Req,
+  Delete,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { SessionAuthGuard } from './guard/session.guard';
 import { Public } from 'src/common/decorators/public.decorator';
+import { Roles } from './decorator/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -101,6 +103,7 @@ export class AuthController {
   // -----------------------------
   @Post('change-password')
   @UseGuards(SessionAuthGuard)
+  @Roles('VISITOR')
   changePassword(
     @Request() req: any,
     @Body() dto: { currentPassword: string; newPassword: string },
@@ -109,16 +112,27 @@ export class AuthController {
   }
 
   // -----------------------------
-  // ASSIGN ROLE
+  // SET ROLE (REPLACES EXISTING ROLE)
   // -----------------------------
-  @Post('assign-role/:userId/:roleId')
+  @Post('users/:userId/role/:roleId')
   @UseGuards(SessionAuthGuard)
-  assignRole(
+  @Roles('MEMBER')
+  setRole(
     @Param('userId') userId: string,
     @Param('roleId') roleId: string,
     @Req() req: any,
   ) {
-    return this.service.assignRole(userId, roleId, req.user);
+    return this.service.setRole(userId, roleId, req.user);
+  }
+
+  // -----------------------------
+  // REMOVE ROLE (RESET TO NO ROLE)
+  // -----------------------------
+  @Delete('users/:userId/role')
+  @UseGuards(SessionAuthGuard)
+  @Roles('MEMBER')
+  removeRole(@Param('userId') userId: string, @Req() req: any) {
+    return this.service.removeRole(userId, req.user);
   }
 
   // -----------------------------
@@ -126,6 +140,7 @@ export class AuthController {
   // -----------------------------
   @Get('me')
   @UseGuards(SessionAuthGuard)
+  @Roles('VISITOR')
   me(@Request() req: any) {
     return {
       success: true,

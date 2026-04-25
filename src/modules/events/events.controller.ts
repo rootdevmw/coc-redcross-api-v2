@@ -9,9 +9,11 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
+import { Roles } from '../auth/decorator/roles.decorator';
 import { EventsService } from './events.service';
 
 @Controller('events')
+@Roles('DEACON')
 export class EventsController {
   constructor(private service: EventsService) {}
 

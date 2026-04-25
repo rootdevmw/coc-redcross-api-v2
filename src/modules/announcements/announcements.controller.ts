@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import { AnnouncementsService } from './announcements.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
@@ -18,8 +19,8 @@ export class AnnouncementsController {
   constructor(private service: AnnouncementsService) {}
 
   @Post()
-  create(@Body() dto: CreateAnnouncementDto) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateAnnouncementDto, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -38,12 +39,16 @@ export class AnnouncementsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateAnnouncementDto) {
-    return this.service.update(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateAnnouncementDto,
+    @Req() req: any,
+  ) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 }

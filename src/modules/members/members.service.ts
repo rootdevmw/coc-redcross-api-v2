@@ -4,23 +4,22 @@ import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class MembersService {
   private readonly logger = new Logger(MembersService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE
   // -----------------------------
-  @Audit({
-    action: 'MEMBER_CREATED',
-    entity: 'Member',
-  })
   async create(dto: CreateMemberDto) {
-    this.logger.log('Creating member');
+    this.logger.log(`CREATE_MEMBER_STARTED: ${dto.firstName} ${dto.lastName}`);
 
     const member = await this.prisma.member.create({
       data: {
@@ -31,22 +30,11 @@ export class MembersService {
         status: dto.status,
         location: dto.location,
         homecell: dto.homecellId
-          ? {
-              connect: {
-                id: toBigInt(dto.homecellId),
-              },
-            }
+          ? { connect: { id: toBigInt(dto.homecellId) } }
           : undefined,
         baptized: dto.isBaptized,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : null,
-
-        bio: dto.bio?.trim()
-          ? {
-              create: {
-                bio: dto.bio,
-              },
-            }
-          : undefined,
+        bio: dto.bio?.trim() ? { create: { bio: dto.bio } } : undefined,
       },
       include: {
         bio: true,
@@ -54,7 +42,14 @@ export class MembersService {
       },
     });
 
-    this.logger.log(`Created member ${member.id}`);
+    await this.auditService.log({
+      action: 'MEMBER_CREATED',
+      entity: 'Member',
+      entityId: member.id.toString(),
+      after: member,
+    });
+
+    this.logger.log(`CREATE_MEMBER_SUCCESS: ${member.id}`);
 
     return {
       success: true,
@@ -70,19 +65,13 @@ export class MembersService {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    this.logger.log(`Fetching members page=${page} limit=${limit}`);
+    this.logger.log(`FETCH_MEMBERS_STARTED: page=${page} limit=${limit}`);
 
     const where: any = {};
 
-    if (query.status && query.status !== '') {
-      where.status = query.status;
-    }
-
+    if (query.status) where.status = query.status;
     if (query.homecellId) where.homecellId = query.homecellId;
-
-    if (query.prefix && query.prefix !== '') {
-      where.prefix = query.prefix;
-    }
+    if (query.prefix) where.prefix = query.prefix;
 
     if (query.search) {
       where.OR = [
@@ -112,7 +101,9 @@ export class MembersService {
       this.prisma.member.count({ where }),
     ]);
 
-    this.logger.log(`Fetched ${data.length} members out of ${total}`);
+    this.logger.log(
+      `FETCH_MEMBERS_SUCCESS: returned=${data.length} total=${total}`,
+    );
 
     return {
       success: true,
@@ -125,7 +116,7 @@ export class MembersService {
   // FIND ONE
   // -----------------------------
   async findOne(id: string) {
-    this.logger.log(`Fetching member ${id}`);
+    this.logger.log(`FETCH_MEMBER_STARTED: ${id}`);
 
     const member = await this.prisma.member.findFirst({
       where: { id: toBigInt(id) },
@@ -142,7 +133,7 @@ export class MembersService {
 
     if (!member) throw new NotFoundException('Member not found');
 
-    this.logger.log(`Fetched member ${id}`);
+    this.logger.log(`FETCH_MEMBER_SUCCESS: ${id}`);
 
     return {
       success: true,
@@ -153,18 +144,19 @@ export class MembersService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  @Audit({
-    action: 'MEMBER_UPDATED',
-    entity: 'Member',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: UpdateMemberDto) {
-    this.logger.log(`Updating member ${id}`);
+    const memberId = toBigInt(id);
 
-    const member = await this.prisma.member.update({
-      where: { id: toBigInt(id) },
+    this.logger.log(`UPDATE_MEMBER_STARTED: ${id}`);
 
+    const before = await this.prisma.member.findFirst({
+      where: { id: memberId },
+    });
+
+    if (!before) throw new NotFoundException('Member not found');
+
+    const after = await this.prisma.member.update({
+      where: { id: memberId },
       data: {
         firstName: dto.firstName,
         lastName: dto.lastName,
@@ -175,7 +167,6 @@ export class MembersService {
         location: dto.location,
         homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : undefined,
-
         bio:
           dto.bio !== undefined
             ? {
@@ -186,18 +177,25 @@ export class MembersService {
               }
             : undefined,
       },
-
       include: {
         bio: true,
         homecell: true,
       },
     });
 
-    this.logger.log(`Updated member ${member.id}`);
+    await this.auditService.log({
+      action: 'MEMBER_UPDATED',
+      entity: 'Member',
+      entityId: id,
+      before,
+      after,
+    });
+
+    this.logger.log(`UPDATE_MEMBER_SUCCESS: ${id}`);
 
     return {
       success: true,
-      data: member,
+      data: after,
       meta: {},
     };
   }
@@ -205,16 +203,29 @@ export class MembersService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  @Audit({
-    action: 'MEMBER_DELETED',
-    entity: 'Member',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
-    await this.prisma.member.delete({
-      where: { id: toBigInt(id) },
+    const memberId = toBigInt(id);
+
+    this.logger.warn(`DELETE_MEMBER_STARTED: ${id}`);
+
+    const before = await this.prisma.member.findFirst({
+      where: { id: memberId },
     });
+
+    if (!before) throw new NotFoundException('Member not found');
+
+    await this.prisma.member.delete({
+      where: { id: memberId },
+    });
+
+    await this.auditService.log({
+      action: 'MEMBER_DELETED',
+      entity: 'Member',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_MEMBER_SUCCESS: ${id}`);
 
     return {
       success: true,
@@ -226,13 +237,10 @@ export class MembersService {
   // -----------------------------
   // ASSIGN MINISTRY
   // -----------------------------
-  @Audit({
-    action: 'MEMBER_ASSIGNED_MINISTRY',
-    entity: 'Member',
-    idParamIndex: 0,
-  })
   async assignMinistry(memberId: string, ministryId: string) {
-    this.logger.log(`Assigning member ${memberId} to ministry ${ministryId}`);
+    this.logger.log(
+      `ASSIGN_MINISTRY_STARTED: member=${memberId} ministry=${ministryId}`,
+    );
 
     await this.prisma.memberMinistry.create({
       data: {
@@ -241,7 +249,16 @@ export class MembersService {
       },
     });
 
-    this.logger.log(`Assigned member ${memberId} to ministry ${ministryId}`);
+    await this.auditService.log({
+      action: 'MEMBER_ASSIGNED_MINISTRY',
+      entity: 'Member',
+      entityId: memberId,
+      after: { ministryId },
+    });
+
+    this.logger.log(
+      `ASSIGN_MINISTRY_SUCCESS: member=${memberId} ministry=${ministryId}`,
+    );
 
     return {
       success: true,
@@ -253,13 +270,10 @@ export class MembersService {
   // -----------------------------
   // REMOVE MINISTRY
   // -----------------------------
-  @Audit({
-    action: 'MEMBER_REMOVED_MINISTRY',
-    entity: 'Member',
-    idParamIndex: 0,
-  })
   async removeMinistry(memberId: string, ministryId: string) {
-    this.logger.log(`Removing member ${memberId} from ministry ${ministryId}`);
+    this.logger.warn(
+      `REMOVE_MINISTRY_STARTED: member=${memberId} ministry=${ministryId}`,
+    );
 
     await this.prisma.memberMinistry.delete({
       where: {
@@ -270,7 +284,16 @@ export class MembersService {
       },
     });
 
-    this.logger.log(`Removed member ${memberId} from ministry ${ministryId}`);
+    await this.auditService.log({
+      action: 'MEMBER_REMOVED_MINISTRY',
+      entity: 'Member',
+      entityId: memberId,
+      after: { ministryId },
+    });
+
+    this.logger.warn(
+      `REMOVE_MINISTRY_SUCCESS: member=${memberId} ministry=${ministryId}`,
+    );
 
     return {
       success: true,

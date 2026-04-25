@@ -1,21 +1,20 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ProgramTemplatesService {
   private readonly logger = new Logger(ProgramTemplatesService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE TEMPLATE
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_TEMPLATE_CREATED',
-    entity: 'ProgramTemplate',
-  })
   async create(dto: any) {
     this.logger.log(`Creating template: ${dto.name}`);
 
@@ -45,6 +44,13 @@ export class ProgramTemplatesService {
       },
     });
 
+    await this.auditService.log({
+      action: 'PROGRAM_TEMPLATE_CREATED',
+      entity: 'ProgramTemplate',
+      entityId: template.id.toString(),
+      after: template,
+    });
+
     return { success: true, data: template, meta: {} };
   }
 
@@ -55,9 +61,7 @@ export class ProgramTemplatesService {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    const where: any = {
-      deletedAt: null,
-    };
+    const where: any = { deletedAt: null };
 
     if (query.homecellId) {
       where.homecellId = toBigIntOptional(query.homecellId);
@@ -121,16 +125,21 @@ export class ProgramTemplatesService {
   // -----------------------------
   // UPDATE TEMPLATE
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_TEMPLATE_UPDATED',
-    entity: 'ProgramTemplate',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: any) {
     this.logger.log(`Updating template ${id}`);
 
     const templateId = toBigIntOptional(id);
+
+    const before = await this.prisma.programTemplate.findFirst({
+      where: { id: templateId },
+      include: {
+        items: true,
+      },
+    });
+
+    if (!before) {
+      throw new NotFoundException('Template not found');
+    }
 
     if (dto.items) {
       await this.prisma.programTemplateItem.deleteMany({
@@ -138,7 +147,7 @@ export class ProgramTemplatesService {
       });
     }
 
-    const template = await this.prisma.programTemplate.update({
+    const after = await this.prisma.programTemplate.update({
       where: { id: templateId },
       data: {
         name: dto.name,
@@ -169,22 +178,43 @@ export class ProgramTemplatesService {
       },
     });
 
-    return { success: true, data: template, meta: {} };
+    await this.auditService.log({
+      action: 'PROGRAM_TEMPLATE_UPDATED',
+      entity: 'ProgramTemplate',
+      entityId: id,
+      before,
+      after,
+    });
+
+    return { success: true, data: after, meta: {} };
   }
 
   // -----------------------------
   // DELETE TEMPLATE
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_TEMPLATE_DELETED',
-    entity: 'ProgramTemplate',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
+    this.logger.log(`Deleting template ${id}`);
+
+    const templateId = toBigIntOptional(id);
+
+    const before = await this.prisma.programTemplate.findFirst({
+      where: { id: templateId },
+    });
+
+    if (!before) {
+      throw new NotFoundException('Template not found');
+    }
+
     await this.prisma.programTemplate.update({
-      where: { id: toBigIntOptional(id) },
+      where: { id: templateId },
       data: { deletedAt: new Date() },
+    });
+
+    await this.auditService.log({
+      action: 'PROGRAM_TEMPLATE_DELETED',
+      entity: 'ProgramTemplate',
+      entityId: id,
+      before,
     });
 
     return { success: true, data: {}, meta: {} };

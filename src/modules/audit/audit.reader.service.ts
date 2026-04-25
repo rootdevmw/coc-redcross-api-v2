@@ -5,6 +5,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class AuditReaderService {
   constructor(private prisma: PrismaService) {}
 
+  private normalize(value: string) {
+    return value
+      ?.trim()
+      .replace(/-/g, '_')
+      .replace(/([a-z])([A-Z])/g, '$1_$2')
+      .toUpperCase();
+  }
+
   // -----------------------------
   // ENTITY LIST VIEW
   // -----------------------------
@@ -15,7 +23,8 @@ export class AuditReaderService {
     action?: string;
     search?: string;
   }) {
-    const { entity, page, limit, action, search } = params;
+    const entity = this.normalize(params.entity);
+    const action = params.action ? this.normalize(params.action) : undefined;
 
     const where: any = {
       entity,
@@ -25,61 +34,11 @@ export class AuditReaderService {
       where.action = action;
     }
 
-    if (search) {
+    if (params.search) {
       where.entityId = {
-        contains: search,
+        contains: params.search,
       };
     }
-
-    const [data, total] = await Promise.all([
-      this.prisma.auditLog.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-      }),
-
-      this.prisma.auditLog.count({ where }),
-    ]);
-
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-      },
-    };
-  }
-
-  // -----------------------------
-  // SINGLE ENTITY RECORD TIMELINE
-  // -----------------------------
-  async findEntityTimeline(params: { entity: string; entityId: string }) {
-    const logs = await this.prisma.auditLog.findMany({
-      where: {
-        entity: params.entity,
-        entityId: params.entityId,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return {
-      data: logs,
-    };
-  }
-
-  // -----------------------------
-  // GLOBAL SEARCH (optional future)
-  // -----------------------------
-  async searchAll(params: { search: string; page: number; limit: number }) {
-    const where = {
-      OR: [
-        { entity: { contains: params.search } },
-        { entityId: { contains: params.search } },
-        { action: { contains: params.search } },
-      ],
-    };
 
     const [data, total] = await Promise.all([
       this.prisma.auditLog.findMany({
@@ -99,5 +58,22 @@ export class AuditReaderService {
         total,
       },
     };
+  }
+
+  // -----------------------------
+  // TIMELINE
+  // -----------------------------
+  async findEntityTimeline(params: { entity: string; entityId: string }) {
+    const entity = this.normalize(params.entity);
+
+    const logs = await this.prisma.auditLog.findMany({
+      where: {
+        entity,
+        entityId: params.entityId,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return { data: logs };
   }
 }

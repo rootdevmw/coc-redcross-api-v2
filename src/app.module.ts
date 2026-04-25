@@ -1,28 +1,26 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core/constants';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config';
-import { MembersModule } from './modules/members/members.module';
-import { HomecellsModule } from './modules/homecells/homecells.module';
-import { MinistriesModule } from './modules/ministries/ministries.module';
-import { ContentModule } from './modules/content/content.module';
 import { AnnouncementsModule } from './modules/announcements/announcements.module';
-import { EventsModule } from './modules/events/events.module';
-import { ProgramsModule } from './modules/programs/programs.module';
-import { NewslettersModule } from './modules/newsletters/newsletters.module';
-import { StreamsModule } from './modules/streams/streams.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { RolesModule } from './modules/roles/roles.module';
-import { UsersModule } from './modules/users/users.module';
-import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
-import { SessionAuthGuard } from './modules/auth/guard/session.guard';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core/constants';
-import { EmailModule } from './modules/email/email.module';
 import { AttentionModule } from './modules/attention/attention.module';
-import { AuditService } from './modules/audit/audit.service';
-import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 import { AuditModule } from './modules/audit/audit.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { SessionAuthGuard } from './modules/auth/guard/session.guard';
+import { ContentModule } from './modules/content/content.module';
+import { EmailModule } from './modules/email/email.module';
+import { EventsModule } from './modules/events/events.module';
+import { HomecellsModule } from './modules/homecells/homecells.module';
+import { MembersModule } from './modules/members/members.module';
+import { MinistriesModule } from './modules/ministries/ministries.module';
+import { NewslettersModule } from './modules/newsletters/newsletters.module';
+import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
+import { ProgramsModule } from './modules/programs/programs.module';
+import { RolesModule } from './modules/roles/roles.module';
+import { StreamsModule } from './modules/streams/streams.module';
+import { UsersModule } from './modules/users/users.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -48,10 +46,6 @@ import { AuditModule } from './modules/audit/audit.module';
     }),
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    { provide: APP_GUARD, useClass: SessionAuthGuard },
-    { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },
-  ],
+  providers: [AppService, { provide: APP_GUARD, useClass: SessionAuthGuard }],
 })
 export class AppModule {}

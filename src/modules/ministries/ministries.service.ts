@@ -4,21 +4,20 @@ import { CreateMinistryDto } from './dto/create-ministry.dto';
 import { UpdateMinistryDto } from './dto/update-ministry.dto';
 import { QueryMinistryDto } from './dto/query-ministry.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class MinistriesService {
   private readonly logger = new Logger(MinistriesService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE
   // -----------------------------
-  @Audit({
-    action: 'MINISTRY_CREATED',
-    entity: 'Ministry',
-  })
   async create(dto: CreateMinistryDto) {
     this.logger.log(`Creating ministry: ${dto.name}`);
 
@@ -29,6 +28,13 @@ export class MinistriesService {
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
       },
+    });
+
+    await this.auditService.log({
+      action: 'MINISTRY_CREATED',
+      entity: 'Ministry',
+      entityId: ministry.id.toString(),
+      after: ministry,
     });
 
     return {
@@ -141,15 +147,21 @@ export class MinistriesService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  @Audit({
-    action: 'MINISTRY_UPDATED',
-    entity: 'Ministry',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: UpdateMinistryDto) {
-    const ministry = await this.prisma.ministry.update({
-      where: { id: toBigInt(id) },
+    this.logger.log(`Updating ministry: ${id}`);
+
+    const ministryId = toBigInt(id);
+
+    const before = await this.prisma.ministry.findFirst({
+      where: { id: ministryId },
+    });
+
+    if (!before) {
+      throw new NotFoundException('Ministry not found');
+    }
+
+    const after = await this.prisma.ministry.update({
+      where: { id: ministryId },
       data: {
         name: dto.name,
         description: dto.description,
@@ -158,9 +170,17 @@ export class MinistriesService {
       },
     });
 
+    await this.auditService.log({
+      action: 'MINISTRY_UPDATED',
+      entity: 'Ministry',
+      entityId: id,
+      before,
+      after,
+    });
+
     return {
       success: true,
-      data: ministry,
+      data: after,
       meta: {},
     };
   }
@@ -168,15 +188,28 @@ export class MinistriesService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  @Audit({
-    action: 'MINISTRY_DELETED',
-    entity: 'Ministry',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
+    this.logger.log(`Deleting ministry: ${id}`);
+
+    const ministryId = toBigInt(id);
+
+    const before = await this.prisma.ministry.findFirst({
+      where: { id: ministryId },
+    });
+
+    if (!before) {
+      throw new NotFoundException('Ministry not found');
+    }
+
     await this.prisma.ministry.delete({
-      where: { id: toBigInt(id) },
+      where: { id: ministryId },
+    });
+
+    await this.auditService.log({
+      action: 'MINISTRY_DELETED',
+      entity: 'Ministry',
+      entityId: id,
+      before,
     });
 
     return {
@@ -189,34 +222,21 @@ export class MinistriesService {
   // -----------------------------
   // ASSIGN MEMBER
   // -----------------------------
-  @Audit({
-    action: 'MINISTRY_MEMBER_ASSIGNED',
-    entity: 'MemberMinistry',
-  })
   async assignMember(memberId: string, ministryId: string) {
     this.logger.log(`Assigning member ${memberId} to ministry ${ministryId}`);
-
-    const member = await this.prisma.member.findFirst({
-      where: { id: toBigInt(memberId) },
-    });
-
-    if (!member) {
-      throw new NotFoundException(`Member with id ${memberId} not found`);
-    }
-
-    const ministry = await this.prisma.ministry.findFirst({
-      where: { id: toBigInt(ministryId) },
-    });
-
-    if (!ministry) {
-      throw new NotFoundException(`Ministry with id ${ministryId} not found`);
-    }
 
     await this.prisma.memberMinistry.create({
       data: {
         memberId: toBigInt(memberId),
         ministryId: toBigInt(ministryId),
       },
+    });
+
+    await this.auditService.log({
+      action: 'MINISTRY_MEMBER_ASSIGNED',
+      entity: 'MemberMinistry',
+      entityId: `${memberId}-${ministryId}`,
+      after: { memberId, ministryId },
     });
 
     return {
@@ -229,11 +249,6 @@ export class MinistriesService {
   // -----------------------------
   // REMOVE MEMBER
   // -----------------------------
-  @Audit({
-    action: 'MINISTRY_MEMBER_REMOVED',
-    entity: 'MemberMinistry',
-    idParamIndex: 0,
-  })
   async removeMember(memberId: string, ministryId: string) {
     this.logger.log(`Removing member ${memberId} from ministry ${ministryId}`);
 
@@ -244,6 +259,13 @@ export class MinistriesService {
           ministryId: toBigInt(ministryId),
         },
       },
+    });
+
+    await this.auditService.log({
+      action: 'MINISTRY_MEMBER_REMOVED',
+      entity: 'MemberMinistry',
+      entityId: `${memberId}-${ministryId}`,
+      before: { memberId, ministryId },
     });
 
     return {

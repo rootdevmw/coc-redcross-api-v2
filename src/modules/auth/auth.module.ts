@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RolesGuard } from './guard/roles.guard';
 import { EmailModule } from '../email/email.module';
 import { AuditService } from '../audit/audit.service';
+import { RequestContextService } from '../audit/request-contenxt.service';
 
 @Module({
   imports: [
@@ -27,7 +28,13 @@ import { AuditService } from '../audit/audit.service';
 
   controllers: [AuthController],
 
-  providers: [AuthService, PrismaService, RolesGuard, AuditService],
+  providers: [
+    AuthService,
+    PrismaService,
+    RolesGuard,
+    AuditService,
+    RequestContextService,
+  ],
 
   exports: [AuthService],
 })

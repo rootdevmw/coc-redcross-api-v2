@@ -13,17 +13,15 @@ export class EventsService {
 
   constructor(
     private prisma: PrismaService,
-    private auditService: AuditService, //  keep ONLY for special case
+    private auditService: AuditService,
   ) {}
 
   // -----------------------------
   // CREATE
   // -----------------------------
-  @Audit({
-    action: 'EVENT_CREATED',
-    entity: 'Event',
-  })
   async create(dto: CreateEventDto) {
+    this.logger.log(`CREATE_EVENT_STARTED: ${dto.title}`);
+
     const event = await this.prisma.event.create({
       data: {
         title: dto.title,
@@ -45,6 +43,15 @@ export class EventsService {
         ministries: { include: { ministry: true } },
       },
     });
+
+    await this.auditService.log({
+      action: 'EVENT_CREATED',
+      entity: 'Event',
+      entityId: event.id.toString(),
+      after: event,
+    });
+
+    this.logger.log(`CREATE_EVENT_SUCCESS: ${event.id}`);
 
     return { success: true, data: event, meta: {} };
   }
@@ -114,23 +121,21 @@ export class EventsService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  @Audit({
-    action: 'EVENT_UPDATED',
-    entity: 'Event',
-    fetchBefore: true,
-    idParamIndex: 0,
-  })
   async update(id: string, dto: UpdateEventDto) {
     const eventId = toBigInt(id);
 
+    this.logger.log(`UPDATE_EVENT_STARTED: ${id}`);
+
     const before = await this.prisma.event.findFirst({
       where: { id: eventId },
-      include: { ministries: true },
+      include: {
+        ministries: true,
+      },
     });
 
     if (!before) throw new NotFoundException(`Event not found`);
 
-    // replace ministries
+    // replace ministries if provided
     if (dto.ministryIds) {
       await this.prisma.eventMinistry.deleteMany({
         where: { eventId },
@@ -160,20 +165,20 @@ export class EventsService {
       },
     });
 
-    // 🔥 SPECIAL CASE: reschedule detection
+    //  SPECIAL CASE: detect reschedule
     const wasRescheduled =
       before.startTime.getTime() !== after.startTime.getTime() ||
       before.endTime.getTime() !== after.endTime.getTime();
 
-    if (wasRescheduled) {
-      await this.auditService.log({
-        action: 'EVENT_RESCHEDULED',
-        entity: 'Event',
-        entityId: id,
-        before,
-        after,
-      });
-    }
+    await this.auditService.log({
+      action: wasRescheduled ? 'EVENT_RESCHEDULED' : 'EVENT_UPDATED',
+      entity: 'Event',
+      entityId: id,
+      before,
+      after,
+    });
+
+    this.logger.log(`UPDATE_EVENT_SUCCESS: ${id}`);
 
     return { success: true, data: after, meta: {} };
   }
@@ -181,16 +186,32 @@ export class EventsService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  @Audit({
-    action: 'EVENT_DELETED',
-    entity: 'Event',
-    fetchBefore: true,
-    idParamIndex: 0,
-  })
   async remove(id: string) {
-    await this.prisma.event.delete({
-      where: { id: toBigInt(id) },
+    const eventId = toBigInt(id);
+
+    this.logger.warn(`DELETE_EVENT_STARTED: ${id}`);
+
+    const before = await this.prisma.event.findFirst({
+      where: { id: eventId },
+      include: {
+        ministries: true,
+      },
     });
+
+    if (!before) throw new NotFoundException(`Event not found`);
+
+    await this.prisma.event.delete({
+      where: { id: eventId },
+    });
+
+    await this.auditService.log({
+      action: 'EVENT_DELETED',
+      entity: 'Event',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_EVENT_SUCCESS: ${id}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -198,13 +219,18 @@ export class EventsService {
   // -----------------------------
   // CREATE TYPE
   // -----------------------------
-  @Audit({
-    action: 'EVENT_TYPE_CREATED',
-    entity: 'EventType',
-  })
   async createType(name: string) {
+    this.logger.log(`CREATE_EVENT_TYPE: ${name}`);
+
     const type = await this.prisma.eventType.create({
       data: { name },
+    });
+
+    await this.auditService.log({
+      action: 'EVENT_TYPE_CREATED',
+      entity: 'EventType',
+      entityId: type.id.toString(),
+      after: type,
     });
 
     return { success: true, data: type, meta: {} };

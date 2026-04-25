@@ -6,23 +6,22 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class RolesService {
   private readonly logger = new Logger(RolesService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE ROLE
   // -----------------------------
-  @Audit({
-    action: 'ROLE_CREATED',
-    entity: 'Role',
-  })
   async create(dto: any) {
-    this.logger.log(`Creating role: ${dto.name}`);
+    this.logger.log(`CREATE_ROLE_STARTED: ${dto.name}`);
 
     const existing = await this.prisma.role.findFirst({
       where: { name: dto.name },
@@ -37,6 +36,15 @@ export class RolesService {
         name: dto.name,
       },
     });
+
+    await this.auditService.log({
+      action: 'ROLE_CREATED',
+      entity: 'Role',
+      entityId: role.id.toString(),
+      after: role,
+    });
+
+    this.logger.log(`CREATE_ROLE_SUCCESS: ${role.id}`);
 
     return {
       success: true,
@@ -88,25 +96,39 @@ export class RolesService {
   // -----------------------------
   // UPDATE ROLE
   // -----------------------------
-  @Audit({
-    action: 'ROLE_UPDATED',
-    entity: 'Role',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: any) {
-    this.logger.log(`Updating role ${id}`);
+    const roleId = toBigIntOptional(id);
 
-    const role = await this.prisma.role.update({
-      where: { id: toBigIntOptional(id) },
+    this.logger.log(`UPDATE_ROLE_STARTED: ${id}`);
+
+    const before = await this.prisma.role.findFirst({
+      where: { id: roleId },
+    });
+
+    if (!before) {
+      throw new NotFoundException(`Role not found`);
+    }
+
+    const after = await this.prisma.role.update({
+      where: { id: roleId },
       data: {
         name: dto.name,
       },
     });
 
+    await this.auditService.log({
+      action: 'ROLE_UPDATED',
+      entity: 'Role',
+      entityId: id,
+      before,
+      after,
+    });
+
+    this.logger.log(`UPDATE_ROLE_SUCCESS: ${id}`);
+
     return {
       success: true,
-      data: role,
+      data: after,
       meta: {},
     };
   }
@@ -114,18 +136,31 @@ export class RolesService {
   // -----------------------------
   // DELETE ROLE
   // -----------------------------
-  @Audit({
-    action: 'ROLE_DELETED',
-    entity: 'Role',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
-    this.logger.log(`Deleting role ${id}`);
+    const roleId = toBigIntOptional(id);
+
+    this.logger.warn(`DELETE_ROLE_STARTED: ${id}`);
+
+    const before = await this.prisma.role.findFirst({
+      where: { id: roleId },
+    });
+
+    if (!before) {
+      throw new NotFoundException(`Role not found`);
+    }
 
     await this.prisma.role.delete({
-      where: { id: toBigIntOptional(id) },
+      where: { id: roleId },
     });
+
+    await this.auditService.log({
+      action: 'ROLE_DELETED',
+      entity: 'Role',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_ROLE_SUCCESS: ${id}`);
 
     return {
       success: true,

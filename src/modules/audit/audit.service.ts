@@ -7,6 +7,13 @@ export class AuditService {
 
   constructor(private prisma: PrismaService) {}
 
+  // -----------------------------
+  // NORMALIZER (single source of truth)
+  // -----------------------------
+  private normalizeEntity(entity: string) {
+    return entity?.toUpperCase().replace(/-/g, '_');
+  }
+
   async log(params: {
     action: string;
     entity: string;
@@ -17,14 +24,16 @@ export class AuditService {
     ipAddress?: string;
     userAgent?: string;
   }) {
+    const normalizedEntity = this.normalizeEntity(params.entity);
+
     this.logger.log(
-      `${params.action} on ${params.entity} (${params.entityId}) by user ${params.userId}`,
+      `${params.action} on ${normalizedEntity} (${params.entityId}) by user ${params.userId}`,
     );
 
     await this.prisma.auditLog.create({
       data: {
         action: params.action,
-        entity: params.entity,
+        entity: normalizedEntity, //  ALWAYS NORMALIZED
         entityId: params.entityId?.toString(),
         before: params.before,
         after: params.after,

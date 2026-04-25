@@ -1,21 +1,20 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class ProgramsService {
   private readonly logger = new Logger(ProgramsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE PROGRAM
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_CREATED',
-    entity: 'Program',
-  })
   async create(dto: any) {
     this.logger.log(`Creating program for date ${dto.date}`);
 
@@ -25,7 +24,6 @@ export class ProgramsService {
         location: dto.location || undefined,
         typeId: dto.typeId,
         homecellId: dto.homecellId,
-
         items: {
           create: dto.items.map((item: any) => ({
             title: item.title,
@@ -46,16 +44,19 @@ export class ProgramsService {
       },
     });
 
+    await this.auditService.log({
+      action: 'PROGRAM_CREATED',
+      entity: 'Program',
+      entityId: program.id.toString(),
+      after: program,
+    });
+
     return { success: true, data: program, meta: {} };
   }
 
   // -----------------------------
   // CREATE FROM TEMPLATE
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_CREATED_FROM_TEMPLATE',
-    entity: 'Program',
-  })
   async createFromTemplate(dto: any) {
     this.logger.log(`Creating program from template ${dto.templateId}`);
 
@@ -82,7 +83,6 @@ export class ProgramsService {
         location: dto.location || undefined,
         typeId: template.typeId,
         homecellId: dto.homecellId ?? template.homecellId ?? null,
-
         items: {
           create: template.items.map((item) => ({
             title: item.title,
@@ -101,6 +101,13 @@ export class ProgramsService {
           orderBy: { sequence: 'asc' },
         },
       },
+    });
+
+    await this.auditService.log({
+      action: 'PROGRAM_CREATED_FROM_TEMPLATE',
+      entity: 'Program',
+      entityId: program.id.toString(),
+      after: program,
     });
 
     return { success: true, data: program, meta: {} };
@@ -180,29 +187,31 @@ export class ProgramsService {
   // -----------------------------
   // UPDATE PROGRAM
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_UPDATED',
-    entity: 'Program',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: any) {
     this.logger.log(`Updating program ${id}`);
 
+    const programId = toBigIntOptional(id);
+
+    const before = await this.prisma.program.findFirst({
+      where: { id: programId },
+      include: { items: true },
+    });
+
+    if (!before) throw new NotFoundException('Program not found');
+
     if (dto.items) {
       await this.prisma.programItem.deleteMany({
-        where: { programId: toBigIntOptional(id) },
+        where: { programId },
       });
     }
 
-    const program = await this.prisma.program.update({
-      where: { id: toBigIntOptional(id) },
+    const after = await this.prisma.program.update({
+      where: { id: programId },
       data: {
         date: dto.date ? new Date(dto.date) : undefined,
         location: dto.location || undefined,
         typeId: dto.typeId || undefined,
         homecellId: dto.homecellId || undefined,
-
         items: dto.items
           ? {
               create: dto.items.map((item: any) => ({
@@ -226,21 +235,40 @@ export class ProgramsService {
       },
     });
 
-    return { success: true, data: program, meta: {} };
+    await this.auditService.log({
+      action: 'PROGRAM_UPDATED',
+      entity: 'Program',
+      entityId: id,
+      before,
+      after,
+    });
+
+    return { success: true, data: after, meta: {} };
   }
 
   // -----------------------------
   // DELETE PROGRAM
   // -----------------------------
-  @Audit({
-    action: 'PROGRAM_DELETED',
-    entity: 'Program',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
+    this.logger.warn(`Deleting program ${id}`);
+
+    const programId = toBigIntOptional(id);
+
+    const before = await this.prisma.program.findFirst({
+      where: { id: programId },
+    });
+
+    if (!before) throw new NotFoundException('Program not found');
+
     await this.prisma.program.delete({
-      where: { id: toBigIntOptional(id) },
+      where: { id: programId },
+    });
+
+    await this.auditService.log({
+      action: 'PROGRAM_DELETED',
+      entity: 'Program',
+      entityId: id,
+      before,
     });
 
     return { success: true, data: {}, meta: {} };

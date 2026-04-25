@@ -5,21 +5,21 @@ import { QueryAnnouncementDto } from './dto/query-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AnnouncementsService {
   private readonly logger = new Logger(AnnouncementsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE
   // -----------------------------
-  @Audit({
-    action: 'ANNOUNCEMENT_CREATED',
-    entity: 'Announcement',
-  })
-  async create(dto: CreateAnnouncementDto) {
+  async create(dto: CreateAnnouncementDto, user: any) {
     this.logger.log(`CREATE_ANNOUNCEMENT_STARTED: ${dto.title}`);
 
     const announcement = await this.prisma.announcement.create({
@@ -28,6 +28,7 @@ export class AnnouncementsService {
         body: dto.body,
         priority: dto.priority,
         expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : null,
+
         targets: {
           create: dto.targets.map((t) => ({
             targetType: t.targetType,
@@ -38,6 +39,14 @@ export class AnnouncementsService {
       include: {
         targets: true,
       },
+    });
+
+    await this.auditService.log({
+      action: 'ANNOUNCEMENT_CREATED',
+      entity: 'Announcement',
+      entityId: announcement.id.toString(),
+      after: announcement,
+      userId: user.id,
     });
 
     this.logger.log(`CREATE_ANNOUNCEMENT_SUCCESS: ${announcement.id}`);
@@ -163,37 +172,33 @@ export class AnnouncementsService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  @Audit({
-    action: 'ANNOUNCEMENT_UPDATED',
-    entity: 'Announcement',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
-  async update(id: string, dto: UpdateAnnouncementDto) {
+  async update(id: string, dto: UpdateAnnouncementDto, user: any) {
     this.logger.log(`UPDATE_ANNOUNCEMENT_STARTED: ${id}`);
 
     const announcementId = toBigInt(id);
 
-    // Keep validation (important!)
-    const existing = await this.prisma.announcement.findFirst({
+    const before = await this.prisma.announcement.findFirst({
       where: { id: announcementId },
+      include: { targets: true },
     });
 
-    if (!existing) throw new NotFoundException('Announcement not found');
+    if (!before) throw new NotFoundException('Announcement not found');
 
+    // Replace targets if provided
     if (dto.targets) {
       await this.prisma.announcementTarget.deleteMany({
         where: { announcementId },
       });
     }
 
-    const updated = await this.prisma.announcement.update({
+    const after = await this.prisma.announcement.update({
       where: { id: announcementId },
       data: {
         title: dto.title,
         body: dto.body,
         priority: dto.priority,
         expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : undefined,
+
         targets: dto.targets
           ? {
               create: dto.targets.map((t) => ({
@@ -206,11 +211,20 @@ export class AnnouncementsService {
       include: { targets: true },
     });
 
+    await this.auditService.log({
+      action: 'ANNOUNCEMENT_UPDATED',
+      entity: 'Announcement',
+      entityId: id,
+      userId: user.id,
+      before,
+      after,
+    });
+
     this.logger.log(`UPDATE_ANNOUNCEMENT_SUCCESS: ${id}`);
 
     return {
       success: true,
-      data: updated,
+      data: after,
       meta: {},
     };
   }
@@ -218,25 +232,28 @@ export class AnnouncementsService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  @Audit({
-    action: 'ANNOUNCEMENT_DELETED',
-    entity: 'Announcement',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
-  async remove(id: string) {
+  async remove(id: string, user: any) {
     this.logger.log(`DELETE_ANNOUNCEMENT_STARTED: ${id}`);
 
     const announcementId = toBigInt(id);
 
-    const existing = await this.prisma.announcement.findFirst({
+    const before = await this.prisma.announcement.findFirst({
       where: { id: announcementId },
+      include: { targets: true },
     });
 
-    if (!existing) throw new NotFoundException('Announcement not found');
+    if (!before) throw new NotFoundException('Announcement not found');
 
     await this.prisma.announcement.delete({
       where: { id: announcementId },
+    });
+
+    await this.auditService.log({
+      action: 'ANNOUNCEMENT_DELETED',
+      entity: 'Announcement',
+      entityId: id,
+      userId: user.id,
+      before,
     });
 
     this.logger.log(`DELETE_ANNOUNCEMENT_SUCCESS: ${id}`);

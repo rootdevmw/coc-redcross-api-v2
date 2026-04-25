@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { EmailService } from '../email/email.service';
 import { ConfigService } from '@nestjs/config/dist/config.service';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class UsersService {
@@ -20,18 +20,16 @@ export class UsersService {
     private prisma: PrismaService,
     private emailService: EmailService,
     private config: ConfigService,
+    private auditService: AuditService,
   ) {}
 
   // -----------------------------
   // CREATE USER (INVITE FLOW)
   // -----------------------------
-  @Audit({
-    action: 'USER_CREATED',
-    entity: 'User',
-  })
   async create(dto: any) {
     const email = dto.email.toLowerCase().trim();
-    this.logger.log(`Creating user: ${email}`);
+
+    this.logger.log(`CREATE_USER_STARTED: ${email}`);
 
     const existing = await this.prisma.user.findFirst({
       where: { email },
@@ -53,6 +51,7 @@ export class UsersService {
       },
     });
 
+    // generate invite token
     const rawToken = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto
       .createHash('sha256')
@@ -75,6 +74,15 @@ export class UsersService {
 
     const { password, ...safeUser } = user;
 
+    await this.auditService.log({
+      action: 'USER_CREATED',
+      entity: 'User',
+      entityId: user.id.toString(),
+      after: safeUser,
+    });
+
+    this.logger.log(`CREATE_USER_SUCCESS: ${user.id}`);
+
     return {
       success: true,
       data: safeUser,
@@ -85,19 +93,41 @@ export class UsersService {
   // -----------------------------
   // UPDATE USER
   // -----------------------------
-  @Audit({
-    action: 'USER_UPDATED',
-    entity: 'User',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: any) {
+    const userId = toBigIntOptional(id);
     const email = dto.email?.toLowerCase().trim();
 
+    this.logger.log(`UPDATE_USER_STARTED: ${id}`);
+
+    const before = await this.prisma.user.findFirst({
+      where: { id: userId },
+      include: {
+        roles: { include: { role: true } },
+        member: true,
+      },
+    });
+
+    if (!before) {
+      throw new NotFoundException(`User not found`);
+    }
+
     const user = await this.prisma.user.update({
-      where: { id: toBigIntOptional(id) },
+      where: { id: userId },
       data: { email },
     });
+
+    await this.auditService.log({
+      action: 'USER_UPDATED',
+      entity: 'User',
+      entityId: id,
+      before,
+      after: {
+        id: user.id.toString(),
+        email: user.email,
+      },
+    });
+
+    this.logger.log(`UPDATE_USER_SUCCESS: ${id}`);
 
     return {
       success: true,
@@ -112,17 +142,36 @@ export class UsersService {
   // -----------------------------
   // DELETE USER (SOFT)
   // -----------------------------
-  @Audit({
-    action: 'USER_DELETED',
-    entity: 'User',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
+    const userId = toBigIntOptional(id);
+
+    this.logger.warn(`DELETE_USER_STARTED: ${id}`);
+
+    const before = await this.prisma.user.findFirst({
+      where: { id: userId },
+      include: {
+        roles: { include: { role: true } },
+        member: true,
+      },
+    });
+
+    if (!before) {
+      throw new NotFoundException(`User not found`);
+    }
+
     await this.prisma.user.update({
-      where: { id: toBigIntOptional(id) },
+      where: { id: userId },
       data: { deletedAt: new Date() },
     });
+
+    await this.auditService.log({
+      action: 'USER_DELETED',
+      entity: 'User',
+      entityId: id,
+      before,
+    });
+
+    this.logger.warn(`DELETE_USER_SUCCESS: ${id}`);
 
     return { success: true, data: {}, meta: {} };
   }
@@ -130,15 +179,11 @@ export class UsersService {
   // -----------------------------
   // LINK MEMBER
   // -----------------------------
-  @Audit({
-    action: 'USER_MEMBER_LINKED',
-    entity: 'User',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async linkMember(userId: string, memberId: string) {
     const userIdBigInt = toBigIntOptional(userId);
     const memberIdBigInt = toBigIntOptional(memberId);
+
+    this.logger.log(`LINK_MEMBER_STARTED: user=${userId} member=${memberId}`);
 
     const user = await this.prisma.user.findFirst({
       where: { id: userIdBigInt, deletedAt: null },
@@ -169,21 +214,27 @@ export class UsersService {
       data: { userId: userIdBigInt },
     });
 
+    await this.auditService.log({
+      action: 'USER_MEMBER_LINKED',
+      entity: 'User',
+      entityId: userId,
+      before: user,
+      after: { linkedMemberId: memberId },
+    });
+
     return { success: true, data: {}, meta: {} };
   }
 
   // -----------------------------
   // UNLINK MEMBER
   // -----------------------------
-  @Audit({
-    action: 'USER_MEMBER_UNLINKED',
-    entity: 'User',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async unlinkMember(userId: string) {
+    const userIdBigInt = toBigIntOptional(userId);
+
+    this.logger.log(`UNLINK_MEMBER_STARTED: ${userId}`);
+
     const user = await this.prisma.user.findFirst({
-      where: { id: toBigIntOptional(userId) },
+      where: { id: userIdBigInt },
       include: { member: true },
     });
 
@@ -194,6 +245,14 @@ export class UsersService {
     await this.prisma.member.update({
       where: { id: user.member.id },
       data: { userId: null },
+    });
+
+    await this.auditService.log({
+      action: 'USER_MEMBER_UNLINKED',
+      entity: 'User',
+      entityId: userId,
+      before: user,
+      after: null,
     });
 
     return { success: true, data: {}, meta: {} };

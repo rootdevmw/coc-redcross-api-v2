@@ -3,28 +3,22 @@ import { PrismaService } from '../../prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
-import { ConfigService } from '@nestjs/config/dist/config.service';
-import { Audit } from 'src/common/decorators/audit.decorator';
+import { ConfigService } from '@nestjs/config';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class NewslettersService {
   private readonly logger = new Logger(NewslettersService.name);
-  private readonly config: ConfigService;
 
   constructor(
     private prisma: PrismaService,
-    config: ConfigService,
-  ) {
-    this.config = config;
-  }
+    private config: ConfigService,
+    private auditService: AuditService,
+  ) {}
 
   // -----------------------------
   // CREATE
   // -----------------------------
-  @Audit({
-    action: 'NEWSLETTER_CREATED',
-    entity: 'Newsletter',
-  })
   async create(dto: any, file?: Express.Multer.File) {
     this.logger.log(`Creating newsletter: ${dto.title}`);
 
@@ -41,6 +35,13 @@ export class NewslettersService {
         fileUrl,
         publishedAt: dto.publishedAt ? new Date(dto.publishedAt) : null,
       },
+    });
+
+    await this.auditService.log({
+      action: 'NEWSLETTER_CREATED',
+      entity: 'Newsletter',
+      entityId: newsletter.id.toString(),
+      after: newsletter,
     });
 
     return {
@@ -100,14 +101,18 @@ export class NewslettersService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  @Audit({
-    action: 'NEWSLETTER_UPDATED',
-    entity: 'Newsletter',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async update(id: string, dto: any, file?: Express.Multer.File) {
     this.logger.log(`Updating newsletter ${id}`);
+
+    const newsletterId = toBigIntOptional(id);
+
+    const before = await this.prisma.newsletter.findFirst({
+      where: { id: newsletterId },
+    });
+
+    if (!before) {
+      throw new NotFoundException('Newsletter not found');
+    }
 
     let fileUrl: string | undefined;
 
@@ -115,8 +120,8 @@ export class NewslettersService {
       fileUrl = this.saveFile(file);
     }
 
-    const newsletter = await this.prisma.newsletter.update({
-      where: { id: toBigIntOptional(id) },
+    const after = await this.prisma.newsletter.update({
+      where: { id: newsletterId },
       data: {
         title: dto.title,
         description: dto.description,
@@ -130,9 +135,17 @@ export class NewslettersService {
       },
     });
 
+    await this.auditService.log({
+      action: 'NEWSLETTER_UPDATED',
+      entity: 'Newsletter',
+      entityId: id,
+      before,
+      after,
+    });
+
     return {
       success: true,
-      data: newsletter,
+      data: after,
       meta: {},
     };
   }
@@ -140,25 +153,33 @@ export class NewslettersService {
   // -----------------------------
   // PUBLISH
   // -----------------------------
-  @Audit({
-    action: 'NEWSLETTER_PUBLISHED',
-    entity: 'Newsletter',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async publish(id: string) {
     this.logger.log(`Publishing newsletter ${id}`);
 
-    const newsletter = await this.prisma.newsletter.update({
-      where: { id: toBigIntOptional(id) },
+    const newsletterId = toBigIntOptional(id);
+
+    const before = await this.prisma.newsletter.findFirst({
+      where: { id: newsletterId },
+    });
+
+    const after = await this.prisma.newsletter.update({
+      where: { id: newsletterId },
       data: {
         publishedAt: new Date(),
       },
     });
 
+    await this.auditService.log({
+      action: 'NEWSLETTER_PUBLISHED',
+      entity: 'Newsletter',
+      entityId: id,
+      before,
+      after,
+    });
+
     return {
       success: true,
-      data: newsletter,
+      data: after,
       meta: {},
     };
   }
@@ -166,25 +187,33 @@ export class NewslettersService {
   // -----------------------------
   // UNPUBLISH
   // -----------------------------
-  @Audit({
-    action: 'NEWSLETTER_UNPUBLISHED',
-    entity: 'Newsletter',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async unpublish(id: string) {
     this.logger.log(`Unpublishing newsletter ${id}`);
 
-    const newsletter = await this.prisma.newsletter.update({
-      where: { id: toBigIntOptional(id) },
+    const newsletterId = toBigIntOptional(id);
+
+    const before = await this.prisma.newsletter.findFirst({
+      where: { id: newsletterId },
+    });
+
+    const after = await this.prisma.newsletter.update({
+      where: { id: newsletterId },
       data: {
         publishedAt: null,
       },
     });
 
+    await this.auditService.log({
+      action: 'NEWSLETTER_UNPUBLISHED',
+      entity: 'Newsletter',
+      entityId: id,
+      before,
+      after,
+    });
+
     return {
       success: true,
-      data: newsletter,
+      data: after,
       meta: {},
     };
   }
@@ -192,15 +221,24 @@ export class NewslettersService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  @Audit({
-    action: 'NEWSLETTER_DELETED',
-    entity: 'Newsletter',
-    idParamIndex: 0,
-    fetchBefore: true,
-  })
   async remove(id: string) {
+    this.logger.log(`Deleting newsletter ${id}`);
+
+    const newsletterId = toBigIntOptional(id);
+
+    const before = await this.prisma.newsletter.findFirst({
+      where: { id: newsletterId },
+    });
+
     await this.prisma.newsletter.delete({
-      where: { id: toBigIntOptional(id) },
+      where: { id: newsletterId },
+    });
+
+    await this.auditService.log({
+      action: 'NEWSLETTER_DELETED',
+      entity: 'Newsletter',
+      entityId: id,
+      before,
     });
 
     return {
@@ -235,8 +273,8 @@ export class NewslettersService {
     return this.buildPublicUrl(`/uploads/newsletters/${fileName}`);
   }
 
-  private buildPublicUrl(path: string): string {
+  private buildPublicUrl(filePath: string): string {
     const baseUrl = this.config.get<string>('APP_URL');
-    return `${baseUrl}${path}`;
+    return `${baseUrl}${filePath}`;
   }
 }

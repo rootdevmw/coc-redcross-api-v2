@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class ProgramsService {
@@ -11,6 +12,10 @@ export class ProgramsService {
   // -----------------------------
   // CREATE PROGRAM
   // -----------------------------
+  @Audit({
+    action: 'PROGRAM_CREATED',
+    entity: 'Program',
+  })
   async create(dto: any) {
     this.logger.log(`Creating program for date ${dto.date}`);
 
@@ -35,9 +40,7 @@ export class ProgramsService {
         type: true,
         homecell: true,
         items: {
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -46,6 +49,13 @@ export class ProgramsService {
     return { success: true, data: program, meta: {} };
   }
 
+  // -----------------------------
+  // CREATE FROM TEMPLATE
+  // -----------------------------
+  @Audit({
+    action: 'PROGRAM_CREATED_FROM_TEMPLATE',
+    entity: 'Program',
+  })
   async createFromTemplate(dto: any) {
     this.logger.log(`Creating program from template ${dto.templateId}`);
 
@@ -70,10 +80,7 @@ export class ProgramsService {
       data: {
         date: new Date(dto.date),
         location: dto.location || undefined,
-        // copy from template
         typeId: template.typeId,
-
-        // allow override OR fallback
         homecellId: dto.homecellId ?? template.homecellId ?? null,
 
         items: {
@@ -86,14 +93,11 @@ export class ProgramsService {
           })),
         },
       },
-
       include: {
         type: true,
         homecell: true,
         items: {
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -103,7 +107,7 @@ export class ProgramsService {
   }
 
   // -----------------------------
-  // GET ALL PROGRAMS
+  // FIND ALL (NO AUDIT)
   // -----------------------------
   async findAll(query: any) {
     const page = Number(query.page) || 1;
@@ -111,12 +115,8 @@ export class ProgramsService {
 
     const where: any = { deletedAt: null };
 
-    if (query.homecellId) {
-      where.homecellId = query.homecellId;
-    }
-    if (query.typeId) {
-      where.typeId = query.typeId;
-    }
+    if (query.homecellId) where.homecellId = query.homecellId;
+    if (query.typeId) where.typeId = query.typeId;
 
     if (query.date) {
       const start = new Date(query.date);
@@ -127,7 +127,6 @@ export class ProgramsService {
       where.date = { gte: new Date(query.fromDate) };
     }
 
-    // upcoming programs sort asc, recent/admin sort desc
     const orderDir: 'asc' | 'desc' = query.fromDate ? 'asc' : 'desc';
 
     const [data, total] = await Promise.all([
@@ -157,7 +156,7 @@ export class ProgramsService {
   }
 
   // -----------------------------
-  // GET SINGLE PROGRAM
+  // FIND ONE (NO AUDIT)
   // -----------------------------
   async findOne(id: string) {
     const program = await this.prisma.program.findFirst({
@@ -167,9 +166,7 @@ export class ProgramsService {
         homecell: true,
         items: {
           where: { deletedAt: null },
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -183,10 +180,15 @@ export class ProgramsService {
   // -----------------------------
   // UPDATE PROGRAM
   // -----------------------------
+  @Audit({
+    action: 'PROGRAM_UPDATED',
+    entity: 'Program',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: any) {
     this.logger.log(`Updating program ${id}`);
 
-    // Replace items if provided
     if (dto.items) {
       await this.prisma.programItem.deleteMany({
         where: { programId: toBigIntOptional(id) },
@@ -218,9 +220,7 @@ export class ProgramsService {
         homecell: true,
         items: {
           where: { deletedAt: null },
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -229,6 +229,15 @@ export class ProgramsService {
     return { success: true, data: program, meta: {} };
   }
 
+  // -----------------------------
+  // DELETE PROGRAM
+  // -----------------------------
+  @Audit({
+    action: 'PROGRAM_DELETED',
+    entity: 'Program',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     await this.prisma.program.delete({
       where: { id: toBigIntOptional(id) },

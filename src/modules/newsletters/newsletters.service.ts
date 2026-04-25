@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import { ConfigService } from '@nestjs/config/dist/config.service';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class NewslettersService {
@@ -20,6 +21,10 @@ export class NewslettersService {
   // -----------------------------
   // CREATE
   // -----------------------------
+  @Audit({
+    action: 'NEWSLETTER_CREATED',
+    entity: 'Newsletter',
+  })
   async create(dto: any, file?: Express.Multer.File) {
     this.logger.log(`Creating newsletter: ${dto.title}`);
 
@@ -33,7 +38,7 @@ export class NewslettersService {
       data: {
         title: dto.title,
         description: dto.description,
-        fileUrl: fileUrl, //  from upload
+        fileUrl,
         publishedAt: dto.publishedAt ? new Date(dto.publishedAt) : null,
       },
     });
@@ -46,7 +51,7 @@ export class NewslettersService {
   }
 
   // -----------------------------
-  // FIND ALL
+  // FIND ALL (NO AUDIT)
   // -----------------------------
   async findAll(query: any) {
     const page = Number(query.page) || 1;
@@ -74,7 +79,7 @@ export class NewslettersService {
   }
 
   // -----------------------------
-  // FIND ONE (OPTIONAL BUT GOOD)
+  // FIND ONE (NO AUDIT)
   // -----------------------------
   async findOne(id: string) {
     const newsletter = await this.prisma.newsletter.findFirst({
@@ -95,8 +100,14 @@ export class NewslettersService {
   // -----------------------------
   // UPDATE
   // -----------------------------
+  @Audit({
+    action: 'NEWSLETTER_UPDATED',
+    entity: 'Newsletter',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: any, file?: Express.Multer.File) {
-    this.logger.log(`Updating newsletter ${dto.publishedAt}`);
+    this.logger.log(`Updating newsletter ${id}`);
 
     let fileUrl: string | undefined;
 
@@ -129,6 +140,12 @@ export class NewslettersService {
   // -----------------------------
   // PUBLISH
   // -----------------------------
+  @Audit({
+    action: 'NEWSLETTER_PUBLISHED',
+    entity: 'Newsletter',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async publish(id: string) {
     this.logger.log(`Publishing newsletter ${id}`);
 
@@ -149,6 +166,12 @@ export class NewslettersService {
   // -----------------------------
   // UNPUBLISH
   // -----------------------------
+  @Audit({
+    action: 'NEWSLETTER_UNPUBLISHED',
+    entity: 'Newsletter',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async unpublish(id: string) {
     this.logger.log(`Unpublishing newsletter ${id}`);
 
@@ -166,6 +189,15 @@ export class NewslettersService {
     };
   }
 
+  // -----------------------------
+  // DELETE
+  // -----------------------------
+  @Audit({
+    action: 'NEWSLETTER_DELETED',
+    entity: 'Newsletter',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     await this.prisma.newsletter.delete({
       where: { id: toBigIntOptional(id) },
@@ -178,15 +210,16 @@ export class NewslettersService {
     };
   }
 
+  // -----------------------------
+  // FILE STORAGE
+  // -----------------------------
   private saveFile(file: Express.Multer.File): string {
     const uploadDir = path.join(process.cwd(), 'uploads/newsletters');
 
-    // ensure directory exists
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
-    // generate clean filename
     const timestamp = Date.now();
     const ext = path.extname(file.originalname);
     const baseName = file.originalname
@@ -199,7 +232,6 @@ export class NewslettersService {
 
     fs.writeFileSync(filePath, file.buffer);
 
-    // return public path
     return this.buildPublicUrl(`/uploads/newsletters/${fileName}`);
   }
 

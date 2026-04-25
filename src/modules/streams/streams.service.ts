@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class StreamsService {
@@ -9,8 +10,12 @@ export class StreamsService {
   constructor(private prisma: PrismaService) {}
 
   // -----------------------------
-  // CREATE
+  // CREATE STREAM
   // -----------------------------
+  @Audit({
+    action: 'STREAM_CREATED',
+    entity: 'Stream',
+  })
   async create(dto: any) {
     this.logger.log(`Creating stream: ${dto.title}`);
 
@@ -30,12 +35,8 @@ export class StreamsService {
       },
       include: {
         platforms: {
-          where: {
-            platform: { deletedAt: null },
-          },
-          include: {
-            platform: true,
-          },
+          where: { platform: { deletedAt: null } },
+          include: { platform: true },
         },
       },
     });
@@ -48,98 +49,17 @@ export class StreamsService {
   }
 
   // -----------------------------
-  // GET ALL
+  // UPDATE STREAM
   // -----------------------------
-  async findAll(query: any) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
-
-    const [data, total] = await Promise.all([
-      this.prisma.stream.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          platforms: {
-            where: {
-              platform: { deletedAt: null },
-            },
-            include: {
-              platform: true,
-            },
-          },
-        },
-      }),
-      this.prisma.stream.count(),
-    ]);
-
-    return {
-      success: true,
-      data: data.map((s) => this.format(s)),
-      meta: { page, limit, total },
-    };
-  }
-
-  // -----------------------------
-  // GET LIVE
-  // -----------------------------
-  async findLive() {
-    const stream = await this.prisma.stream.findFirst({
-      where: { isLive: true },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        platforms: {
-          where: {
-            platform: { deletedAt: null },
-          },
-          include: {
-            platform: true,
-          },
-        },
-      },
-    });
-
-    return {
-      success: true,
-      data: stream ? this.format(stream) : null,
-      meta: {},
-    };
-  }
-
-  // -----------------------------
-  // GET ONE
-  // -----------------------------
-  async findOne(id: string) {
-    const stream = await this.prisma.stream.findFirst({
-      where: { id: toBigIntOptional(id) },
-      include: {
-        platforms: {
-          where: {
-            platform: { deletedAt: null },
-          },
-          include: {
-            platform: true,
-          },
-        },
-      },
-    });
-
-    if (!stream) throw new NotFoundException('Stream not found');
-
-    return {
-      success: true,
-      data: this.format(stream),
-      meta: {},
-    };
-  }
-
-  // -----------------------------
-  // UPDATE
-  // -----------------------------
+  @Audit({
+    action: 'STREAM_UPDATED',
+    entity: 'Stream',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: any) {
     this.logger.log(`Updating stream ${id}`);
 
-    // replace platforms if provided
     if (dto.platformIds) {
       await this.prisma.streamPlatform.deleteMany({
         where: { streamId: toBigIntOptional(id) },
@@ -163,12 +83,8 @@ export class StreamsService {
       },
       include: {
         platforms: {
-          where: {
-            platform: { deletedAt: null },
-          },
-          include: {
-            platform: true,
-          },
+          where: { platform: { deletedAt: null } },
+          include: { platform: true },
         },
       },
     });
@@ -180,6 +96,15 @@ export class StreamsService {
     };
   }
 
+  // -----------------------------
+  // DELETE STREAM
+  // -----------------------------
+  @Audit({
+    action: 'STREAM_DELETED',
+    entity: 'Stream',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     await this.prisma.stream.delete({
       where: { id: toBigIntOptional(id) },
@@ -193,8 +118,14 @@ export class StreamsService {
   }
 
   // -----------------------------
-  // SET LIVE
+  // SET LIVE STREAM
   // -----------------------------
+  @Audit({
+    action: 'STREAM_SET_LIVE',
+    entity: 'Stream',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async setLive(id: string) {
     this.logger.log(`Setting stream ${id} as live`);
 
@@ -207,9 +138,7 @@ export class StreamsService {
       data: { isLive: true },
       include: {
         platforms: {
-          include: {
-            platform: true,
-          },
+          include: { platform: true },
         },
       },
     });
@@ -222,18 +151,12 @@ export class StreamsService {
   }
 
   // -----------------------------
-  // FORMAT (FLATTEN)
-  // -----------------------------
-  private format(stream: any) {
-    return {
-      ...stream,
-      platforms: stream.platforms.map((p: any) => p.platform),
-    };
-  }
-
-  // -----------------------------
   // CREATE PLATFORM
   // -----------------------------
+  @Audit({
+    action: 'PLATFORM_CREATED',
+    entity: 'Platform',
+  })
   async createPlatform(dto: any) {
     this.logger.log(`Creating platform: ${dto.name}`);
 
@@ -251,6 +174,15 @@ export class StreamsService {
     };
   }
 
+  // -----------------------------
+  // UPDATE PLATFORM
+  // -----------------------------
+  @Audit({
+    action: 'PLATFORM_UPDATED',
+    entity: 'Platform',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async updatePlatform(dto: any) {
     this.logger.log(`Updating platform ${dto.id}`);
 
@@ -270,10 +202,76 @@ export class StreamsService {
   }
 
   // -----------------------------
-  // GET PLATFORMS
+  // GETTERS (NO AUDIT)
   // -----------------------------
+  async findAll(query: any) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+
+    const [data, total] = await Promise.all([
+      this.prisma.stream.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          platforms: {
+            where: { platform: { deletedAt: null } },
+            include: { platform: true },
+          },
+        },
+      }),
+      this.prisma.stream.count(),
+    ]);
+
+    return {
+      success: true,
+      data: data.map((s) => this.format(s)),
+      meta: { page, limit, total },
+    };
+  }
+
+  async findLive() {
+    const stream = await this.prisma.stream.findFirst({
+      where: { isLive: true },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        platforms: {
+          where: { platform: { deletedAt: null } },
+          include: { platform: true },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      data: stream ? this.format(stream) : null,
+      meta: {},
+    };
+  }
+
+  async findOne(id: string) {
+    const stream = await this.prisma.stream.findFirst({
+      where: { id: toBigIntOptional(id) },
+      include: {
+        platforms: {
+          where: { platform: { deletedAt: null } },
+          include: { platform: true },
+        },
+      },
+    });
+
+    if (!stream) throw new NotFoundException('Stream not found');
+
+    return {
+      success: true,
+      data: this.format(stream),
+      meta: {},
+    };
+  }
+
   async getPlatforms() {
     const platforms = await this.prisma.platform.findMany({
+      where: { deletedAt: null },
       orderBy: { name: 'asc' },
     });
 
@@ -281,6 +279,16 @@ export class StreamsService {
       success: true,
       data: platforms,
       meta: {},
+    };
+  }
+
+  // -----------------------------
+  // HELPERS
+  // -----------------------------
+  private format(stream: any) {
+    return {
+      ...stream,
+      platforms: stream.platforms.map((p: any) => p.platform),
     };
   }
 }

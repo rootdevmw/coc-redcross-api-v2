@@ -4,6 +4,7 @@ import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class MembersService {
@@ -11,6 +12,13 @@ export class MembersService {
 
   constructor(private prisma: PrismaService) {}
 
+  // -----------------------------
+  // CREATE
+  // -----------------------------
+  @Audit({
+    action: 'MEMBER_CREATED',
+    entity: 'Member',
+  })
   async create(dto: CreateMemberDto) {
     this.logger.log('Creating member');
 
@@ -32,7 +40,6 @@ export class MembersService {
         baptized: dto.isBaptized,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : null,
 
-        //  nested bio creation
         bio: dto.bio?.trim()
           ? {
               create: {
@@ -56,9 +63,13 @@ export class MembersService {
     };
   }
 
+  // -----------------------------
+  // FIND ALL
+  // -----------------------------
   async findAll(query: QueryMemberDto) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
+
     this.logger.log(`Fetching members page=${page} limit=${limit}`);
 
     const where: any = {};
@@ -110,6 +121,9 @@ export class MembersService {
     };
   }
 
+  // -----------------------------
+  // FIND ONE
+  // -----------------------------
   async findOne(id: string) {
     this.logger.log(`Fetching member ${id}`);
 
@@ -136,6 +150,15 @@ export class MembersService {
     };
   }
 
+  // -----------------------------
+  // UPDATE
+  // -----------------------------
+  @Audit({
+    action: 'MEMBER_UPDATED',
+    entity: 'Member',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: UpdateMemberDto) {
     this.logger.log(`Updating member ${id}`);
 
@@ -153,17 +176,12 @@ export class MembersService {
         homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : undefined,
 
-        //  nested upsert for bio
         bio:
           dto.bio !== undefined
             ? {
                 upsert: {
-                  create: {
-                    bio: dto.bio,
-                  },
-                  update: {
-                    bio: dto.bio,
-                  },
+                  create: { bio: dto.bio },
+                  update: { bio: dto.bio },
                 },
               }
             : undefined,
@@ -183,6 +201,16 @@ export class MembersService {
       meta: {},
     };
   }
+
+  // -----------------------------
+  // DELETE
+  // -----------------------------
+  @Audit({
+    action: 'MEMBER_DELETED',
+    entity: 'Member',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     await this.prisma.member.delete({
       where: { id: toBigInt(id) },
@@ -195,6 +223,14 @@ export class MembersService {
     };
   }
 
+  // -----------------------------
+  // ASSIGN MINISTRY
+  // -----------------------------
+  @Audit({
+    action: 'MEMBER_ASSIGNED_MINISTRY',
+    entity: 'Member',
+    idParamIndex: 0,
+  })
   async assignMinistry(memberId: string, ministryId: string) {
     this.logger.log(`Assigning member ${memberId} to ministry ${ministryId}`);
 
@@ -214,6 +250,14 @@ export class MembersService {
     };
   }
 
+  // -----------------------------
+  // REMOVE MINISTRY
+  // -----------------------------
+  @Audit({
+    action: 'MEMBER_REMOVED_MINISTRY',
+    entity: 'Member',
+    idParamIndex: 0,
+  })
   async removeMinistry(memberId: string, ministryId: string) {
     this.logger.log(`Removing member ${memberId} from ministry ${ministryId}`);
 

@@ -22,6 +22,7 @@ import { EmailModule } from './modules/email/email.module';
 import { AttentionModule } from './modules/attention/attention.module';
 import { AuditService } from './modules/audit/audit.service';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
+import { AuditModule } from './modules/audit/audit.module';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { AuditInterceptor } from './common/interceptors/audit.interceptor';
     UsersModule,
     AttentionModule,
     ProgramTemplatesModule,
-    AuditService,
+    AuditModule,
     EmailModule,
     ConfigModule.forRoot({
       isGlobal: true,

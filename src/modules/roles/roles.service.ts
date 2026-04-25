@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class RolesService {
@@ -16,6 +17,10 @@ export class RolesService {
   // -----------------------------
   // CREATE ROLE
   // -----------------------------
+  @Audit({
+    action: 'ROLE_CREATED',
+    entity: 'Role',
+  })
   async create(dto: any) {
     this.logger.log(`Creating role: ${dto.name}`);
 
@@ -41,7 +46,7 @@ export class RolesService {
   }
 
   // -----------------------------
-  // GET ALL
+  // GET ALL (NO AUDIT)
   // -----------------------------
   async findAll(query: any) {
     const page = Number(query.page) || 1;
@@ -64,7 +69,7 @@ export class RolesService {
   }
 
   // -----------------------------
-  // GET ONE
+  // GET ONE (NO AUDIT)
   // -----------------------------
   async findOne(id: string) {
     const role = await this.prisma.role.findFirst({
@@ -81,8 +86,14 @@ export class RolesService {
   }
 
   // -----------------------------
-  // UPDATE
+  // UPDATE ROLE
   // -----------------------------
+  @Audit({
+    action: 'ROLE_UPDATED',
+    entity: 'Role',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: any) {
     this.logger.log(`Updating role ${id}`);
 
@@ -101,8 +112,14 @@ export class RolesService {
   }
 
   // -----------------------------
-  // DELETE
+  // DELETE ROLE
   // -----------------------------
+  @Audit({
+    action: 'ROLE_DELETED',
+    entity: 'Role',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     this.logger.log(`Deleting role ${id}`);
 

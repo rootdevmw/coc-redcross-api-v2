@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class ProgramTemplatesService {
@@ -11,6 +12,10 @@ export class ProgramTemplatesService {
   // -----------------------------
   // CREATE TEMPLATE
   // -----------------------------
+  @Audit({
+    action: 'PROGRAM_TEMPLATE_CREATED',
+    entity: 'ProgramTemplate',
+  })
   async create(dto: any) {
     this.logger.log(`Creating template: ${dto.name}`);
 
@@ -34,9 +39,7 @@ export class ProgramTemplatesService {
         type: true,
         homecell: true,
         items: {
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -46,7 +49,7 @@ export class ProgramTemplatesService {
   }
 
   // -----------------------------
-  // GET ALL TEMPLATES
+  // GET ALL (NO AUDIT)
   // -----------------------------
   async findAll(query: any) {
     const page = Number(query.page) || 1;
@@ -72,9 +75,7 @@ export class ProgramTemplatesService {
           homecell: true,
           items: {
             where: { deletedAt: null },
-            include: {
-              responsible: true,
-            },
+            include: { responsible: true },
             orderBy: { sequence: 'asc' },
           },
         },
@@ -91,7 +92,7 @@ export class ProgramTemplatesService {
   }
 
   // -----------------------------
-  // GET SINGLE TEMPLATE
+  // GET ONE (NO AUDIT)
   // -----------------------------
   async findOne(id: string) {
     const template = await this.prisma.programTemplate.findFirst({
@@ -104,9 +105,7 @@ export class ProgramTemplatesService {
         homecell: true,
         items: {
           where: { deletedAt: null },
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -122,12 +121,17 @@ export class ProgramTemplatesService {
   // -----------------------------
   // UPDATE TEMPLATE
   // -----------------------------
+  @Audit({
+    action: 'PROGRAM_TEMPLATE_UPDATED',
+    entity: 'ProgramTemplate',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: any) {
     this.logger.log(`Updating template ${id}`);
 
     const templateId = toBigIntOptional(id);
 
-    // 🔥 EXACT SAME PATTERN AS PROGRAMS
     if (dto.items) {
       await this.prisma.programTemplateItem.deleteMany({
         where: { templateId },
@@ -159,9 +163,7 @@ export class ProgramTemplatesService {
         homecell: true,
         items: {
           where: { deletedAt: null },
-          include: {
-            responsible: true,
-          },
+          include: { responsible: true },
           orderBy: { sequence: 'asc' },
         },
       },
@@ -171,8 +173,14 @@ export class ProgramTemplatesService {
   }
 
   // -----------------------------
-  // DELETE TEMPLATE (SOFT)
+  // DELETE TEMPLATE
   // -----------------------------
+  @Audit({
+    action: 'PROGRAM_TEMPLATE_DELETED',
+    entity: 'ProgramTemplate',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     await this.prisma.programTemplate.update({
       where: { id: toBigIntOptional(id) },

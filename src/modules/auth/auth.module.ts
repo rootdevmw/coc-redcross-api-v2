@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { RolesGuard } from './guard/roles.guard';
 import { EmailModule } from '../email/email.module';
+import { AuditService } from '../audit/audit.service';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { EmailModule } from '../email/email.module';
 
   controllers: [AuthController],
 
-  providers: [AuthService, PrismaService, RolesGuard],
+  providers: [AuthService, PrismaService, RolesGuard, AuditService],
 
   exports: [AuthService],
 })

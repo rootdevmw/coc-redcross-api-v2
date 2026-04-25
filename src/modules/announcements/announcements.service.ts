@@ -4,17 +4,21 @@ import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { QueryAnnouncementDto } from './dto/query-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
-import { AuditService } from '../audit/audit.service';
+import { Audit } from 'src/common/decorators/audit.decorator';
 
 @Injectable()
 export class AnnouncementsService {
   private readonly logger = new Logger(AnnouncementsService.name);
 
-  constructor(
-    private prisma: PrismaService,
-    private auditService: AuditService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
+  // -----------------------------
+  // CREATE
+  // -----------------------------
+  @Audit({
+    action: 'ANNOUNCEMENT_CREATED',
+    entity: 'Announcement',
+  })
   async create(dto: CreateAnnouncementDto) {
     this.logger.log(`CREATE_ANNOUNCEMENT_STARTED: ${dto.title}`);
 
@@ -24,7 +28,6 @@ export class AnnouncementsService {
         body: dto.body,
         priority: dto.priority,
         expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : null,
-
         targets: {
           create: dto.targets.map((t) => ({
             targetType: t.targetType,
@@ -37,18 +40,14 @@ export class AnnouncementsService {
       },
     });
 
-    await this.auditService.log({
-      action: 'ANNOUNCEMENT_CREATED',
-      entity: 'Announcement',
-      entityId: announcement.id.toString(),
-      after: announcement,
-    });
-
     this.logger.log(`CREATE_ANNOUNCEMENT_SUCCESS: ${announcement.id}`);
 
     return { success: true, data: announcement, meta: {} };
   }
 
+  // -----------------------------
+  // FIND ALL (NO AUDIT)
+  // -----------------------------
   async findAll(query: QueryAnnouncementDto) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
@@ -81,10 +80,9 @@ export class AnnouncementsService {
     };
   }
 
-  /**
-   * CORE FEATURE
-   * Get announcements relevant to a member
-   */
+  // -----------------------------
+  // MEMBER FILTER (NO AUDIT)
+  // -----------------------------
   async findForMember(memberId: string) {
     this.logger.log(`Fetching announcements for member ${memberId}`);
 
@@ -122,7 +120,6 @@ export class AnnouncementsService {
       });
     }
 
-    // IMPORTANT: handle no conditions
     if (!conditions.length) {
       this.logger.warn(`No targeting data for member ${memberId}`);
       return { success: true, data: [], meta: {} };
@@ -131,9 +128,7 @@ export class AnnouncementsService {
     const announcements = await this.prisma.announcement.findMany({
       where: {
         AND: [
-          {
-            OR: conditions,
-          },
+          { OR: conditions },
           {
             OR: [{ expiryDate: null }, { expiryDate: { gt: new Date() } }],
           },
@@ -145,6 +140,9 @@ export class AnnouncementsService {
     return { success: true, data: announcements, meta: {} };
   }
 
+  // -----------------------------
+  // FIND ONE (NO AUDIT)
+  // -----------------------------
   async findOne(id: string) {
     const announcement = await this.prisma.announcement.findFirst({
       where: { id: toBigInt(id) },
@@ -162,33 +160,40 @@ export class AnnouncementsService {
     };
   }
 
+  // -----------------------------
+  // UPDATE
+  // -----------------------------
+  @Audit({
+    action: 'ANNOUNCEMENT_UPDATED',
+    entity: 'Announcement',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async update(id: string, dto: UpdateAnnouncementDto) {
     this.logger.log(`UPDATE_ANNOUNCEMENT_STARTED: ${id}`);
 
     const announcementId = toBigInt(id);
 
-    const before = await this.prisma.announcement.findFirst({
+    // Keep validation (important!)
+    const existing = await this.prisma.announcement.findFirst({
       where: { id: announcementId },
-      include: { targets: true },
     });
 
-    if (!before) throw new NotFoundException('Announcement not found');
+    if (!existing) throw new NotFoundException('Announcement not found');
 
-    // Replace targets if provided
     if (dto.targets) {
       await this.prisma.announcementTarget.deleteMany({
         where: { announcementId },
       });
     }
 
-    const after = await this.prisma.announcement.update({
+    const updated = await this.prisma.announcement.update({
       where: { id: announcementId },
       data: {
         title: dto.title,
         body: dto.body,
         priority: dto.priority,
         expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : undefined,
-
         targets: dto.targets
           ? {
               create: dto.targets.map((t) => ({
@@ -201,44 +206,37 @@ export class AnnouncementsService {
       include: { targets: true },
     });
 
-    await this.auditService.log({
-      action: 'ANNOUNCEMENT_UPDATED',
-      entity: 'Announcement',
-      entityId: id,
-      before,
-      after,
-    });
-
     this.logger.log(`UPDATE_ANNOUNCEMENT_SUCCESS: ${id}`);
 
     return {
       success: true,
-      data: after,
+      data: updated,
       meta: {},
     };
   }
 
+  // -----------------------------
+  // DELETE
+  // -----------------------------
+  @Audit({
+    action: 'ANNOUNCEMENT_DELETED',
+    entity: 'Announcement',
+    idParamIndex: 0,
+    fetchBefore: true,
+  })
   async remove(id: string) {
     this.logger.log(`DELETE_ANNOUNCEMENT_STARTED: ${id}`);
 
     const announcementId = toBigInt(id);
 
-    const before = await this.prisma.announcement.findFirst({
+    const existing = await this.prisma.announcement.findFirst({
       where: { id: announcementId },
-      include: { targets: true },
     });
 
-    if (!before) throw new NotFoundException('Announcement not found');
+    if (!existing) throw new NotFoundException('Announcement not found');
 
     await this.prisma.announcement.delete({
       where: { id: announcementId },
-    });
-
-    await this.auditService.log({
-      action: 'ANNOUNCEMENT_DELETED',
-      entity: 'Announcement',
-      entityId: id,
-      before,
     });
 
     this.logger.log(`DELETE_ANNOUNCEMENT_SUCCESS: ${id}`);

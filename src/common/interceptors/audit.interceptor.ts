@@ -28,15 +28,21 @@ export class AuditInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
+    this.logger.log('AUDIT INTERCEPTOR HIT');
     const meta = this.reflector.get<AuditMeta>(AUDIT_KEY, context.getHandler());
 
     // Skip if no audit config
-    if (!meta) return next.handle();
+    if (!meta) {
+      this.logger.log('No audit metadata found, skipping audit');
+      return next.handle();
+    }
 
     const request = context.switchToHttp().getRequest();
     const args = context.getArgs();
     const user = request.user;
-
+    this.logger.log('Reached here with meta: ', meta);
+    this.logger.log('Reached here with args: ', args);
+    this.logger.log('Reached here with user: ', user);
     const id =
       meta.idParamIndex !== undefined ? args[meta.idParamIndex] : undefined;
 
@@ -54,28 +60,33 @@ export class AuditInterceptor implements NestInterceptor {
         );
       }
     }
+    this.logger.log('Reached here with meta 2: ', meta);
+    this.logger.log('Reached here with before: ', before);
 
     // -----------------------------
     // EXECUTION PIPELINE
     // -----------------------------
     return next.handle().pipe(
-      tap(async (result) => {
-        try {
-          const after = result?.data ?? result;
-
-          await this.auditService.log({
+      tap((result) => {
+        void this.auditService
+          .log({
             action: meta.action,
             entity: meta.entity,
             entityId: id ? id.toString() : null,
             before,
-            after,
+            after: result?.data ?? result,
             userId: user?.member?.id ?? null,
             ipAddress: request.ip,
             userAgent: request.headers['user-agent'],
+          })
+          .then(() => {
+            this.logger.log(
+              `Logged audit action: ${meta.action} on ${meta.entity} (${id}) by user ${user?.member?.id})`,
+            );
+          })
+          .catch((err) => {
+            this.logger.error(`AUDIT LOG FAILED for ${meta.entity}`, err);
           });
-        } catch (err) {
-          this.logger.error(`Audit log failed for ${meta.entity} (${id})`, err);
-        }
       }),
     );
   }

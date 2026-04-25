@@ -166,7 +166,7 @@ model ContentType {
 model Content {
   id          BigInt   @id @default(autoincrement())
   title       String
-  body        String @db.Text
+  body        String @db.LongText
   typeId      BigInt
   authorId    BigInt?
   status      String

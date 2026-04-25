@@ -7,6 +7,7 @@ import {
   Body,
   Query,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 
@@ -16,8 +17,8 @@ export class EventsController {
 
   // STATIC ROUTES FIRST
   @Post('types')
-  createType(@Body('name') name: string) {
-    return this.service.createType(name);
+  createType(@Body('name') name: string, @Req() req: any) {
+    return this.service.createType(name, req.user);
   }
 
   @Get('types')
@@ -28,8 +29,8 @@ export class EventsController {
   // -----------------------
 
   @Post()
-  create(@Body() dto: any) {
-    return this.service.create(dto);
+  create(@Body() dto: any, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -43,12 +44,12 @@ export class EventsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: any) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 }

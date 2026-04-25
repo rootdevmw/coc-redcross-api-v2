@@ -153,7 +153,7 @@ export class ContentService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateContentDto) {
+  async create(dto: CreateContentDto, user?: any) {
     this.logger.log(`CREATE_CONTENT_STARTED: ${dto.title}`);
 
     const mediaRelations = await this.syncMedia(dto.body);
@@ -200,6 +200,7 @@ export class ContentService {
       entity: 'Content',
       entityId: content.id.toString(),
       after: content,
+      userId: user?.id,
     });
 
     this.logger.log(`CREATE_CONTENT_SUCCESS: ${content.id}`);
@@ -210,7 +211,7 @@ export class ContentService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: UpdateContentDto) {
+  async update(id: string, dto: UpdateContentDto, user?: any) {
     const contentId = toBigInt(id);
 
     this.logger.log(`UPDATE_CONTENT_STARTED: ${id}`);
@@ -275,6 +276,7 @@ export class ContentService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_CONTENT_SUCCESS: ${id}`);
@@ -285,7 +287,7 @@ export class ContentService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     const contentId = toBigInt(id);
 
     this.logger.warn(`DELETE_CONTENT_STARTED: ${id}`);
@@ -310,6 +312,7 @@ export class ContentService {
       entity: 'Content',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     this.logger.warn(`DELETE_CONTENT_SUCCESS: ${id}`);
@@ -320,7 +323,7 @@ export class ContentService {
   // -----------------------------
   // PUBLISH
   // -----------------------------
-  async publish(id: string, status: string) {
+  async publish(id: string, status: string, user?: any) {
     this.logger.log(`PUBLISH_CONTENT_STARTED: ${id} → ${status}`);
 
     const contentId = toBigInt(id);
@@ -344,6 +347,7 @@ export class ContentService {
       entityId: id,
       before,
       after: content,
+      userId: user?.id,
     });
 
     this.logger.log(`PUBLISH_CONTENT_SUCCESS: ${id}`);
@@ -354,7 +358,7 @@ export class ContentService {
   // -----------------------------
   // TYPES
   // -----------------------------
-  async createType(name: string) {
+  async createType(name: string, user?: any) {
     this.logger.log(`CREATE_CONTENT_TYPE: ${name}`);
 
     const type = await this.prisma.contentType.create({
@@ -366,6 +370,7 @@ export class ContentService {
       entity: 'ContentType',
       entityId: type.id.toString(),
       after: type,
+      userId: user?.id,
     });
 
     return { success: true, data: type, meta: {} };

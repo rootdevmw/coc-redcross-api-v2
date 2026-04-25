@@ -15,7 +15,7 @@ export class ProgramTemplatesService {
   // -----------------------------
   // CREATE TEMPLATE
   // -----------------------------
-  async create(dto: any) {
+  async create(dto: any, user?: any) {
     this.logger.log(`Creating template: ${dto.name}`);
 
     const template = await this.prisma.programTemplate.create({
@@ -49,6 +49,7 @@ export class ProgramTemplatesService {
       entity: 'ProgramTemplate',
       entityId: template.id.toString(),
       after: template,
+      userId: user?.id,
     });
 
     return { success: true, data: template, meta: {} };
@@ -125,7 +126,7 @@ export class ProgramTemplatesService {
   // -----------------------------
   // UPDATE TEMPLATE
   // -----------------------------
-  async update(id: string, dto: any) {
+  async update(id: string, dto: any, user?: any) {
     this.logger.log(`Updating template ${id}`);
 
     const templateId = toBigIntOptional(id);
@@ -184,6 +185,7 @@ export class ProgramTemplatesService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     return { success: true, data: after, meta: {} };
@@ -192,7 +194,7 @@ export class ProgramTemplatesService {
   // -----------------------------
   // DELETE TEMPLATE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     this.logger.log(`Deleting template ${id}`);
 
     const templateId = toBigIntOptional(id);
@@ -215,6 +217,7 @@ export class ProgramTemplatesService {
       entity: 'ProgramTemplate',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     return { success: true, data: {}, meta: {} };

@@ -26,7 +26,7 @@ export class UsersService {
   // -----------------------------
   // CREATE USER (INVITE FLOW)
   // -----------------------------
-  async create(dto: any) {
+  async create(dto: any, actorUser?: any) {
     const email = dto.email.toLowerCase().trim();
 
     this.logger.log(`CREATE_USER_STARTED: ${email}`);
@@ -79,6 +79,7 @@ export class UsersService {
       entity: 'User',
       entityId: user.id.toString(),
       after: safeUser,
+      userId: actorUser?.id,
     });
 
     this.logger.log(`CREATE_USER_SUCCESS: ${user.id}`);
@@ -93,7 +94,7 @@ export class UsersService {
   // -----------------------------
   // UPDATE USER
   // -----------------------------
-  async update(id: string, dto: any) {
+  async update(id: string, dto: any, actorUser?: any) {
     const userId = toBigIntOptional(id);
     const email = dto.email?.toLowerCase().trim();
 
@@ -125,6 +126,7 @@ export class UsersService {
         id: user.id.toString(),
         email: user.email,
       },
+      userId: actorUser?.id,
     });
 
     this.logger.log(`UPDATE_USER_SUCCESS: ${id}`);
@@ -142,7 +144,7 @@ export class UsersService {
   // -----------------------------
   // DELETE USER (SOFT)
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, actorUser?: any) {
     const userId = toBigIntOptional(id);
 
     this.logger.warn(`DELETE_USER_STARTED: ${id}`);
@@ -169,6 +171,7 @@ export class UsersService {
       entity: 'User',
       entityId: id,
       before,
+      userId: actorUser?.id,
     });
 
     this.logger.warn(`DELETE_USER_SUCCESS: ${id}`);
@@ -179,7 +182,7 @@ export class UsersService {
   // -----------------------------
   // LINK MEMBER
   // -----------------------------
-  async linkMember(userId: string, memberId: string) {
+  async linkMember(userId: string, memberId: string, actorUser?: any) {
     const userIdBigInt = toBigIntOptional(userId);
     const memberIdBigInt = toBigIntOptional(memberId);
 
@@ -220,6 +223,7 @@ export class UsersService {
       entityId: userId,
       before: user,
       after: { linkedMemberId: memberId },
+      userId: actorUser?.id,
     });
 
     return { success: true, data: {}, meta: {} };
@@ -228,7 +232,7 @@ export class UsersService {
   // -----------------------------
   // UNLINK MEMBER
   // -----------------------------
-  async unlinkMember(userId: string) {
+  async unlinkMember(userId: string, actorUser?: any) {
     const userIdBigInt = toBigIntOptional(userId);
 
     this.logger.log(`UNLINK_MEMBER_STARTED: ${userId}`);
@@ -253,6 +257,7 @@ export class UsersService {
       entityId: userId,
       before: user,
       after: null,
+      userId: actorUser?.id,
     });
 
     return { success: true, data: {}, meta: {} };

@@ -13,6 +13,37 @@ export class AuditReaderService {
       .toUpperCase();
   }
 
+  private async attachUsers<T extends { userId?: bigint | null }>(logs: T[]) {
+    const userIds = Array.from(
+      new Set(
+        logs
+          .map((log) => log.userId)
+          .filter((userId): userId is bigint => userId !== null && userId !== undefined),
+      ),
+    );
+
+    if (!userIds.length) {
+      return logs.map((log) => ({ ...log, user: null }));
+    }
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: { in: userIds },
+      },
+      include: {
+        roles: { include: { role: true } },
+        member: true,
+      },
+    });
+
+    const usersById = new Map(users.map((user) => [user.id.toString(), user]));
+
+    return logs.map((log) => ({
+      ...log,
+      user: log.userId ? usersById.get(log.userId.toString()) ?? null : null,
+    }));
+  }
+
   // -----------------------------
   // ENTITY LIST VIEW
   // -----------------------------
@@ -40,7 +71,7 @@ export class AuditReaderService {
       };
     }
 
-    const [data, total] = await Promise.all([
+    const [logs, total] = await Promise.all([
       this.prisma.auditLog.findMany({
         where,
         skip: (params.page - 1) * params.limit,
@@ -49,6 +80,8 @@ export class AuditReaderService {
       }),
       this.prisma.auditLog.count({ where }),
     ]);
+
+    const data = await this.attachUsers(logs);
 
     return {
       data,
@@ -74,6 +107,6 @@ export class AuditReaderService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return { data: logs };
+    return { data: await this.attachUsers(logs) };
   }
 }

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -36,8 +37,8 @@ export class ContentController {
   }
 
   @Post()
-  create(@Body() dto: CreateContentDto) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateContentDto, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -46,8 +47,8 @@ export class ContentController {
   }
 
   @Post('types')
-  createType(@Body() dto: CreateContentTypeDto) {
-    return this.service.createType(dto.name);
+  createType(@Body() dto: CreateContentTypeDto, @Req() req: any) {
+    return this.service.createType(dto.name, req.user);
   }
 
   @Get('types')
@@ -60,17 +61,17 @@ export class ContentController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateContentDto) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateContentDto, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 
   @Post(':id/publish')
-  publish(@Param('id') id: string, @Body('status') status: string) {
-    return this.service.publish(id, status);
+  publish(@Param('id') id: string, @Body('status') status: string, @Req() req: any) {
+    return this.service.publish(id, status, req.user);
   }
 }

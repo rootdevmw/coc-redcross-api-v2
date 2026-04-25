@@ -19,7 +19,7 @@ export class NewslettersService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: any, file?: Express.Multer.File) {
+  async create(dto: any, user?: any, file?: Express.Multer.File) {
     this.logger.log(`Creating newsletter: ${dto.title}`);
 
     let fileUrl = '';
@@ -42,6 +42,7 @@ export class NewslettersService {
       entity: 'Newsletter',
       entityId: newsletter.id.toString(),
       after: newsletter,
+      userId: user?.id,
     });
 
     return {
@@ -101,7 +102,7 @@ export class NewslettersService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: any, file?: Express.Multer.File) {
+  async update(id: string, dto: any, user?: any, file?: Express.Multer.File) {
     this.logger.log(`Updating newsletter ${id}`);
 
     const newsletterId = toBigIntOptional(id);
@@ -141,6 +142,7 @@ export class NewslettersService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     return {
@@ -153,7 +155,7 @@ export class NewslettersService {
   // -----------------------------
   // PUBLISH
   // -----------------------------
-  async publish(id: string) {
+  async publish(id: string, user?: any) {
     this.logger.log(`Publishing newsletter ${id}`);
 
     const newsletterId = toBigIntOptional(id);
@@ -175,6 +177,7 @@ export class NewslettersService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     return {
@@ -187,7 +190,7 @@ export class NewslettersService {
   // -----------------------------
   // UNPUBLISH
   // -----------------------------
-  async unpublish(id: string) {
+  async unpublish(id: string, user?: any) {
     this.logger.log(`Unpublishing newsletter ${id}`);
 
     const newsletterId = toBigIntOptional(id);
@@ -209,6 +212,7 @@ export class NewslettersService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     return {
@@ -221,7 +225,7 @@ export class NewslettersService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     this.logger.log(`Deleting newsletter ${id}`);
 
     const newsletterId = toBigIntOptional(id);
@@ -239,6 +243,7 @@ export class NewslettersService {
       entity: 'Newsletter',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     return {

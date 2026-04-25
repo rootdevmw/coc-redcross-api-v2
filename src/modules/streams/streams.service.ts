@@ -15,7 +15,7 @@ export class StreamsService {
   // -----------------------------
   // CREATE STREAM
   // -----------------------------
-  async create(dto: any) {
+  async create(dto: any, user?: any) {
     this.logger.log(`CREATE_STREAM_STARTED: ${dto.title}`);
 
     const stream = await this.prisma.stream.create({
@@ -45,6 +45,7 @@ export class StreamsService {
       entity: 'Stream',
       entityId: stream.id.toString(),
       after: stream,
+      userId: user?.id,
     });
 
     this.logger.log(`CREATE_STREAM_SUCCESS: ${stream.id}`);
@@ -59,7 +60,7 @@ export class StreamsService {
   // -----------------------------
   // UPDATE STREAM
   // -----------------------------
-  async update(id: string, dto: any) {
+  async update(id: string, dto: any, user?: any) {
     const streamId = toBigIntOptional(id);
 
     this.logger.log(`UPDATE_STREAM_STARTED: ${id}`);
@@ -110,6 +111,7 @@ export class StreamsService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_STREAM_SUCCESS: ${id}`);
@@ -124,7 +126,7 @@ export class StreamsService {
   // -----------------------------
   // DELETE STREAM
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     const streamId = toBigIntOptional(id);
 
     this.logger.warn(`DELETE_STREAM_STARTED: ${id}`);
@@ -149,6 +151,7 @@ export class StreamsService {
       entity: 'Stream',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     this.logger.warn(`DELETE_STREAM_SUCCESS: ${id}`);
@@ -163,7 +166,7 @@ export class StreamsService {
   // -----------------------------
   // SET LIVE STREAM
   // -----------------------------
-  async setLive(id: string) {
+  async setLive(id: string, user?: any) {
     const streamId = toBigIntOptional(id);
 
     this.logger.log(`SET_LIVE_STREAM_STARTED: ${id}`);
@@ -197,6 +200,7 @@ export class StreamsService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`SET_LIVE_STREAM_SUCCESS: ${id}`);
@@ -211,7 +215,7 @@ export class StreamsService {
   // -----------------------------
   // CREATE PLATFORM
   // -----------------------------
-  async createPlatform(dto: any) {
+  async createPlatform(dto: any, user?: any) {
     this.logger.log(`CREATE_PLATFORM_STARTED: ${dto.name}`);
 
     const platform = await this.prisma.platform.create({
@@ -226,6 +230,7 @@ export class StreamsService {
       entity: 'Platform',
       entityId: platform.id.toString(),
       after: platform,
+      userId: user?.id,
     });
 
     return {
@@ -238,7 +243,7 @@ export class StreamsService {
   // -----------------------------
   // UPDATE PLATFORM
   // -----------------------------
-  async updatePlatform(dto: any) {
+  async updatePlatform(dto: any, user?: any) {
     const platformId = toBigIntOptional(dto.id);
 
     this.logger.log(`UPDATE_PLATFORM_STARTED: ${dto.id}`);
@@ -265,6 +270,7 @@ export class StreamsService {
       entityId: dto.id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_PLATFORM_SUCCESS: ${dto.id}`);

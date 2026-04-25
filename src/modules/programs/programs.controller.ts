@@ -7,6 +7,7 @@ import {
   Body,
   Query,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { ProgramsService } from './programs.service';
 import { CreateProgramFromTemplateDto } from './dto/create-from-template.dto';
@@ -27,14 +28,14 @@ export class ProgramsController {
   }
 
   @Post('from-template')
-  createFromTemplate(@Body() dto: CreateProgramFromTemplateDto) {
-    return this.service.createFromTemplate(dto);
+  createFromTemplate(@Body() dto: CreateProgramFromTemplateDto, @Req() req: any) {
+    return this.service.createFromTemplate(dto, req.user);
   }
   // -------------------------
 
   @Post()
-  create(@Body() dto: any) {
-    return this.service.create(dto);
+  create(@Body() dto: any, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -48,12 +49,12 @@ export class ProgramsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: any) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 }

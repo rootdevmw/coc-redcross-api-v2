@@ -14,7 +14,7 @@ export class HomecellsService {
     private auditService: AuditService,
   ) {}
 
-  async create(dto: CreateHomecellDto) {
+  async create(dto: CreateHomecellDto, user?: any) {
     this.logger.log('CREATE_HOMECELL_STARTED');
 
     const homecell = await this.prisma.homecell.create({
@@ -31,6 +31,7 @@ export class HomecellsService {
       entity: 'Homecell',
       entityId: homecell.id.toString(),
       after: homecell,
+      userId: user?.id,
     });
 
     this.logger.log(`CREATE_HOMECELL_SUCCESS: ${homecell.name}`);
@@ -121,7 +122,7 @@ export class HomecellsService {
     };
   }
 
-  async update(id: string, dto: UpdateHomecellDto) {
+  async update(id: string, dto: UpdateHomecellDto, user?: any) {
     this.logger.log(`UPDATE_HOMECELL_STARTED: ${id}`);
 
     const homecellId = toBigInt(id);
@@ -148,6 +149,7 @@ export class HomecellsService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_HOMECELL_SUCCESS: ${id}`);
@@ -159,7 +161,7 @@ export class HomecellsService {
     };
   }
 
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     const homecellId = toBigInt(id);
 
     this.logger.warn(`DELETE_HOMECELL_STARTED: ${id}`);
@@ -179,6 +181,7 @@ export class HomecellsService {
       entity: 'Homecell',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     this.logger.warn(`DELETE_HOMECELL_SUCCESS: ${id}`);
@@ -194,7 +197,7 @@ export class HomecellsService {
    * A member can belong to ONLY ONE homecell
    * → This overrides previous assignment
    */
-  async assignMember(homecellId: string, memberId: string) {
+  async assignMember(homecellId: string, memberId: string, user?: any) {
     const homecell = await this.prisma.homecell.findFirst({
       where: { id: toBigInt(homecellId) },
     });
@@ -232,6 +235,7 @@ export class HomecellsService {
       entityId: memberId,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log('MEMBER_ASSIGNMENT_SUCCESS');
@@ -268,7 +272,7 @@ export class HomecellsService {
     };
   }
 
-  async removeMember(homecellId: string, memberId: string) {
+  async removeMember(homecellId: string, memberId: string, user?: any) {
     this.logger.log(`REMOVE_MEMBER_STARTED: ${memberId}`);
 
     const homecell = await this.prisma.homecell.findFirst({
@@ -304,6 +308,7 @@ export class HomecellsService {
       entityId: memberId,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(

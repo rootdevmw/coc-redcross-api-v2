@@ -20,7 +20,7 @@ export class RolesService {
   // -----------------------------
   // CREATE ROLE
   // -----------------------------
-  async create(dto: any) {
+  async create(dto: any, user?: any) {
     this.logger.log(`CREATE_ROLE_STARTED: ${dto.name}`);
 
     const existing = await this.prisma.role.findFirst({
@@ -42,6 +42,7 @@ export class RolesService {
       entity: 'Role',
       entityId: role.id.toString(),
       after: role,
+      userId: user?.id,
     });
 
     this.logger.log(`CREATE_ROLE_SUCCESS: ${role.id}`);
@@ -96,7 +97,7 @@ export class RolesService {
   // -----------------------------
   // UPDATE ROLE
   // -----------------------------
-  async update(id: string, dto: any) {
+  async update(id: string, dto: any, user?: any) {
     const roleId = toBigIntOptional(id);
 
     this.logger.log(`UPDATE_ROLE_STARTED: ${id}`);
@@ -122,6 +123,7 @@ export class RolesService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_ROLE_SUCCESS: ${id}`);
@@ -136,7 +138,7 @@ export class RolesService {
   // -----------------------------
   // DELETE ROLE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     const roleId = toBigIntOptional(id);
 
     this.logger.warn(`DELETE_ROLE_STARTED: ${id}`);
@@ -158,6 +160,7 @@ export class RolesService {
       entity: 'Role',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     this.logger.warn(`DELETE_ROLE_SUCCESS: ${id}`);

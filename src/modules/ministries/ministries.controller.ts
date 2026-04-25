@@ -7,6 +7,7 @@ import {
   Body,
   Query,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { MinistriesService } from './ministries.service';
 import { CreateMinistryDto } from './dto/create-ministry.dto';
@@ -18,8 +19,8 @@ export class MinistriesController {
   constructor(private service: MinistriesService) {}
 
   @Post()
-  create(@Body() dto: CreateMinistryDto) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateMinistryDto, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -33,13 +34,13 @@ export class MinistriesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateMinistryDto) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateMinistryDto, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 
   @Get(':id/members')
@@ -51,15 +52,17 @@ export class MinistriesController {
   assignMember(
     @Param('id') ministryId: string,
     @Body('memberId') memberId: string,
+    @Req() req: any,
   ) {
-    return this.service.assignMember(memberId, ministryId);
+    return this.service.assignMember(memberId, ministryId, req.user);
   }
 
   @Delete(':id/members/:memberId')
   removeMember(
     @Param('id') ministryId: string,
     @Param('memberId') memberId: string,
+    @Req() req: any,
   ) {
-    return this.service.removeMember(memberId, ministryId);
+    return this.service.removeMember(memberId, ministryId, req.user);
   }
 }

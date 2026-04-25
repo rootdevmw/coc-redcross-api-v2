@@ -18,7 +18,7 @@ export class MinistriesService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateMinistryDto) {
+  async create(dto: CreateMinistryDto, user?: any) {
     this.logger.log(`Creating ministry: ${dto.name}`);
 
     const ministry = await this.prisma.ministry.create({
@@ -35,6 +35,7 @@ export class MinistriesService {
       entity: 'Ministry',
       entityId: ministry.id.toString(),
       after: ministry,
+      userId: user?.id,
     });
 
     return {
@@ -147,7 +148,7 @@ export class MinistriesService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: UpdateMinistryDto) {
+  async update(id: string, dto: UpdateMinistryDto, user?: any) {
     this.logger.log(`Updating ministry: ${id}`);
 
     const ministryId = toBigInt(id);
@@ -176,6 +177,7 @@ export class MinistriesService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     return {
@@ -188,7 +190,7 @@ export class MinistriesService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     this.logger.log(`Deleting ministry: ${id}`);
 
     const ministryId = toBigInt(id);
@@ -210,6 +212,7 @@ export class MinistriesService {
       entity: 'Ministry',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     return {
@@ -222,7 +225,7 @@ export class MinistriesService {
   // -----------------------------
   // ASSIGN MEMBER
   // -----------------------------
-  async assignMember(memberId: string, ministryId: string) {
+  async assignMember(memberId: string, ministryId: string, user?: any) {
     this.logger.log(`Assigning member ${memberId} to ministry ${ministryId}`);
 
     await this.prisma.memberMinistry.create({
@@ -237,6 +240,7 @@ export class MinistriesService {
       entity: 'MemberMinistry',
       entityId: `${memberId}-${ministryId}`,
       after: { memberId, ministryId },
+      userId: user?.id,
     });
 
     return {
@@ -249,7 +253,7 @@ export class MinistriesService {
   // -----------------------------
   // REMOVE MEMBER
   // -----------------------------
-  async removeMember(memberId: string, ministryId: string) {
+  async removeMember(memberId: string, ministryId: string, user?: any) {
     this.logger.log(`Removing member ${memberId} from ministry ${ministryId}`);
 
     await this.prisma.memberMinistry.delete({
@@ -266,6 +270,7 @@ export class MinistriesService {
       entity: 'MemberMinistry',
       entityId: `${memberId}-${ministryId}`,
       before: { memberId, ministryId },
+      userId: user?.id,
     });
 
     return {

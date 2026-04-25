@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { HomecellsService } from './homecells.service';
 import { CreateHomecellDto } from './dto/create-homecell.dto';
@@ -17,8 +18,8 @@ export class HomecellsController {
   constructor(private service: HomecellsService) {}
 
   @Post()
-  create(@Body() dto: CreateHomecellDto) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateHomecellDto, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -32,13 +33,13 @@ export class HomecellsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateHomecellDto) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateHomecellDto, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 
   @Get(':id/members')
@@ -47,12 +48,12 @@ export class HomecellsController {
   }
 
   @Post(':id/members')
-  assignMember(@Param('id') homecellId: string, @Body() dto: AssignMemberDto) {
-    return this.service.assignMember(homecellId, dto.memberId);
+  assignMember(@Param('id') homecellId: string, @Body() dto: AssignMemberDto, @Req() req: any) {
+    return this.service.assignMember(homecellId, dto.memberId, req.user);
   }
 
   @Delete(':id/members/:memberId')
-  removeMember(@Param('id') homecellId: string, @Param('memberId') memberId: string) {
-    return this.service.removeMember(homecellId, memberId);
+  removeMember(@Param('id') homecellId: string, @Param('memberId') memberId: string, @Req() req: any) {
+    return this.service.removeMember(homecellId, memberId, req.user);
   }
 }

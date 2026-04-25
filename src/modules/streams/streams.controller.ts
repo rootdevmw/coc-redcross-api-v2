@@ -1,4 +1,5 @@
 import {
+  Req,
   Controller,
   Get,
   Post,
@@ -18,13 +19,13 @@ export class StreamsController {
   // PLATFORMS
   // -------------------------
   @Post('platforms')
-  createPlatform(@Body() dto: any) {
-    return this.service.createPlatform(dto);
+  createPlatform(@Body() dto: any, @Req() req: any) {
+    return this.service.createPlatform(dto, req.user);
   }
 
   @Patch('platforms/:id')
-  updatePlatform(@Param('id') id: string, @Body() dto: any) {
-    return this.service.updatePlatform({ ...dto, id });
+  updatePlatform(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+    return this.service.updatePlatform({ ...dto, id }, req.user);
   }
 
   @Get('platforms')
@@ -34,8 +35,8 @@ export class StreamsController {
 
   // -------------------------
   @Post()
-  create(@Body() dto: any) {
-    return this.service.create(dto);
+  create(@Body() dto: any, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -56,18 +57,18 @@ export class StreamsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: any) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 
   //  SET LIVE
   @Post(':id/live')
-  setLive(@Param('id') id: string) {
-    return this.service.setLive(id);
+  setLive(@Param('id') id: string, @Req() req: any) {
+    return this.service.setLive(id, req.user);
   }
 }

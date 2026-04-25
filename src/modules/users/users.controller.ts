@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   Query,
+  Req,
   UseGuards,
   Post,
 } from '@nestjs/common';
@@ -24,8 +25,8 @@ export class UsersController {
   // -----------------------------
   @Post(':id/member')
   @Roles('ADMIN')
-  linkMember(@Param('id') userId: string, @Body('memberId') memberId: string) {
-    return this.service.linkMember(userId, memberId);
+  linkMember(@Param('id') userId: string, @Body('memberId') memberId: string, @Req() req: any) {
+    return this.service.linkMember(userId, memberId, req.user);
   }
 
   // -----------------------------
@@ -33,15 +34,15 @@ export class UsersController {
   // -----------------------------
   @Delete(':id/member')
   @Roles('ADMIN')
-  unlinkMember(@Param('id') userId: string) {
-    return this.service.unlinkMember(userId);
+  unlinkMember(@Param('id') userId: string, @Req() req: any) {
+    return this.service.unlinkMember(userId, req.user);
   }
 
   //  Only ADMIN can manage users
   @Post()
   @Roles('ADMIN')
-  create(@Body() dto: any) {
-    return this.service.create(dto);
+  create(@Body() dto: any, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
   @Get()
   @Roles('ADMIN')
@@ -57,13 +58,13 @@ export class UsersController {
 
   @Patch(':id')
   @Roles('ADMIN')
-  update(@Param('id') id: string, @Body() dto: any) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
   @Roles('ADMIN')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 }

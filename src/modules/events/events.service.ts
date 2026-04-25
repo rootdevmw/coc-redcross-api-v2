@@ -19,7 +19,7 @@ export class EventsService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateEventDto) {
+  async create(dto: CreateEventDto, user?: any) {
     this.logger.log(`CREATE_EVENT_STARTED: ${dto.title}`);
 
     const event = await this.prisma.event.create({
@@ -49,6 +49,7 @@ export class EventsService {
       entity: 'Event',
       entityId: event.id.toString(),
       after: event,
+      userId: user?.id,
     });
 
     this.logger.log(`CREATE_EVENT_SUCCESS: ${event.id}`);
@@ -121,7 +122,7 @@ export class EventsService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: UpdateEventDto) {
+  async update(id: string, dto: UpdateEventDto, user?: any) {
     const eventId = toBigInt(id);
 
     this.logger.log(`UPDATE_EVENT_STARTED: ${id}`);
@@ -176,6 +177,7 @@ export class EventsService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_EVENT_SUCCESS: ${id}`);
@@ -186,7 +188,7 @@ export class EventsService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     const eventId = toBigInt(id);
 
     this.logger.warn(`DELETE_EVENT_STARTED: ${id}`);
@@ -209,6 +211,7 @@ export class EventsService {
       entity: 'Event',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     this.logger.warn(`DELETE_EVENT_SUCCESS: ${id}`);
@@ -219,7 +222,7 @@ export class EventsService {
   // -----------------------------
   // CREATE TYPE
   // -----------------------------
-  async createType(name: string) {
+  async createType(name: string, user?: any) {
     this.logger.log(`CREATE_EVENT_TYPE: ${name}`);
 
     const type = await this.prisma.eventType.create({
@@ -231,6 +234,7 @@ export class EventsService {
       entity: 'EventType',
       entityId: type.id.toString(),
       after: type,
+      userId: user?.id,
     });
 
     return { success: true, data: type, meta: {} };

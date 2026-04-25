@@ -18,7 +18,7 @@ export class MembersService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateMemberDto) {
+  async create(dto: CreateMemberDto, user?: any) {
     this.logger.log(`CREATE_MEMBER_STARTED: ${dto.firstName} ${dto.lastName}`);
 
     const member = await this.prisma.member.create({
@@ -47,6 +47,7 @@ export class MembersService {
       entity: 'Member',
       entityId: member.id.toString(),
       after: member,
+      userId: user?.id,
     });
 
     this.logger.log(`CREATE_MEMBER_SUCCESS: ${member.id}`);
@@ -144,7 +145,7 @@ export class MembersService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: UpdateMemberDto) {
+  async update(id: string, dto: UpdateMemberDto, user?: any) {
     const memberId = toBigInt(id);
 
     this.logger.log(`UPDATE_MEMBER_STARTED: ${id}`);
@@ -189,6 +190,7 @@ export class MembersService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     this.logger.log(`UPDATE_MEMBER_SUCCESS: ${id}`);
@@ -203,7 +205,7 @@ export class MembersService {
   // -----------------------------
   // DELETE
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     const memberId = toBigInt(id);
 
     this.logger.warn(`DELETE_MEMBER_STARTED: ${id}`);
@@ -223,6 +225,7 @@ export class MembersService {
       entity: 'Member',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     this.logger.warn(`DELETE_MEMBER_SUCCESS: ${id}`);
@@ -237,7 +240,7 @@ export class MembersService {
   // -----------------------------
   // ASSIGN MINISTRY
   // -----------------------------
-  async assignMinistry(memberId: string, ministryId: string) {
+  async assignMinistry(memberId: string, ministryId: string, user?: any) {
     this.logger.log(
       `ASSIGN_MINISTRY_STARTED: member=${memberId} ministry=${ministryId}`,
     );
@@ -254,6 +257,7 @@ export class MembersService {
       entity: 'Member',
       entityId: memberId,
       after: { ministryId },
+      userId: user?.id,
     });
 
     this.logger.log(
@@ -270,7 +274,7 @@ export class MembersService {
   // -----------------------------
   // REMOVE MINISTRY
   // -----------------------------
-  async removeMinistry(memberId: string, ministryId: string) {
+  async removeMinistry(memberId: string, ministryId: string, user?: any) {
     this.logger.warn(
       `REMOVE_MINISTRY_STARTED: member=${memberId} ministry=${ministryId}`,
     );
@@ -289,6 +293,7 @@ export class MembersService {
       entity: 'Member',
       entityId: memberId,
       after: { ministryId },
+      userId: user?.id,
     });
 
     this.logger.warn(

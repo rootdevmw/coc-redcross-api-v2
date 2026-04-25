@@ -15,7 +15,7 @@ export class ProgramsService {
   // -----------------------------
   // CREATE PROGRAM
   // -----------------------------
-  async create(dto: any) {
+  async create(dto: any, user?: any) {
     this.logger.log(`Creating program for date ${dto.date}`);
 
     const program = await this.prisma.program.create({
@@ -49,6 +49,7 @@ export class ProgramsService {
       entity: 'Program',
       entityId: program.id.toString(),
       after: program,
+      userId: user?.id,
     });
 
     return { success: true, data: program, meta: {} };
@@ -57,7 +58,7 @@ export class ProgramsService {
   // -----------------------------
   // CREATE FROM TEMPLATE
   // -----------------------------
-  async createFromTemplate(dto: any) {
+  async createFromTemplate(dto: any, user?: any) {
     this.logger.log(`Creating program from template ${dto.templateId}`);
 
     const template = await this.prisma.programTemplate.findFirst({
@@ -108,6 +109,7 @@ export class ProgramsService {
       entity: 'Program',
       entityId: program.id.toString(),
       after: program,
+      userId: user?.id,
     });
 
     return { success: true, data: program, meta: {} };
@@ -187,7 +189,7 @@ export class ProgramsService {
   // -----------------------------
   // UPDATE PROGRAM
   // -----------------------------
-  async update(id: string, dto: any) {
+  async update(id: string, dto: any, user?: any) {
     this.logger.log(`Updating program ${id}`);
 
     const programId = toBigIntOptional(id);
@@ -241,6 +243,7 @@ export class ProgramsService {
       entityId: id,
       before,
       after,
+      userId: user?.id,
     });
 
     return { success: true, data: after, meta: {} };
@@ -249,7 +252,7 @@ export class ProgramsService {
   // -----------------------------
   // DELETE PROGRAM
   // -----------------------------
-  async remove(id: string) {
+  async remove(id: string, user?: any) {
     this.logger.warn(`Deleting program ${id}`);
 
     const programId = toBigIntOptional(id);
@@ -269,6 +272,7 @@ export class ProgramsService {
       entity: 'Program',
       entityId: id,
       before,
+      userId: user?.id,
     });
 
     return { success: true, data: {}, meta: {} };

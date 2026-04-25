@@ -229,6 +229,7 @@ export class AuthService {
   async changePassword(
     userId: string,
     dto: { currentPassword: string; newPassword: string },
+    actorUser?: any,
   ) {
     this.logger.log(`CHANGE_PASSWORD → user ${userId}`);
 
@@ -252,6 +253,7 @@ export class AuthService {
         entity: 'User',
         entityId: user.id.toString(),
         after: { reason: 'incorrect_current_password' },
+        userId: actorUser?.id,
       });
 
       throw new ConflictException('Incorrect password');
@@ -268,6 +270,7 @@ export class AuthService {
       action: 'PASSWORD_CHANGED',
       entity: 'User',
       entityId: user.id.toString(),
+      userId: actorUser?.id,
     });
 
     this.logger.log(`PASSWORD_CHANGED_SUCCESS → ${user.email}`);
@@ -305,7 +308,7 @@ export class AuthService {
   // -----------------------------
   // ASSIGN ROLE (USE DECORATOR)
   // -----------------------------
-  async assignRole(userId: string, roleId: string) {
+  async assignRole(userId: string, roleId: string, actorUser?: any) {
     this.logger.log(`ASSIGN_ROLE → user=${userId}, role=${roleId}`);
 
     const rel = await this.prisma.userRole.upsert({
@@ -321,6 +324,7 @@ export class AuthService {
       entity: 'UserRole',
       entityId: `${userId}:${roleId}`,
       after: { userId, roleId },
+      userId: actorUser?.id,
     });
 
     this.logger.log(`ROLE_ASSIGNED_SUCCESS`);

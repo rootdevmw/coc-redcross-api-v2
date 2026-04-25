@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   Query,
+  Req,
   UploadedFile,
   UseInterceptors,
   Delete,
@@ -21,22 +22,22 @@ export class NewslettersController {
   // PUBLISH
   // -----------------------------
   @Patch(':id/publish')
-  publish(@Param('id') id: string) {
-    return this.service.publish(id);
+  publish(@Param('id') id: string, @Req() req: any) {
+    return this.service.publish(id, req.user);
   }
 
   // -----------------------------
   // UNPUBLISH
   // -----------------------------
   @Patch(':id/unpublish')
-  unpublish(@Param('id') id: string) {
-    return this.service.unpublish(id);
+  unpublish(@Param('id') id: string, @Req() req: any) {
+    return this.service.unpublish(id, req.user);
   }
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  create(@UploadedFile() file: Express.Multer.File, @Body() dto: any) {
-    return this.service.create(dto, file);
+  create(@UploadedFile() file: Express.Multer.File, @Body() dto: any, @Req() req: any) {
+    return this.service.create(dto, req.user, file);
   }
 
   @Patch(':id')
@@ -45,8 +46,9 @@ export class NewslettersController {
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: any,
+    @Req() req: any,
   ) {
-    return this.service.update(id, dto, file);
+    return this.service.update(id, dto, req.user, file);
   }
 
   @Get()
@@ -60,7 +62,7 @@ export class NewslettersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 }

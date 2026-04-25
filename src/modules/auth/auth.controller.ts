@@ -105,7 +105,7 @@ export class AuthController {
     @Request() req: any,
     @Body() dto: { currentPassword: string; newPassword: string },
   ) {
-    return this.service.changePassword(req.user.id, dto);
+    return this.service.changePassword(req.user.id, dto, req.user);
   }
 
   // -----------------------------
@@ -113,8 +113,12 @@ export class AuthController {
   // -----------------------------
   @Post('assign-role/:userId/:roleId')
   @UseGuards(SessionAuthGuard)
-  assignRole(@Param('userId') userId: string, @Param('roleId') roleId: string) {
-    return this.service.assignRole(userId, roleId);
+  assignRole(
+    @Param('userId') userId: string,
+    @Param('roleId') roleId: string,
+    @Req() req: any,
+  ) {
+    return this.service.assignRole(userId, roleId, req.user);
   }
 
   // -----------------------------

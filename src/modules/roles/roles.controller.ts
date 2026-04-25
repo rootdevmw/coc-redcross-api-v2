@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
@@ -22,8 +23,8 @@ export class RolesController {
   // 🔒 Only ADMIN can manage roles
   @Post()
   @Roles('ADMIN')
-  create(@Body() dto: any) {
-    return this.service.create(dto);
+  create(@Body() dto: any, @Req() req: any) {
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -40,13 +41,13 @@ export class RolesController {
 
   @Patch(':id')
   @Roles('ADMIN')
-  update(@Param('id') id: string, @Body() dto: any) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+    return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
   @Roles('ADMIN')
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.service.remove(id, req.user);
   }
 }

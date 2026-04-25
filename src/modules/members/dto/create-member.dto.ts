@@ -31,4 +31,8 @@ export class CreateMemberDto {
   @IsOptional()
   @IsString()
   homecellId?: string;
+
+  @IsOptional()
+  @IsString()
+  bio?: string;
 }

@@ -4,15 +4,19 @@ import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { QueryAnnouncementDto } from './dto/query-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
+import { AuditService } from '../audit/audit.service';
 
 @Injectable()
 export class AnnouncementsService {
   private readonly logger = new Logger(AnnouncementsService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   async create(dto: CreateAnnouncementDto) {
-    this.logger.log(`Creating announcement: ${dto.title}`);
+    this.logger.log(`CREATE_ANNOUNCEMENT_STARTED: ${dto.title}`);
 
     const announcement = await this.prisma.announcement.create({
       data: {
@@ -28,7 +32,19 @@ export class AnnouncementsService {
           })),
         },
       },
+      include: {
+        targets: true,
+      },
     });
+
+    await this.auditService.log({
+      action: 'ANNOUNCEMENT_CREATED',
+      entity: 'Announcement',
+      entityId: announcement.id.toString(),
+      after: announcement,
+    });
+
+    this.logger.log(`CREATE_ANNOUNCEMENT_SUCCESS: ${announcement.id}`);
 
     return { success: true, data: announcement, meta: {} };
   }
@@ -147,17 +163,26 @@ export class AnnouncementsService {
   }
 
   async update(id: string, dto: UpdateAnnouncementDto) {
-    this.logger.log(`Updating announcement: ${id}`);
+    this.logger.log(`UPDATE_ANNOUNCEMENT_STARTED: ${id}`);
 
-    // If targets are provided → replace them
+    const announcementId = toBigInt(id);
+
+    const before = await this.prisma.announcement.findFirst({
+      where: { id: announcementId },
+      include: { targets: true },
+    });
+
+    if (!before) throw new NotFoundException('Announcement not found');
+
+    // Replace targets if provided
     if (dto.targets) {
       await this.prisma.announcementTarget.deleteMany({
-        where: { announcementId: toBigInt(id) },
+        where: { announcementId },
       });
     }
 
-    const announcement = await this.prisma.announcement.update({
-      where: { id: toBigInt(id) },
+    const after = await this.prisma.announcement.update({
+      where: { id: announcementId },
       data: {
         title: dto.title,
         body: dto.body,
@@ -173,11 +198,22 @@ export class AnnouncementsService {
             }
           : undefined,
       },
+      include: { targets: true },
     });
+
+    await this.auditService.log({
+      action: 'ANNOUNCEMENT_UPDATED',
+      entity: 'Announcement',
+      entityId: id,
+      before,
+      after,
+    });
+
+    this.logger.log(`UPDATE_ANNOUNCEMENT_SUCCESS: ${id}`);
 
     return {
       success: true,
-      data: announcement,
+      data: after,
       meta: {},
     };
   }

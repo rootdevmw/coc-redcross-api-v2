@@ -1,22 +1,39 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
   Body,
-  Query,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { ContentService } from './content.service';
-import { CreateContentDto } from './dto/create-content.dto';
-import { UpdateContentDto } from './dto/update-content.dto';
-import { QueryContentDto } from './dto/query-content.dto';
 import { CreateContentTypeDto } from './dto/create-content-type.dto';
+import { CreateContentDto } from './dto/create-content.dto';
+import { QueryContentDto } from './dto/query-content.dto';
+import { UpdateContentDto } from './dto/update-content.dto';
 
 @Controller('content')
 export class ContentController {
   constructor(private service: ContentService) {}
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: {
+        fileSize: Number(process.env.UPLOAD_MAX_FILE_SIZE) || 50 * 1024 * 1024,
+      },
+    }),
+  )
+  async uploadMedia(@UploadedFile() file: Express.Multer.File) {
+    return this.service.uploadMedia(file);
+  }
 
   @Post()
   create(@Body() dto: CreateContentDto) {

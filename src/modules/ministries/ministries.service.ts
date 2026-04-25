@@ -62,8 +62,16 @@ export class MinistriesService {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
-          leader: true,
-          overseer: true,
+          leader: {
+            include: {
+              bio: true,
+            },
+          },
+          overseer: {
+            include: {
+              bio: true,
+            },
+          },
         },
       }),
       this.prisma.ministry.count({ where }),
@@ -90,8 +98,16 @@ export class MinistriesService {
         deletedAt: null,
       },
       include: {
-        leader: true,
-        overseer: true,
+        leader: {
+          include: {
+            bio: true,
+          },
+        },
+        overseer: {
+          include: {
+            bio: true,
+          },
+        },
 
         members: {
           where: {
@@ -102,7 +118,7 @@ export class MinistriesService {
           },
         },
 
-        // 🔥 JOIN TABLE → EVENT
+        //  JOIN TABLE → EVENT
         events: {
           include: {
             event: true,

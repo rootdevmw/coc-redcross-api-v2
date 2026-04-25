@@ -33,15 +33,31 @@ export class HomecellsService {
 
   async findAll() {
     this.logger.log('Fetching homecells');
-
+    const now = new Date();
     const data = await this.prisma.homecell.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        leader: true,
+        leader: {
+          include: {
+            bio: true,
+          },
+        },
         members: {
           where: { deletedAt: null },
         },
-        overseer: true,
+        programs: {
+          where: {
+            deletedAt: null,
+            date: {
+              gte: now,
+            },
+          },
+        },
+        overseer: {
+          include: {
+            bio: true,
+          },
+        },
       },
     });
 
@@ -56,15 +72,30 @@ export class HomecellsService {
 
   async findOne(id: string) {
     this.logger.log(`Fetching homecell ${id}`);
+    const now = new Date();
 
     const homecell = await this.prisma.homecell.findFirst({
       where: { id: toBigInt(id) },
       include: {
-        leader: true,
+        leader: {
+          include: {
+            bio: true,
+          },
+        },
         members: {
           where: { deletedAt: null },
         },
-        overseer: true,
+        programs: {
+          where: {
+            deletedAt: null,
+            date: {
+              gte: now,
+            },
+          },
+        },
+        overseer: {
+          include: { bio: true },
+        },
       },
     });
 

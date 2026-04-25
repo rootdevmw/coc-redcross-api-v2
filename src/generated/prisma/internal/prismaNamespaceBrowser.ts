@@ -57,6 +57,7 @@ export const ModelName = {
   Member: 'Member',
   MemberMinistry: 'MemberMinistry',
   Homecell: 'Homecell',
+  MemberBio: 'MemberBio',
   Ministry: 'Ministry',
   ContentType: 'ContentType',
   Content: 'Content',
@@ -85,7 +86,8 @@ export const ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   PrayerRequest: 'PrayerRequest',
   Visitor: 'Visitor',
-  AttentionAction: 'AttentionAction'
+  AttentionAction: 'AttentionAction',
+  AuditLog: 'AuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -170,6 +172,17 @@ export const HomecellScalarFieldEnum = {
 } as const
 
 export type HomecellScalarFieldEnum = (typeof HomecellScalarFieldEnum)[keyof typeof HomecellScalarFieldEnum]
+
+
+export const MemberBioScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  bio: 'bio',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MemberBioScalarFieldEnum = (typeof MemberBioScalarFieldEnum)[keyof typeof MemberBioScalarFieldEnum]
 
 
 export const MinistryScalarFieldEnum = {
@@ -351,6 +364,7 @@ export const ProgramScalarFieldEnum = {
   date: 'date',
   typeId: 'typeId',
   homecellId: 'homecellId',
+  location: 'location',
   createdAt: 'createdAt',
   deletedAt: 'deletedAt'
 } as const
@@ -512,12 +526,37 @@ export const AttentionActionScalarFieldEnum = {
 export type AttentionActionScalarFieldEnum = (typeof AttentionActionScalarFieldEnum)[keyof typeof AttentionActionScalarFieldEnum]
 
 
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  description: 'description',
+  before: 'before',
+  after: 'after',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const NullsOrder = {
@@ -561,6 +600,13 @@ export const HomecellOrderByRelevanceFieldEnum = {
 } as const
 
 export type HomecellOrderByRelevanceFieldEnum = (typeof HomecellOrderByRelevanceFieldEnum)[keyof typeof HomecellOrderByRelevanceFieldEnum]
+
+
+export const MemberBioOrderByRelevanceFieldEnum = {
+  bio: 'bio'
+} as const
+
+export type MemberBioOrderByRelevanceFieldEnum = (typeof MemberBioOrderByRelevanceFieldEnum)[keyof typeof MemberBioOrderByRelevanceFieldEnum]
 
 
 export const MinistryOrderByRelevanceFieldEnum = {
@@ -659,6 +705,13 @@ export const ProgramTypeOrderByRelevanceFieldEnum = {
 export type ProgramTypeOrderByRelevanceFieldEnum = (typeof ProgramTypeOrderByRelevanceFieldEnum)[keyof typeof ProgramTypeOrderByRelevanceFieldEnum]
 
 
+export const ProgramOrderByRelevanceFieldEnum = {
+  location: 'location'
+} as const
+
+export type ProgramOrderByRelevanceFieldEnum = (typeof ProgramOrderByRelevanceFieldEnum)[keyof typeof ProgramOrderByRelevanceFieldEnum]
+
+
 export const ProgramItemOrderByRelevanceFieldEnum = {
   title: 'title',
   description: 'description',
@@ -755,4 +808,33 @@ export const AttentionActionOrderByRelevanceFieldEnum = {
 } as const
 
 export type AttentionActionOrderByRelevanceFieldEnum = (typeof AttentionActionOrderByRelevanceFieldEnum)[keyof typeof AttentionActionOrderByRelevanceFieldEnum]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const AuditLogOrderByRelevanceFieldEnum = {
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  description: 'description',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent'
+} as const
+
+export type AuditLogOrderByRelevanceFieldEnum = (typeof AuditLogOrderByRelevanceFieldEnum)[keyof typeof AuditLogOrderByRelevanceFieldEnum]
 

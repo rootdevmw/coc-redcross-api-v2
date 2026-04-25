@@ -390,6 +390,7 @@ export const ModelName = {
   Member: 'Member',
   MemberMinistry: 'MemberMinistry',
   Homecell: 'Homecell',
+  MemberBio: 'MemberBio',
   Ministry: 'Ministry',
   ContentType: 'ContentType',
   Content: 'Content',
@@ -418,7 +419,8 @@ export const ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   PrayerRequest: 'PrayerRequest',
   Visitor: 'Visitor',
-  AttentionAction: 'AttentionAction'
+  AttentionAction: 'AttentionAction',
+  AuditLog: 'AuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -434,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "member" | "memberMinistry" | "homecell" | "ministry" | "contentType" | "content" | "media" | "contentMedia" | "eventMedia" | "tag" | "contentTag" | "series" | "scriptureRef" | "announcement" | "announcementTarget" | "eventType" | "event" | "eventMinistry" | "programType" | "program" | "programItem" | "programTemplate" | "programTemplateItem" | "stream" | "platform" | "streamPlatform" | "newsletter" | "session" | "passwordResetToken" | "prayerRequest" | "visitor" | "attentionAction"
+    modelProps: "user" | "role" | "userRole" | "member" | "memberMinistry" | "homecell" | "memberBio" | "ministry" | "contentType" | "content" | "media" | "contentMedia" | "eventMedia" | "tag" | "contentTag" | "series" | "scriptureRef" | "announcement" | "announcementTarget" | "eventType" | "event" | "eventMinistry" | "programType" | "program" | "programItem" | "programTemplate" | "programTemplateItem" | "stream" | "platform" | "streamPlatform" | "newsletter" | "session" | "passwordResetToken" | "prayerRequest" | "visitor" | "attentionAction" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -831,6 +833,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.HomecellCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.HomecellCountAggregateOutputType> | number
+        }
+      }
+    }
+    MemberBio: {
+      payload: Prisma.$MemberBioPayload<ExtArgs>
+      fields: Prisma.MemberBioFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MemberBioFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MemberBioFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>
+        }
+        findFirst: {
+          args: Prisma.MemberBioFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MemberBioFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>
+        }
+        findMany: {
+          args: Prisma.MemberBioFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>[]
+        }
+        create: {
+          args: Prisma.MemberBioCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>
+        }
+        createMany: {
+          args: Prisma.MemberBioCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.MemberBioDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>
+        }
+        update: {
+          args: Prisma.MemberBioUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>
+        }
+        deleteMany: {
+          args: Prisma.MemberBioDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MemberBioUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.MemberBioUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberBioPayload>
+        }
+        aggregate: {
+          args: Prisma.MemberBioAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMemberBio>
+        }
+        groupBy: {
+          args: Prisma.MemberBioGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemberBioGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MemberBioCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MemberBioCountAggregateOutputType> | number
         }
       }
     }
@@ -2748,6 +2816,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AuditLog: {
+      payload: Prisma.$AuditLogPayload<ExtArgs>
+      fields: Prisma.AuditLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuditLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        findFirst: {
+          args: Prisma.AuditLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        findMany: {
+          args: Prisma.AuditLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        create: {
+          args: Prisma.AuditLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        createMany: {
+          args: Prisma.AuditLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.AuditLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        update: {
+          args: Prisma.AuditLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuditLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuditLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.AuditLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        aggregate: {
+          args: Prisma.AuditLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditLog>
+        }
+        groupBy: {
+          args: Prisma.AuditLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuditLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2853,6 +2987,17 @@ export const HomecellScalarFieldEnum = {
 } as const
 
 export type HomecellScalarFieldEnum = (typeof HomecellScalarFieldEnum)[keyof typeof HomecellScalarFieldEnum]
+
+
+export const MemberBioScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  bio: 'bio',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MemberBioScalarFieldEnum = (typeof MemberBioScalarFieldEnum)[keyof typeof MemberBioScalarFieldEnum]
 
 
 export const MinistryScalarFieldEnum = {
@@ -3034,6 +3179,7 @@ export const ProgramScalarFieldEnum = {
   date: 'date',
   typeId: 'typeId',
   homecellId: 'homecellId',
+  location: 'location',
   createdAt: 'createdAt',
   deletedAt: 'deletedAt'
 } as const
@@ -3195,12 +3341,37 @@ export const AttentionActionScalarFieldEnum = {
 export type AttentionActionScalarFieldEnum = (typeof AttentionActionScalarFieldEnum)[keyof typeof AttentionActionScalarFieldEnum]
 
 
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  description: 'description',
+  before: 'before',
+  after: 'after',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const NullsOrder = {
@@ -3244,6 +3415,13 @@ export const HomecellOrderByRelevanceFieldEnum = {
 } as const
 
 export type HomecellOrderByRelevanceFieldEnum = (typeof HomecellOrderByRelevanceFieldEnum)[keyof typeof HomecellOrderByRelevanceFieldEnum]
+
+
+export const MemberBioOrderByRelevanceFieldEnum = {
+  bio: 'bio'
+} as const
+
+export type MemberBioOrderByRelevanceFieldEnum = (typeof MemberBioOrderByRelevanceFieldEnum)[keyof typeof MemberBioOrderByRelevanceFieldEnum]
 
 
 export const MinistryOrderByRelevanceFieldEnum = {
@@ -3340,6 +3518,13 @@ export const ProgramTypeOrderByRelevanceFieldEnum = {
 } as const
 
 export type ProgramTypeOrderByRelevanceFieldEnum = (typeof ProgramTypeOrderByRelevanceFieldEnum)[keyof typeof ProgramTypeOrderByRelevanceFieldEnum]
+
+
+export const ProgramOrderByRelevanceFieldEnum = {
+  location: 'location'
+} as const
+
+export type ProgramOrderByRelevanceFieldEnum = (typeof ProgramOrderByRelevanceFieldEnum)[keyof typeof ProgramOrderByRelevanceFieldEnum]
 
 
 export const ProgramItemOrderByRelevanceFieldEnum = {
@@ -3440,6 +3625,35 @@ export const AttentionActionOrderByRelevanceFieldEnum = {
 export type AttentionActionOrderByRelevanceFieldEnum = (typeof AttentionActionOrderByRelevanceFieldEnum)[keyof typeof AttentionActionOrderByRelevanceFieldEnum]
 
 
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const AuditLogOrderByRelevanceFieldEnum = {
+  action: 'action',
+  entity: 'entity',
+  entityId: 'entityId',
+  description: 'description',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent'
+} as const
+
+export type AuditLogOrderByRelevanceFieldEnum = (typeof AuditLogOrderByRelevanceFieldEnum)[keyof typeof AuditLogOrderByRelevanceFieldEnum]
+
+
 
 /**
  * Field references
@@ -3499,6 +3713,20 @@ export type EnumVisitorStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'AttentionType'
  */
 export type EnumAttentionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AttentionType'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -3609,6 +3837,7 @@ export type GlobalOmitConfig = {
   member?: Prisma.MemberOmit
   memberMinistry?: Prisma.MemberMinistryOmit
   homecell?: Prisma.HomecellOmit
+  memberBio?: Prisma.MemberBioOmit
   ministry?: Prisma.MinistryOmit
   contentType?: Prisma.ContentTypeOmit
   content?: Prisma.ContentOmit
@@ -3638,6 +3867,7 @@ export type GlobalOmitConfig = {
   prayerRequest?: Prisma.PrayerRequestOmit
   visitor?: Prisma.VisitorOmit
   attentionAction?: Prisma.AttentionActionOmit
+  auditLog?: Prisma.AuditLogOmit
 }
 
 /* Types for Logging */

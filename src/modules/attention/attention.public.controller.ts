@@ -14,7 +14,6 @@ export class PublicAttentionController {
   @Post('prayer-requests')
   @Public()
   createPrayer(@Body() dto: CreatePrayerRequestDto) {
-    console.log('Received prayer request:', dto);
     return this.attentionService.createPrayerRequest(dto);
   }
   // ───────────────────────

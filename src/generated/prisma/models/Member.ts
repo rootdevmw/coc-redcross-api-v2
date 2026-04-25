@@ -299,6 +299,7 @@ export type MemberWhereInput = {
   overseeingMinistries?: Prisma.MinistryListRelationFilter
   programTemplateItems?: Prisma.ProgramTemplateItemListRelationFilter
   attentionActions?: Prisma.AttentionActionListRelationFilter
+  bio?: Prisma.XOR<Prisma.MemberBioNullableScalarRelationFilter, Prisma.MemberBioWhereInput> | null
 }
 
 export type MemberOrderByWithRelationInput = {
@@ -326,6 +327,7 @@ export type MemberOrderByWithRelationInput = {
   overseeingMinistries?: Prisma.MinistryOrderByRelationAggregateInput
   programTemplateItems?: Prisma.ProgramTemplateItemOrderByRelationAggregateInput
   attentionActions?: Prisma.AttentionActionOrderByRelationAggregateInput
+  bio?: Prisma.MemberBioOrderByWithRelationInput
   _relevance?: Prisma.MemberOrderByRelevanceInput
 }
 
@@ -357,6 +359,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   overseeingMinistries?: Prisma.MinistryListRelationFilter
   programTemplateItems?: Prisma.ProgramTemplateItemListRelationFilter
   attentionActions?: Prisma.AttentionActionListRelationFilter
+  bio?: Prisma.XOR<Prisma.MemberBioNullableScalarRelationFilter, Prisma.MemberBioWhereInput> | null
 }, "id" | "userId">
 
 export type MemberOrderByWithAggregationInput = {
@@ -422,6 +425,7 @@ export type MemberCreateInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateInput = {
@@ -447,6 +451,7 @@ export type MemberUncheckedCreateInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUpdateInput = {
@@ -472,6 +477,7 @@ export type MemberUpdateInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
@@ -497,6 +503,7 @@ export type MemberUncheckedUpdateInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateManyInput = {
@@ -767,6 +774,20 @@ export type MemberUncheckedUpdateManyWithoutHomecellNestedInput = {
   deleteMany?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
 }
 
+export type MemberCreateNestedOneWithoutBioInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutBioInput, Prisma.MemberUncheckedCreateWithoutBioInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutBioInput
+  connect?: Prisma.MemberWhereUniqueInput
+}
+
+export type MemberUpdateOneRequiredWithoutBioNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutBioInput, Prisma.MemberUncheckedCreateWithoutBioInput>
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutBioInput
+  upsert?: Prisma.MemberUpsertWithoutBioInput
+  connect?: Prisma.MemberWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MemberUpdateToOneWithWhereWithoutBioInput, Prisma.MemberUpdateWithoutBioInput>, Prisma.MemberUncheckedUpdateWithoutBioInput>
+}
+
 export type MemberCreateNestedOneWithoutLeadingMinistriesInput = {
   create?: Prisma.XOR<Prisma.MemberCreateWithoutLeadingMinistriesInput, Prisma.MemberUncheckedCreateWithoutLeadingMinistriesInput>
   connectOrCreate?: Prisma.MemberCreateOrConnectWithoutLeadingMinistriesInput
@@ -883,6 +904,7 @@ export type MemberCreateWithoutUserInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutUserInput = {
@@ -907,6 +929,7 @@ export type MemberUncheckedCreateWithoutUserInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutUserInput = {
@@ -947,6 +970,7 @@ export type MemberUpdateWithoutUserInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutUserInput = {
@@ -971,6 +995,7 @@ export type MemberUncheckedUpdateWithoutUserInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateWithoutMinistriesInput = {
@@ -995,6 +1020,7 @@ export type MemberCreateWithoutMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutMinistriesInput = {
@@ -1019,6 +1045,7 @@ export type MemberUncheckedCreateWithoutMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutMinistriesInput = {
@@ -1059,6 +1086,7 @@ export type MemberUpdateWithoutMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutMinistriesInput = {
@@ -1083,6 +1111,7 @@ export type MemberUncheckedUpdateWithoutMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateWithoutLeadingHomecellsInput = {
@@ -1107,6 +1136,7 @@ export type MemberCreateWithoutLeadingHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutLeadingHomecellsInput = {
@@ -1131,6 +1161,7 @@ export type MemberUncheckedCreateWithoutLeadingHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutLeadingHomecellsInput = {
@@ -1160,6 +1191,7 @@ export type MemberCreateWithoutHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutHomecellsInput = {
@@ -1184,6 +1216,7 @@ export type MemberUncheckedCreateWithoutHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutHomecellsInput = {
@@ -1213,6 +1246,7 @@ export type MemberCreateWithoutHomecellInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutHomecellInput = {
@@ -1237,6 +1271,7 @@ export type MemberUncheckedCreateWithoutHomecellInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutHomecellInput = {
@@ -1282,6 +1317,7 @@ export type MemberUpdateWithoutLeadingHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutLeadingHomecellsInput = {
@@ -1306,6 +1342,7 @@ export type MemberUncheckedUpdateWithoutLeadingHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUpsertWithoutHomecellsInput = {
@@ -1341,6 +1378,7 @@ export type MemberUpdateWithoutHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutHomecellsInput = {
@@ -1365,6 +1403,7 @@ export type MemberUncheckedUpdateWithoutHomecellsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUpsertWithWhereUniqueWithoutHomecellInput = {
@@ -1402,6 +1441,122 @@ export type MemberScalarWhereInput = {
   homecellId?: Prisma.BigIntNullableFilter<"Member"> | bigint | number | null
 }
 
+export type MemberCreateWithoutBioInput = {
+  id?: bigint | number
+  prefix: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  status: string
+  baptized?: boolean
+  baptismDate?: Date | string | null
+  location?: string | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  user?: Prisma.UserCreateNestedOneWithoutMemberInput
+  ministries?: Prisma.MemberMinistryCreateNestedManyWithoutMemberInput
+  programItems?: Prisma.ProgramItemCreateNestedManyWithoutResponsibleInput
+  contents?: Prisma.ContentCreateNestedManyWithoutAuthorInput
+  homecell?: Prisma.HomecellCreateNestedOneWithoutMembersInput
+  leadingHomecells?: Prisma.HomecellCreateNestedManyWithoutLeaderInput
+  leadingMinistries?: Prisma.MinistryCreateNestedManyWithoutLeaderInput
+  homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
+  overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
+  programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+}
+
+export type MemberUncheckedCreateWithoutBioInput = {
+  id?: bigint | number
+  userId?: bigint | number | null
+  prefix: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  status: string
+  baptized?: boolean
+  baptismDate?: Date | string | null
+  location?: string | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  homecellId?: bigint | number | null
+  ministries?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMemberInput
+  programItems?: Prisma.ProgramItemUncheckedCreateNestedManyWithoutResponsibleInput
+  contents?: Prisma.ContentUncheckedCreateNestedManyWithoutAuthorInput
+  leadingHomecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutLeaderInput
+  leadingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutLeaderInput
+  homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
+  overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
+  programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+}
+
+export type MemberCreateOrConnectWithoutBioInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutBioInput, Prisma.MemberUncheckedCreateWithoutBioInput>
+}
+
+export type MemberUpsertWithoutBioInput = {
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutBioInput, Prisma.MemberUncheckedUpdateWithoutBioInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutBioInput, Prisma.MemberUncheckedCreateWithoutBioInput>
+  where?: Prisma.MemberWhereInput
+}
+
+export type MemberUpdateToOneWithWhereWithoutBioInput = {
+  where?: Prisma.MemberWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutBioInput, Prisma.MemberUncheckedUpdateWithoutBioInput>
+}
+
+export type MemberUpdateWithoutBioInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneWithoutMemberNestedInput
+  ministries?: Prisma.MemberMinistryUpdateManyWithoutMemberNestedInput
+  programItems?: Prisma.ProgramItemUpdateManyWithoutResponsibleNestedInput
+  contents?: Prisma.ContentUpdateManyWithoutAuthorNestedInput
+  homecell?: Prisma.HomecellUpdateOneWithoutMembersNestedInput
+  leadingHomecells?: Prisma.HomecellUpdateManyWithoutLeaderNestedInput
+  leadingMinistries?: Prisma.MinistryUpdateManyWithoutLeaderNestedInput
+  homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
+  overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
+  programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutBioInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  userId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  homecellId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ministries?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMemberNestedInput
+  programItems?: Prisma.ProgramItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  contents?: Prisma.ContentUncheckedUpdateManyWithoutAuthorNestedInput
+  leadingHomecells?: Prisma.HomecellUncheckedUpdateManyWithoutLeaderNestedInput
+  leadingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutLeaderNestedInput
+  homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
+  overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
+  programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+}
+
 export type MemberCreateWithoutLeadingMinistriesInput = {
   id?: bigint | number
   prefix: string
@@ -1424,6 +1579,7 @@ export type MemberCreateWithoutLeadingMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutLeadingMinistriesInput = {
@@ -1448,6 +1604,7 @@ export type MemberUncheckedCreateWithoutLeadingMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutLeadingMinistriesInput = {
@@ -1477,6 +1634,7 @@ export type MemberCreateWithoutOverseeingMinistriesInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutOverseeingMinistriesInput = {
@@ -1501,6 +1659,7 @@ export type MemberUncheckedCreateWithoutOverseeingMinistriesInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutOverseeingMinistriesInput = {
@@ -1541,6 +1700,7 @@ export type MemberUpdateWithoutLeadingMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutLeadingMinistriesInput = {
@@ -1565,6 +1725,7 @@ export type MemberUncheckedUpdateWithoutLeadingMinistriesInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUpsertWithoutOverseeingMinistriesInput = {
@@ -1600,6 +1761,7 @@ export type MemberUpdateWithoutOverseeingMinistriesInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutOverseeingMinistriesInput = {
@@ -1624,6 +1786,7 @@ export type MemberUncheckedUpdateWithoutOverseeingMinistriesInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateWithoutContentsInput = {
@@ -1648,6 +1811,7 @@ export type MemberCreateWithoutContentsInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutContentsInput = {
@@ -1672,6 +1836,7 @@ export type MemberUncheckedCreateWithoutContentsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutContentsInput = {
@@ -1712,6 +1877,7 @@ export type MemberUpdateWithoutContentsInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutContentsInput = {
@@ -1736,6 +1902,7 @@ export type MemberUncheckedUpdateWithoutContentsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateWithoutProgramItemsInput = {
@@ -1760,6 +1927,7 @@ export type MemberCreateWithoutProgramItemsInput = {
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutProgramItemsInput = {
@@ -1784,6 +1952,7 @@ export type MemberUncheckedCreateWithoutProgramItemsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutProgramItemsInput = {
@@ -1824,6 +1993,7 @@ export type MemberUpdateWithoutProgramItemsInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutProgramItemsInput = {
@@ -1848,6 +2018,7 @@ export type MemberUncheckedUpdateWithoutProgramItemsInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateWithoutProgramTemplateItemsInput = {
@@ -1872,6 +2043,7 @@ export type MemberCreateWithoutProgramTemplateItemsInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   attentionActions?: Prisma.AttentionActionCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutProgramTemplateItemsInput = {
@@ -1896,6 +2068,7 @@ export type MemberUncheckedCreateWithoutProgramTemplateItemsInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   attentionActions?: Prisma.AttentionActionUncheckedCreateNestedManyWithoutPerformedByInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutProgramTemplateItemsInput = {
@@ -1936,6 +2109,7 @@ export type MemberUpdateWithoutProgramTemplateItemsInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutProgramTemplateItemsInput = {
@@ -1960,6 +2134,7 @@ export type MemberUncheckedUpdateWithoutProgramTemplateItemsInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateWithoutAttentionActionsInput = {
@@ -1984,6 +2159,7 @@ export type MemberCreateWithoutAttentionActionsInput = {
   homecells?: Prisma.HomecellCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemCreateNestedManyWithoutResponsibleInput
+  bio?: Prisma.MemberBioCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateWithoutAttentionActionsInput = {
@@ -2008,6 +2184,7 @@ export type MemberUncheckedCreateWithoutAttentionActionsInput = {
   homecells?: Prisma.HomecellUncheckedCreateNestedManyWithoutOverseerInput
   overseeingMinistries?: Prisma.MinistryUncheckedCreateNestedManyWithoutOverseerInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedCreateNestedManyWithoutResponsibleInput
+  bio?: Prisma.MemberBioUncheckedCreateNestedOneWithoutMemberInput
 }
 
 export type MemberCreateOrConnectWithoutAttentionActionsInput = {
@@ -2048,6 +2225,7 @@ export type MemberUpdateWithoutAttentionActionsInput = {
   homecells?: Prisma.HomecellUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutAttentionActionsInput = {
@@ -2072,6 +2250,7 @@ export type MemberUncheckedUpdateWithoutAttentionActionsInput = {
   homecells?: Prisma.HomecellUncheckedUpdateManyWithoutOverseerNestedInput
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberCreateManyHomecellInput = {
@@ -2111,6 +2290,7 @@ export type MemberUpdateWithoutHomecellInput = {
   overseeingMinistries?: Prisma.MinistryUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutHomecellInput = {
@@ -2135,6 +2315,7 @@ export type MemberUncheckedUpdateWithoutHomecellInput = {
   overseeingMinistries?: Prisma.MinistryUncheckedUpdateManyWithoutOverseerNestedInput
   programTemplateItems?: Prisma.ProgramTemplateItemUncheckedUpdateManyWithoutResponsibleNestedInput
   attentionActions?: Prisma.AttentionActionUncheckedUpdateManyWithoutPerformedByNestedInput
+  bio?: Prisma.MemberBioUncheckedUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateManyWithoutHomecellInput = {
@@ -2280,6 +2461,7 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   overseeingMinistries?: boolean | Prisma.Member$overseeingMinistriesArgs<ExtArgs>
   programTemplateItems?: boolean | Prisma.Member$programTemplateItemsArgs<ExtArgs>
   attentionActions?: boolean | Prisma.Member$attentionActionsArgs<ExtArgs>
+  bio?: boolean | Prisma.Member$bioArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
@@ -2314,6 +2496,7 @@ export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   overseeingMinistries?: boolean | Prisma.Member$overseeingMinistriesArgs<ExtArgs>
   programTemplateItems?: boolean | Prisma.Member$programTemplateItemsArgs<ExtArgs>
   attentionActions?: boolean | Prisma.Member$attentionActionsArgs<ExtArgs>
+  bio?: boolean | Prisma.Member$bioArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -2331,6 +2514,7 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     overseeingMinistries: Prisma.$MinistryPayload<ExtArgs>[]
     programTemplateItems: Prisma.$ProgramTemplateItemPayload<ExtArgs>[]
     attentionActions: Prisma.$AttentionActionPayload<ExtArgs>[]
+    bio: Prisma.$MemberBioPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: bigint
@@ -2697,6 +2881,7 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
   overseeingMinistries<T extends Prisma.Member$overseeingMinistriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$overseeingMinistriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MinistryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   programTemplateItems<T extends Prisma.Member$programTemplateItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$programTemplateItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProgramTemplateItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attentionActions<T extends Prisma.Member$attentionActionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$attentionActionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttentionActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bio<T extends Prisma.Member$bioArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$bioArgs<ExtArgs>>): Prisma.Prisma__MemberBioClient<runtime.Types.Result.GetResult<Prisma.$MemberBioPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3338,6 +3523,25 @@ export type Member$attentionActionsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.AttentionActionScalarFieldEnum | Prisma.AttentionActionScalarFieldEnum[]
+}
+
+/**
+ * Member.bio
+ */
+export type Member$bioArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MemberBio
+   */
+  select?: Prisma.MemberBioSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MemberBio
+   */
+  omit?: Prisma.MemberBioOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MemberBioInclude<ExtArgs> | null
+  where?: Prisma.MemberBioWhereInput
 }
 
 /**

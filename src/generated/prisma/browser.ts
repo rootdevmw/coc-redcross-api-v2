@@ -48,6 +48,11 @@ export type MemberMinistry = Prisma.MemberMinistryModel
  */
 export type Homecell = Prisma.HomecellModel
 /**
+ * Model MemberBio
+ * 
+ */
+export type MemberBio = Prisma.MemberBioModel
+/**
  * Model Ministry
  * 
  */
@@ -192,3 +197,8 @@ export type Visitor = Prisma.VisitorModel
  * 
  */
 export type AttentionAction = Prisma.AttentionActionModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel

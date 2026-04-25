@@ -17,6 +17,7 @@ export class ProgramsService {
     const program = await this.prisma.program.create({
       data: {
         date: new Date(dto.date),
+        location: dto.location || undefined,
         typeId: dto.typeId,
         homecellId: dto.homecellId,
 
@@ -68,8 +69,8 @@ export class ProgramsService {
     const program = await this.prisma.program.create({
       data: {
         date: new Date(dto.date),
-
-        // 🔥 copy from template
+        location: dto.location || undefined,
+        // copy from template
         typeId: template.typeId,
 
         // allow override OR fallback
@@ -196,6 +197,7 @@ export class ProgramsService {
       where: { id: toBigIntOptional(id) },
       data: {
         date: dto.date ? new Date(dto.date) : undefined,
+        location: dto.location || undefined,
         typeId: dto.typeId || undefined,
         homecellId: dto.homecellId || undefined,
 

@@ -20,4 +20,8 @@ export class QueryContentDto {
   @IsOptional()
   @IsString()
   search?: string;
+
+  @IsOptional()
+  @IsString()
+  tags?: string;
 }

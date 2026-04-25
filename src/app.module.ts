@@ -20,6 +20,7 @@ import { SessionAuthGuard } from './modules/auth/guard/session.guard';
 import { APP_GUARD } from '@nestjs/core/constants';
 import { EmailModule } from './modules/email/email.module';
 import { AttentionModule } from './modules/attention/attention.module';
+import { AuditService } from './modules/audit/audit.service';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AttentionModule } from './modules/attention/attention.module';
     UsersModule,
     AttentionModule,
     ProgramTemplatesModule,
+    AuditService,
     EmailModule,
     ConfigModule.forRoot({
       isGlobal: true,

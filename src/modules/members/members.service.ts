@@ -22,9 +22,28 @@ export class MembersService {
         phone: dto.phone,
         status: dto.status,
         location: dto.location,
-        homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
+        homecell: dto.homecellId
+          ? {
+              connect: {
+                id: toBigInt(dto.homecellId),
+              },
+            }
+          : undefined,
         baptized: dto.isBaptized,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : null,
+
+        //  nested bio creation
+        bio: dto.bio?.trim()
+          ? {
+              create: {
+                bio: dto.bio,
+              },
+            }
+          : undefined,
+      },
+      include: {
+        bio: true,
+        homecell: true,
       },
     });
 
@@ -122,6 +141,7 @@ export class MembersService {
 
     const member = await this.prisma.member.update({
       where: { id: toBigInt(id) },
+
       data: {
         firstName: dto.firstName,
         lastName: dto.lastName,
@@ -132,6 +152,26 @@ export class MembersService {
         location: dto.location,
         homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
         baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : undefined,
+
+        //  nested upsert for bio
+        bio:
+          dto.bio !== undefined
+            ? {
+                upsert: {
+                  create: {
+                    bio: dto.bio,
+                  },
+                  update: {
+                    bio: dto.bio,
+                  },
+                },
+              }
+            : undefined,
+      },
+
+      include: {
+        bio: true,
+        homecell: true,
       },
     });
 
@@ -143,7 +183,6 @@ export class MembersService {
       meta: {},
     };
   }
-
   async remove(id: string) {
     await this.prisma.member.delete({
       where: { id: toBigInt(id) },

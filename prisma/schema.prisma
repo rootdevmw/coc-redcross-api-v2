@@ -81,6 +81,7 @@ model Member {
   @@index([deletedAt])
   programTemplateItems ProgramTemplateItem[]
   attentionActions AttentionAction[]
+  bio MemberBio?
 }
 
 model MemberMinistry {
@@ -115,6 +116,18 @@ model Homecell {
   programTemplates ProgramTemplate[]
 }
 
+model MemberBio {
+  id        BigInt  @id @default(autoincrement())
+
+  memberId  BigInt  @unique
+  bio       String  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  member    Member   @relation(fields: [memberId], references: [id])
+}
+
 //////////////////////////////////////////////////////
 // MINISTRIES
 //////////////////////////////////////////////////////
@@ -122,7 +135,7 @@ model Homecell {
 model Ministry {
   id          BigInt   @id @default(autoincrement())
   name        String
-  description String?
+  description String? @db.Text
   leaderId    BigInt?
   overseerId  BigInt?
   slug        String?  @unique
@@ -263,7 +276,7 @@ model ScriptureRef {
 model Announcement {
   id         BigInt   @id @default(autoincrement())
   title      String
-  body       String
+  body       String @db.Text
   priority   Int
   expiryDate DateTime?
   createdAt  DateTime @default(now())
@@ -300,7 +313,7 @@ model EventType {
 model Event {
   id          BigInt   @id @default(autoincrement())
   title       String
-  description String?
+  description String? @db.Text
   startTime   DateTime
   endTime     DateTime
   location    String?
@@ -348,6 +361,7 @@ model Program {
   date       DateTime
   typeId     BigInt
   homecellId BigInt?
+  location    String?
   createdAt  DateTime @default(now())
   deletedAt DateTime?
   type     ProgramType @relation(fields: [typeId], references: [id])
@@ -362,7 +376,7 @@ model ProgramItem {
   id            BigInt @id @default(autoincrement())
   programId     BigInt
   title         String
-  description   String?
+  description   String? @db.Text
   time          String?
   sequence      Int
   responsibleId BigInt?
@@ -396,7 +410,7 @@ model ProgramTemplateItem {
   id            BigInt @id @default(autoincrement())
   templateId    BigInt
   title         String
-  description   String?
+  description   String? @db.Text
   time          String?
   sequence      Int
   responsibleId BigInt?
@@ -452,7 +466,7 @@ model Newsletter {
   id          BigInt   @id @default(autoincrement())
   title       String
   fileUrl     String
-  description String?
+  description String? @db.Text
   publishedAt DateTime?
   createdAt   DateTime @default(now())
   deletedAt DateTime?
@@ -488,7 +502,7 @@ model PrayerRequest {
 
   requestType       String?
   prayerFor         String
-  request           String
+  request           String @db.Text
 
   isUrgent          Boolean  @default(false)
   shareWithElders   Boolean  @default(true)
@@ -521,7 +535,7 @@ model Visitor {
   hasSpecialNeeds      Boolean  @default(false)
   specialNeedsDetails  String?
 
-  message              String?
+  message              String? @db.Text
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -555,4 +569,21 @@ model AttentionAction {
 enum AttentionType {
   PRAYER_REQUEST
   VISITOR
+}
+
+model AuditLog {
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt?
+  action      String   // CREATE, UPDATE, DELETE, PUBLISH, etc.
+  entity      String   // "Member", "Content", "Event"
+  entityId    String?
+  description String?  // human-readable summary
+
+  before      Json?    // previous state
+  after       Json?    // new state
+
+  ipAddress   String?
+  userAgent   String?
+
+  createdAt   DateTime @default(now())
 }

@@ -10,7 +10,6 @@ export class RequestContextService {
   }
 
   getUserId(): bigint | undefined {
-    console.log('getting user id', this.storage.getStore()?.userId);
     return this.storage.getStore()?.userId;
   }
 }

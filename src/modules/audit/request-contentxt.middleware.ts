@@ -11,7 +11,6 @@ export class RequestContextMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: any, res: any, next: () => void) {
-    console.log('middleware firing......................');
     const sessionId = req.cookies?.session_id;
 
     if (!sessionId) {
@@ -27,8 +26,6 @@ export class RequestContextMiddleware implements NestMiddleware {
 
     const memberId = session?.user?.member?.id;
     const userId = memberId ? BigInt(memberId) : undefined;
-
-    console.log('middleware resolved userId:', userId);
 
     this.ctx.run({ userId }, next); // ← next called INSIDE run
   }

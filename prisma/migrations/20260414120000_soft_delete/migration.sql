@@ -57,5 +57,5 @@ CREATE INDEX `Stream_deletedAt_idx` ON `Stream`(`deletedAt`);
 ALTER TABLE `Platform` ADD COLUMN `deletedAt` DATETIME(3) NULL;
 CREATE INDEX `Platform_deletedAt_idx` ON `Platform`(`deletedAt`);
 
-ALTER TABLE `Newsletter` ADD COLUMN `deletedAt` DATETIME(3) NULL;
-CREATE INDEX `Newsletter_deletedAt_idx` ON `Newsletter`(`deletedAt`);
+ALTER TABLE `Publication` ADD COLUMN `deletedAt` DATETIME(3) NULL;
+CREATE INDEX `Publication_deletedAt_idx` ON `Publication`(`deletedAt`);

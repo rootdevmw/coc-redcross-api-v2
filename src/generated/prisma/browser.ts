@@ -64,7 +64,10 @@ export type Ministry = Prisma.MinistryModel
 export type ContentType = Prisma.ContentTypeModel
 /**
  * Model Content
- * 
+ * *UPDATE Content
+ * SET slug = CAST(id AS CHAR)
+ * WHERE slug IS NULL;
+ * *
  */
 export type Content = Prisma.ContentModel
 /**
@@ -168,10 +171,10 @@ export type Platform = Prisma.PlatformModel
  */
 export type StreamPlatform = Prisma.StreamPlatformModel
 /**
- * Model Newsletter
+ * Model Publication
  * 
  */
-export type Newsletter = Prisma.NewsletterModel
+export type Publication = Prisma.PublicationModel
 /**
  * Model Session
  * 
@@ -187,6 +190,11 @@ export type PasswordResetToken = Prisma.PasswordResetTokenModel
  * 
  */
 export type PrayerRequest = Prisma.PrayerRequestModel
+/**
+ * Model PrayerWarrior
+ * 
+ */
+export type PrayerWarrior = Prisma.PrayerWarriorModel
 /**
  * Model Visitor
  * 

@@ -1,10 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
-import { NewslettersService } from './newsletters.service';
+import { PublicationService } from './publications.service';
 
-@Controller('public/newsletters')
-export class PublicNewslettersController {
-  constructor(private service: NewslettersService) {}
+@Controller('public/publications')
+export class PublicPublicationsController {
+  constructor(private service: PublicationService) {}
 
   @Get()
   @Public()

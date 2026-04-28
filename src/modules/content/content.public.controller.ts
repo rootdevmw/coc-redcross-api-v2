@@ -19,9 +19,9 @@ export class PublicContentController {
   getTypes() {
     return this.service.getTypes();
   }
-  @Get(':id')
+  @Get(':slug')
   @Public()
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('slug') slug: string) {
+    return this.service.findOneBySlug(slug);
   }
 }

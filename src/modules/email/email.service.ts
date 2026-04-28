@@ -290,4 +290,59 @@ export class EmailService {
     </html>
     `;
   }
+
+  // PRAYER REQUEST NOTIFICATION
+  async sendPrayerRequestNotification(email: string, prayer: any) {
+    this.logger.log(`Sending prayer request notification → ${email}`);
+
+    await sgMail.send({
+      to: email,
+      from: process.env.SENDGRID_FROM!,
+      subject: `New Prayer Request - ${prayer.prayerFor}`,
+      html: this.wrapEmail(`
+      <h2 style="color:#fff;">New Prayer Request</h2>
+
+      <p style="color:#9ca3af;">
+        A new prayer request has been submitted and needs intercession.
+      </p>
+
+      <div style="padding:12px;background:#0f172a;border-radius:8px;margin:12px 0;">
+        <p><strong>For:</strong> ${prayer.prayerFor}</p>
+        <p><strong>Request:</strong> ${prayer.request}</p>
+        <p><strong>Urgent:</strong> ${prayer.isUrgent ? 'Yes' : 'No'}</p>
+      </div>
+
+      <p style="color:#9ca3af;">
+        Please remember to mark it as <strong>prayed for</strong> in the system once you have prayed.
+      </p>
+    `),
+    });
+  }
+
+  // PRAYER COMPLETED NOTIFICATION
+  async sendPrayerCompletedNotification(email: string, prayer: any) {
+    this.logger.log(`Sending prayer completed notification → ${email}`);
+
+    await sgMail.send({
+      to: email,
+      from: process.env.SENDGRID_FROM!,
+      subject: `Prayer Answered - ${prayer.prayerFor}`,
+      html: this.wrapEmail(`
+      <h2 style="color:#fff;">Prayer Marked as Prayed For</h2>
+
+      <p style="color:#9ca3af;">
+        A prayer request has been marked as prayed for.
+      </p>
+
+      <div style="padding:12px;background:#0f172a;border-radius:8px;margin:12px 0;">
+        <p><strong>For:</strong> ${prayer.prayerFor}</p>
+        <p><strong>Request:</strong> ${prayer.request}</p>
+      </div>
+
+      <p style="color:#9ca3af;">
+        Thank you for your faithful intercession.
+      </p>
+    `),
+    });
+  }
 }

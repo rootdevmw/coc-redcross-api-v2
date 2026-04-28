@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { PublicAttentionController } from './attention.public.controller';
 import { AuditService } from '../audit/audit.service';
 import { RequestContextService } from '../audit/request-contenxt.service';
+import { EmailService } from '../email/email.service';
 
 @Module({
   controllers: [AttentionController, PublicAttentionController],
@@ -13,6 +14,7 @@ import { RequestContextService } from '../audit/request-contenxt.service';
     PrismaService,
     AuditService,
     RequestContextService,
+    EmailService,
   ],
 })
 export class AttentionModule {}

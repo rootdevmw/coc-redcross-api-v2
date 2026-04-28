@@ -5,6 +5,7 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import ExcelJS from 'exceljs';
 
 @Injectable()
 export class MembersService {
@@ -304,6 +305,154 @@ export class MembersService {
       success: true,
       message: 'Member removed from ministry',
       meta: {},
+    };
+  }
+
+  // -----------------------------
+  // EXPORT xlsx
+  // -----------------------------
+
+  async exportToXlsx(query: QueryMemberDto): Promise<{
+    success: boolean;
+    buffer: Buffer;
+    meta: { count: number };
+  }> {
+    this.logger.log(`EXPORT_MEMBERS_XLSX_STARTED`);
+
+    const where: any = {};
+    if (query.status) where.status = query.status;
+    if (query.homecellId) where.homecellId = query.homecellId;
+    if (query.prefix) where.prefix = query.prefix;
+    if (query.search) {
+      where.OR = [
+        { firstName: { contains: query.search } },
+        { lastName: { contains: query.search } },
+      ];
+    }
+
+    const members = await this.prisma.member.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        homecell: true,
+        ministries: {
+          where: { ministry: { deletedAt: null } },
+          include: { ministry: true },
+        },
+      },
+    });
+
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'Church Management System';
+    wb.created = new Date();
+
+    const ws = wb.addWorksheet('Members', {
+      views: [{ state: 'frozen', ySplit: 1 }],
+    });
+
+    // ── Column definitions ──────────────────────────────────────────────────
+    ws.columns = [
+      { header: 'ID', key: 'id', width: 12 },
+      { header: 'First Name', key: 'firstName', width: 18 },
+      { header: 'Last Name', key: 'lastName', width: 18 },
+      { header: 'Prefix', key: 'prefix', width: 10 },
+      { header: 'Phone', key: 'phone', width: 18 },
+      { header: 'Status', key: 'status', width: 14 },
+      { header: 'Location', key: 'location', width: 22 },
+      { header: 'Baptized', key: 'baptized', width: 10 },
+      { header: 'Baptism Date', key: 'baptismDate', width: 18 },
+      { header: 'Homecell', key: 'homecell', width: 20 },
+      { header: 'Ministries', key: 'ministries', width: 35 },
+      { header: 'Created At', key: 'createdAt', width: 22 },
+    ];
+
+    // ── Header row styling ──────────────────────────────────────────────────
+    const headerRow = ws.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.font = {
+        name: 'Arial',
+        bold: true,
+        color: { argb: 'FFFFFFFF' },
+        size: 11,
+      };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF2D3A8C' },
+      };
+      cell.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+        wrapText: false,
+      };
+      cell.border = {
+        bottom: { style: 'thin', color: { argb: 'FFAAAAAA' } },
+      };
+    });
+    headerRow.height = 28;
+
+    // ── Data rows ───────────────────────────────────────────────────────────
+    members.forEach((m, i) => {
+      const row = ws.addRow({
+        id: m.id.toString(),
+        firstName: m.firstName ?? '',
+        lastName: m.lastName ?? '',
+        prefix: m.prefix ?? '',
+        phone: m.phone ?? '',
+        status: m.status ?? '',
+        location: m.location ?? '',
+        baptized: m.baptized ? 'Yes' : 'No',
+        baptismDate: m.baptismDate ? new Date(m.baptismDate) : '',
+        homecell: m.homecell?.name ?? '',
+        ministries: m.ministries.map((mm) => mm.ministry.name).join('; '),
+        createdAt: new Date(m.createdAt),
+      });
+
+      // Alternate row shading
+      const rowFill: ExcelJS.Fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: i % 2 === 0 ? 'FFFFFFFF' : 'FFF4F6FB' },
+      };
+
+      row.eachCell((cell) => {
+        cell.font = { name: 'Arial', size: 10 };
+        cell.fill = rowFill;
+        cell.alignment = { vertical: 'middle', wrapText: false };
+      });
+
+      // Format date columns
+      const baptismCell = row.getCell('baptismDate');
+      const createdCell = row.getCell('createdAt');
+      if (baptismCell.value) baptismCell.numFmt = 'yyyy-mm-dd';
+      createdCell.numFmt = 'yyyy-mm-dd hh:mm';
+
+      row.height = 20;
+    });
+
+    // ── Summary row ─────────────────────────────────────────────────────────
+    const totalRow = ws.addRow({
+      firstName: `Total: ${members.length} members`,
+    });
+    totalRow.getCell('firstName').font = {
+      name: 'Arial',
+      bold: true,
+      size: 10,
+    };
+    totalRow.getCell('firstName').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE8EAF6' },
+    };
+
+    const buffer = Buffer.from(await wb.xlsx.writeBuffer());
+
+    this.logger.log(`EXPORT_MEMBERS_XLSX_SUCCESS: count=${members.length}`);
+
+    return {
+      success: true,
+      buffer,
+      meta: { count: members.length },
     };
   }
 }

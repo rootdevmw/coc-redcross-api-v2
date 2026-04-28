@@ -81,10 +81,11 @@ export const ModelName = {
   Stream: 'Stream',
   Platform: 'Platform',
   StreamPlatform: 'StreamPlatform',
-  Newsletter: 'Newsletter',
+  Publication: 'Publication',
   Session: 'Session',
   PasswordResetToken: 'PasswordResetToken',
   PrayerRequest: 'PrayerRequest',
+  PrayerWarrior: 'PrayerWarrior',
   Visitor: 'Visitor',
   AttentionAction: 'AttentionAction',
   AuditLog: 'AuditLog'
@@ -212,6 +213,7 @@ export type ContentTypeScalarFieldEnum = (typeof ContentTypeScalarFieldEnum)[key
 export const ContentScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  slug: 'slug',
   body: 'body',
   typeId: 'typeId',
   authorId: 'authorId',
@@ -443,7 +445,7 @@ export const StreamPlatformScalarFieldEnum = {
 export type StreamPlatformScalarFieldEnum = (typeof StreamPlatformScalarFieldEnum)[keyof typeof StreamPlatformScalarFieldEnum]
 
 
-export const NewsletterScalarFieldEnum = {
+export const PublicationScalarFieldEnum = {
   id: 'id',
   title: 'title',
   fileUrl: 'fileUrl',
@@ -453,7 +455,7 @@ export const NewsletterScalarFieldEnum = {
   deletedAt: 'deletedAt'
 } as const
 
-export type NewsletterScalarFieldEnum = (typeof NewsletterScalarFieldEnum)[keyof typeof NewsletterScalarFieldEnum]
+export type PublicationScalarFieldEnum = (typeof PublicationScalarFieldEnum)[keyof typeof PublicationScalarFieldEnum]
 
 
 export const SessionScalarFieldEnum = {
@@ -493,6 +495,14 @@ export const PrayerRequestScalarFieldEnum = {
 } as const
 
 export type PrayerRequestScalarFieldEnum = (typeof PrayerRequestScalarFieldEnum)[keyof typeof PrayerRequestScalarFieldEnum]
+
+
+export const PrayerWarriorScalarFieldEnum = {
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type PrayerWarriorScalarFieldEnum = (typeof PrayerWarriorScalarFieldEnum)[keyof typeof PrayerWarriorScalarFieldEnum]
 
 
 export const VisitorScalarFieldEnum = {
@@ -629,6 +639,7 @@ export type ContentTypeOrderByRelevanceFieldEnum = (typeof ContentTypeOrderByRel
 
 export const ContentOrderByRelevanceFieldEnum = {
   title: 'title',
+  slug: 'slug',
   body: 'body',
   status: 'status'
 } as const
@@ -754,13 +765,13 @@ export const PlatformOrderByRelevanceFieldEnum = {
 export type PlatformOrderByRelevanceFieldEnum = (typeof PlatformOrderByRelevanceFieldEnum)[keyof typeof PlatformOrderByRelevanceFieldEnum]
 
 
-export const NewsletterOrderByRelevanceFieldEnum = {
+export const PublicationOrderByRelevanceFieldEnum = {
   title: 'title',
   fileUrl: 'fileUrl',
   description: 'description'
 } as const
 
-export type NewsletterOrderByRelevanceFieldEnum = (typeof NewsletterOrderByRelevanceFieldEnum)[keyof typeof NewsletterOrderByRelevanceFieldEnum]
+export type PublicationOrderByRelevanceFieldEnum = (typeof PublicationOrderByRelevanceFieldEnum)[keyof typeof PublicationOrderByRelevanceFieldEnum]
 
 
 export const SessionOrderByRelevanceFieldEnum = {

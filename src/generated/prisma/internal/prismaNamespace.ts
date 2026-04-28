@@ -414,10 +414,11 @@ export const ModelName = {
   Stream: 'Stream',
   Platform: 'Platform',
   StreamPlatform: 'StreamPlatform',
-  Newsletter: 'Newsletter',
+  Publication: 'Publication',
   Session: 'Session',
   PasswordResetToken: 'PasswordResetToken',
   PrayerRequest: 'PrayerRequest',
+  PrayerWarrior: 'PrayerWarrior',
   Visitor: 'Visitor',
   AttentionAction: 'AttentionAction',
   AuditLog: 'AuditLog'
@@ -436,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "member" | "memberMinistry" | "homecell" | "memberBio" | "ministry" | "contentType" | "content" | "media" | "contentMedia" | "eventMedia" | "tag" | "contentTag" | "series" | "scriptureRef" | "announcement" | "announcementTarget" | "eventType" | "event" | "eventMinistry" | "programType" | "program" | "programItem" | "programTemplate" | "programTemplateItem" | "stream" | "platform" | "streamPlatform" | "newsletter" | "session" | "passwordResetToken" | "prayerRequest" | "visitor" | "attentionAction" | "auditLog"
+    modelProps: "user" | "role" | "userRole" | "member" | "memberMinistry" | "homecell" | "memberBio" | "ministry" | "contentType" | "content" | "media" | "contentMedia" | "eventMedia" | "tag" | "contentTag" | "series" | "scriptureRef" | "announcement" | "announcementTarget" | "eventType" | "event" | "eventMinistry" | "programType" | "program" | "programItem" | "programTemplate" | "programTemplateItem" | "stream" | "platform" | "streamPlatform" | "publication" | "session" | "passwordResetToken" | "prayerRequest" | "prayerWarrior" | "visitor" | "attentionAction" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2420,69 +2421,69 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Newsletter: {
-      payload: Prisma.$NewsletterPayload<ExtArgs>
-      fields: Prisma.NewsletterFieldRefs
+    Publication: {
+      payload: Prisma.$PublicationPayload<ExtArgs>
+      fields: Prisma.PublicationFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.NewsletterFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload> | null
+          args: Prisma.PublicationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.NewsletterFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>
+          args: Prisma.PublicationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
         }
         findFirst: {
-          args: Prisma.NewsletterFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload> | null
+          args: Prisma.PublicationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.NewsletterFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>
+          args: Prisma.PublicationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
         }
         findMany: {
-          args: Prisma.NewsletterFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>[]
+          args: Prisma.PublicationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>[]
         }
         create: {
-          args: Prisma.NewsletterCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>
+          args: Prisma.PublicationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
         }
         createMany: {
-          args: Prisma.NewsletterCreateManyArgs<ExtArgs>
+          args: Prisma.PublicationCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         delete: {
-          args: Prisma.NewsletterDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>
+          args: Prisma.PublicationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
         }
         update: {
-          args: Prisma.NewsletterUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>
+          args: Prisma.PublicationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
         }
         deleteMany: {
-          args: Prisma.NewsletterDeleteManyArgs<ExtArgs>
+          args: Prisma.PublicationDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.NewsletterUpdateManyArgs<ExtArgs>
+          args: Prisma.PublicationUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         upsert: {
-          args: Prisma.NewsletterUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterPayload>
+          args: Prisma.PublicationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
         }
         aggregate: {
-          args: Prisma.NewsletterAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateNewsletter>
+          args: Prisma.PublicationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePublication>
         }
         groupBy: {
-          args: Prisma.NewsletterGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NewsletterGroupByOutputType>[]
+          args: Prisma.PublicationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PublicationGroupByOutputType>[]
         }
         count: {
-          args: Prisma.NewsletterCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NewsletterCountAggregateOutputType> | number
+          args: Prisma.PublicationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PublicationCountAggregateOutputType> | number
         }
       }
     }
@@ -2681,6 +2682,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PrayerRequestCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PrayerRequestCountAggregateOutputType> | number
+        }
+      }
+    }
+    PrayerWarrior: {
+      payload: Prisma.$PrayerWarriorPayload<ExtArgs>
+      fields: Prisma.PrayerWarriorFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PrayerWarriorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PrayerWarriorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>
+        }
+        findFirst: {
+          args: Prisma.PrayerWarriorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PrayerWarriorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>
+        }
+        findMany: {
+          args: Prisma.PrayerWarriorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>[]
+        }
+        create: {
+          args: Prisma.PrayerWarriorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>
+        }
+        createMany: {
+          args: Prisma.PrayerWarriorCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.PrayerWarriorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>
+        }
+        update: {
+          args: Prisma.PrayerWarriorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>
+        }
+        deleteMany: {
+          args: Prisma.PrayerWarriorDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PrayerWarriorUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.PrayerWarriorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrayerWarriorPayload>
+        }
+        aggregate: {
+          args: Prisma.PrayerWarriorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePrayerWarrior>
+        }
+        groupBy: {
+          args: Prisma.PrayerWarriorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrayerWarriorGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PrayerWarriorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrayerWarriorCountAggregateOutputType> | number
         }
       }
     }
@@ -3027,6 +3094,7 @@ export type ContentTypeScalarFieldEnum = (typeof ContentTypeScalarFieldEnum)[key
 export const ContentScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  slug: 'slug',
   body: 'body',
   typeId: 'typeId',
   authorId: 'authorId',
@@ -3258,7 +3326,7 @@ export const StreamPlatformScalarFieldEnum = {
 export type StreamPlatformScalarFieldEnum = (typeof StreamPlatformScalarFieldEnum)[keyof typeof StreamPlatformScalarFieldEnum]
 
 
-export const NewsletterScalarFieldEnum = {
+export const PublicationScalarFieldEnum = {
   id: 'id',
   title: 'title',
   fileUrl: 'fileUrl',
@@ -3268,7 +3336,7 @@ export const NewsletterScalarFieldEnum = {
   deletedAt: 'deletedAt'
 } as const
 
-export type NewsletterScalarFieldEnum = (typeof NewsletterScalarFieldEnum)[keyof typeof NewsletterScalarFieldEnum]
+export type PublicationScalarFieldEnum = (typeof PublicationScalarFieldEnum)[keyof typeof PublicationScalarFieldEnum]
 
 
 export const SessionScalarFieldEnum = {
@@ -3308,6 +3376,14 @@ export const PrayerRequestScalarFieldEnum = {
 } as const
 
 export type PrayerRequestScalarFieldEnum = (typeof PrayerRequestScalarFieldEnum)[keyof typeof PrayerRequestScalarFieldEnum]
+
+
+export const PrayerWarriorScalarFieldEnum = {
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type PrayerWarriorScalarFieldEnum = (typeof PrayerWarriorScalarFieldEnum)[keyof typeof PrayerWarriorScalarFieldEnum]
 
 
 export const VisitorScalarFieldEnum = {
@@ -3444,6 +3520,7 @@ export type ContentTypeOrderByRelevanceFieldEnum = (typeof ContentTypeOrderByRel
 
 export const ContentOrderByRelevanceFieldEnum = {
   title: 'title',
+  slug: 'slug',
   body: 'body',
   status: 'status'
 } as const
@@ -3569,13 +3646,13 @@ export const PlatformOrderByRelevanceFieldEnum = {
 export type PlatformOrderByRelevanceFieldEnum = (typeof PlatformOrderByRelevanceFieldEnum)[keyof typeof PlatformOrderByRelevanceFieldEnum]
 
 
-export const NewsletterOrderByRelevanceFieldEnum = {
+export const PublicationOrderByRelevanceFieldEnum = {
   title: 'title',
   fileUrl: 'fileUrl',
   description: 'description'
 } as const
 
-export type NewsletterOrderByRelevanceFieldEnum = (typeof NewsletterOrderByRelevanceFieldEnum)[keyof typeof NewsletterOrderByRelevanceFieldEnum]
+export type PublicationOrderByRelevanceFieldEnum = (typeof PublicationOrderByRelevanceFieldEnum)[keyof typeof PublicationOrderByRelevanceFieldEnum]
 
 
 export const SessionOrderByRelevanceFieldEnum = {
@@ -3863,10 +3940,11 @@ export type GlobalOmitConfig = {
   stream?: Prisma.StreamOmit
   platform?: Prisma.PlatformOmit
   streamPlatform?: Prisma.StreamPlatformOmit
-  newsletter?: Prisma.NewsletterOmit
+  publication?: Prisma.PublicationOmit
   session?: Prisma.SessionOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   prayerRequest?: Prisma.PrayerRequestOmit
+  prayerWarrior?: Prisma.PrayerWarriorOmit
   visitor?: Prisma.VisitorOmit
   attentionAction?: Prisma.AttentionActionOmit
   auditLog?: Prisma.AuditLogOmit

@@ -14,7 +14,10 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model Content
- * 
+ * *UPDATE Content
+ * SET slug = CAST(id AS CHAR)
+ * WHERE slug IS NULL;
+ * *
  */
 export type ContentModel = runtime.Types.Result.DefaultSelection<Prisma.$ContentPayload>
 
@@ -43,6 +46,7 @@ export type ContentSumAggregateOutputType = {
 export type ContentMinAggregateOutputType = {
   id: bigint | null
   title: string | null
+  slug: string | null
   body: string | null
   typeId: bigint | null
   authorId: bigint | null
@@ -56,6 +60,7 @@ export type ContentMinAggregateOutputType = {
 export type ContentMaxAggregateOutputType = {
   id: bigint | null
   title: string | null
+  slug: string | null
   body: string | null
   typeId: bigint | null
   authorId: bigint | null
@@ -69,6 +74,7 @@ export type ContentMaxAggregateOutputType = {
 export type ContentCountAggregateOutputType = {
   id: number
   title: number
+  slug: number
   body: number
   typeId: number
   authorId: number
@@ -98,6 +104,7 @@ export type ContentSumAggregateInputType = {
 export type ContentMinAggregateInputType = {
   id?: true
   title?: true
+  slug?: true
   body?: true
   typeId?: true
   authorId?: true
@@ -111,6 +118,7 @@ export type ContentMinAggregateInputType = {
 export type ContentMaxAggregateInputType = {
   id?: true
   title?: true
+  slug?: true
   body?: true
   typeId?: true
   authorId?: true
@@ -124,6 +132,7 @@ export type ContentMaxAggregateInputType = {
 export type ContentCountAggregateInputType = {
   id?: true
   title?: true
+  slug?: true
   body?: true
   typeId?: true
   authorId?: true
@@ -224,6 +233,7 @@ export type ContentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type ContentGroupByOutputType = {
   id: bigint
   title: string
+  slug: string
   body: string
   typeId: bigint
   authorId: bigint | null
@@ -260,6 +270,7 @@ export type ContentWhereInput = {
   NOT?: Prisma.ContentWhereInput | Prisma.ContentWhereInput[]
   id?: Prisma.BigIntFilter<"Content"> | bigint | number
   title?: Prisma.StringFilter<"Content"> | string
+  slug?: Prisma.StringFilter<"Content"> | string
   body?: Prisma.StringFilter<"Content"> | string
   typeId?: Prisma.BigIntFilter<"Content"> | bigint | number
   authorId?: Prisma.BigIntNullableFilter<"Content"> | bigint | number | null
@@ -279,6 +290,7 @@ export type ContentWhereInput = {
 export type ContentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   body?: Prisma.SortOrder
   typeId?: Prisma.SortOrder
   authorId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -302,6 +314,7 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ContentWhereInput[]
   NOT?: Prisma.ContentWhereInput | Prisma.ContentWhereInput[]
   title?: Prisma.StringFilter<"Content"> | string
+  slug?: Prisma.StringFilter<"Content"> | string
   body?: Prisma.StringFilter<"Content"> | string
   typeId?: Prisma.BigIntFilter<"Content"> | bigint | number
   authorId?: Prisma.BigIntNullableFilter<"Content"> | bigint | number | null
@@ -321,6 +334,7 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
 export type ContentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   body?: Prisma.SortOrder
   typeId?: Prisma.SortOrder
   authorId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -342,6 +356,7 @@ export type ContentScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ContentScalarWhereWithAggregatesInput | Prisma.ContentScalarWhereWithAggregatesInput[]
   id?: Prisma.BigIntWithAggregatesFilter<"Content"> | bigint | number
   title?: Prisma.StringWithAggregatesFilter<"Content"> | string
+  slug?: Prisma.StringWithAggregatesFilter<"Content"> | string
   body?: Prisma.StringWithAggregatesFilter<"Content"> | string
   typeId?: Prisma.BigIntWithAggregatesFilter<"Content"> | bigint | number
   authorId?: Prisma.BigIntNullableWithAggregatesFilter<"Content"> | bigint | number | null
@@ -355,6 +370,7 @@ export type ContentScalarWhereWithAggregatesInput = {
 export type ContentCreateInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -371,6 +387,7 @@ export type ContentCreateInput = {
 export type ContentUncheckedCreateInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -387,6 +404,7 @@ export type ContentUncheckedCreateInput = {
 export type ContentUpdateInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -403,6 +421,7 @@ export type ContentUpdateInput = {
 export type ContentUncheckedUpdateInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -419,6 +438,7 @@ export type ContentUncheckedUpdateInput = {
 export type ContentCreateManyInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -432,6 +452,7 @@ export type ContentCreateManyInput = {
 export type ContentUpdateManyMutationInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -442,6 +463,7 @@ export type ContentUpdateManyMutationInput = {
 export type ContentUncheckedUpdateManyInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -471,6 +493,7 @@ export type ContentOrderByRelevanceInput = {
 export type ContentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   body?: Prisma.SortOrder
   typeId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -491,6 +514,7 @@ export type ContentAvgOrderByAggregateInput = {
 export type ContentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   body?: Prisma.SortOrder
   typeId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -504,6 +528,7 @@ export type ContentMaxOrderByAggregateInput = {
 export type ContentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
   body?: Prisma.SortOrder
   typeId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
@@ -697,6 +722,7 @@ export type ContentUpdateOneRequiredWithoutScripturesNestedInput = {
 export type ContentCreateWithoutAuthorInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -712,6 +738,7 @@ export type ContentCreateWithoutAuthorInput = {
 export type ContentUncheckedCreateWithoutAuthorInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   status: string
@@ -756,6 +783,7 @@ export type ContentScalarWhereInput = {
   NOT?: Prisma.ContentScalarWhereInput | Prisma.ContentScalarWhereInput[]
   id?: Prisma.BigIntFilter<"Content"> | bigint | number
   title?: Prisma.StringFilter<"Content"> | string
+  slug?: Prisma.StringFilter<"Content"> | string
   body?: Prisma.StringFilter<"Content"> | string
   typeId?: Prisma.BigIntFilter<"Content"> | bigint | number
   authorId?: Prisma.BigIntNullableFilter<"Content"> | bigint | number | null
@@ -769,6 +797,7 @@ export type ContentScalarWhereInput = {
 export type ContentCreateWithoutTypeInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -784,6 +813,7 @@ export type ContentCreateWithoutTypeInput = {
 export type ContentUncheckedCreateWithoutTypeInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   authorId?: bigint | number | null
   status: string
@@ -825,6 +855,7 @@ export type ContentUpdateManyWithWhereWithoutTypeInput = {
 export type ContentCreateWithoutContentMediaInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -840,6 +871,7 @@ export type ContentCreateWithoutContentMediaInput = {
 export type ContentUncheckedCreateWithoutContentMediaInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -871,6 +903,7 @@ export type ContentUpdateToOneWithWhereWithoutContentMediaInput = {
 export type ContentUpdateWithoutContentMediaInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -886,6 +919,7 @@ export type ContentUpdateWithoutContentMediaInput = {
 export type ContentUncheckedUpdateWithoutContentMediaInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -901,6 +935,7 @@ export type ContentUncheckedUpdateWithoutContentMediaInput = {
 export type ContentCreateWithoutTagsInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -916,6 +951,7 @@ export type ContentCreateWithoutTagsInput = {
 export type ContentUncheckedCreateWithoutTagsInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -947,6 +983,7 @@ export type ContentUpdateToOneWithWhereWithoutTagsInput = {
 export type ContentUpdateWithoutTagsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -962,6 +999,7 @@ export type ContentUpdateWithoutTagsInput = {
 export type ContentUncheckedUpdateWithoutTagsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -977,6 +1015,7 @@ export type ContentUncheckedUpdateWithoutTagsInput = {
 export type ContentCreateWithoutSeriesInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -992,6 +1031,7 @@ export type ContentCreateWithoutSeriesInput = {
 export type ContentUncheckedCreateWithoutSeriesInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -1033,6 +1073,7 @@ export type ContentUpdateManyWithWhereWithoutSeriesInput = {
 export type ContentCreateWithoutScripturesInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   status: string
   publishedAt?: Date | string | null
@@ -1048,6 +1089,7 @@ export type ContentCreateWithoutScripturesInput = {
 export type ContentUncheckedCreateWithoutScripturesInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -1079,6 +1121,7 @@ export type ContentUpdateToOneWithWhereWithoutScripturesInput = {
 export type ContentUpdateWithoutScripturesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1094,6 +1137,7 @@ export type ContentUpdateWithoutScripturesInput = {
 export type ContentUncheckedUpdateWithoutScripturesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1109,6 +1153,7 @@ export type ContentUncheckedUpdateWithoutScripturesInput = {
 export type ContentCreateManyAuthorInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   status: string
@@ -1121,6 +1166,7 @@ export type ContentCreateManyAuthorInput = {
 export type ContentUpdateWithoutAuthorInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1136,6 +1182,7 @@ export type ContentUpdateWithoutAuthorInput = {
 export type ContentUncheckedUpdateWithoutAuthorInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1151,6 +1198,7 @@ export type ContentUncheckedUpdateWithoutAuthorInput = {
 export type ContentUncheckedUpdateManyWithoutAuthorInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1163,6 +1211,7 @@ export type ContentUncheckedUpdateManyWithoutAuthorInput = {
 export type ContentCreateManyTypeInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   authorId?: bigint | number | null
   status: string
@@ -1175,6 +1224,7 @@ export type ContentCreateManyTypeInput = {
 export type ContentUpdateWithoutTypeInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1190,6 +1240,7 @@ export type ContentUpdateWithoutTypeInput = {
 export type ContentUncheckedUpdateWithoutTypeInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1205,6 +1256,7 @@ export type ContentUncheckedUpdateWithoutTypeInput = {
 export type ContentUncheckedUpdateManyWithoutTypeInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1217,6 +1269,7 @@ export type ContentUncheckedUpdateManyWithoutTypeInput = {
 export type ContentCreateManySeriesInput = {
   id?: bigint | number
   title: string
+  slug: string
   body: string
   typeId: bigint | number
   authorId?: bigint | number | null
@@ -1229,6 +1282,7 @@ export type ContentCreateManySeriesInput = {
 export type ContentUpdateWithoutSeriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1244,6 +1298,7 @@ export type ContentUpdateWithoutSeriesInput = {
 export type ContentUncheckedUpdateWithoutSeriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1259,6 +1314,7 @@ export type ContentUncheckedUpdateWithoutSeriesInput = {
 export type ContentUncheckedUpdateManyWithoutSeriesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   body?: Prisma.StringFieldUpdateOperationsInput | string
   typeId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   authorId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
@@ -1320,6 +1376,7 @@ export type ContentCountOutputTypeCountContentMediaArgs<ExtArgs extends runtime.
 export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  slug?: boolean
   body?: boolean
   typeId?: boolean
   authorId?: boolean
@@ -1342,6 +1399,7 @@ export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type ContentSelectScalar = {
   id?: boolean
   title?: boolean
+  slug?: boolean
   body?: boolean
   typeId?: boolean
   authorId?: boolean
@@ -1352,7 +1410,7 @@ export type ContentSelectScalar = {
   seriesId?: boolean
 }
 
-export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "body" | "typeId" | "authorId" | "status" | "publishedAt" | "createdAt" | "deletedAt" | "seriesId", ExtArgs["result"]["content"]>
+export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "body" | "typeId" | "authorId" | "status" | "publishedAt" | "createdAt" | "deletedAt" | "seriesId", ExtArgs["result"]["content"]>
 export type ContentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   type?: boolean | Prisma.ContentTypeDefaultArgs<ExtArgs>
   author?: boolean | Prisma.Content$authorArgs<ExtArgs>
@@ -1376,6 +1434,7 @@ export type $ContentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: bigint
     title: string
+    slug: string
     body: string
     typeId: bigint
     authorId: bigint | null
@@ -1761,6 +1820,7 @@ export interface Prisma__ContentClient<T, Null = never, ExtArgs extends runtime.
 export interface ContentFieldRefs {
   readonly id: Prisma.FieldRef<"Content", 'BigInt'>
   readonly title: Prisma.FieldRef<"Content", 'String'>
+  readonly slug: Prisma.FieldRef<"Content", 'String'>
   readonly body: Prisma.FieldRef<"Content", 'String'>
   readonly typeId: Prisma.FieldRef<"Content", 'BigInt'>
   readonly authorId: Prisma.FieldRef<"Content", 'BigInt'>

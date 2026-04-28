@@ -20,7 +20,7 @@ const SOFT_DELETE_MODELS = new Set([
   'ProgramItem',
   'Stream',
   'Platform',
-  'Newsletter',
+  'Publication',
 ]);
 
 function supportsSoftDelete(model?: string) {

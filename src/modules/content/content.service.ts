@@ -15,6 +15,7 @@ import { UpdateContentDto } from './dto/update-content.dto';
 import { ConfigService } from '@nestjs/config';
 import { Audit } from 'src/common/decorators/audit.decorator';
 import { AuditService } from '../audit/audit.service';
+import { slugify } from 'src/common/utils/slugify';
 
 @Injectable()
 export class ContentService {
@@ -165,7 +166,7 @@ export class ContentService {
         typeId: toBigInt(dto.typeId),
         authorId: toBigInt(dto.authorId),
         status: 'Draft',
-
+        slug: slugify(dto.title),
         tags:
           Array.isArray(dto.tags) && dto.tags.length > 0
             ? {
@@ -399,7 +400,7 @@ export class ContentService {
     if (query.search) {
       where.OR = [
         { title: { contains: query.search } },
-        { body: { contains: query.search} },
+        { body: { contains: query.search } },
       ];
     }
 
@@ -437,6 +438,37 @@ export class ContentService {
 
     const content = await this.prisma.content.findFirst({
       where: { id: contentId, deletedAt: null },
+      include: {
+        type: true,
+        author: true,
+        tags: { include: { tag: true } },
+        scriptures: true,
+        contentMedia: { include: { media: true } },
+      },
+    });
+
+    if (!content) {
+      throw new NotFoundException('Content not found');
+    }
+
+    return {
+      success: true,
+      data: content,
+      meta: {},
+    };
+  }
+
+  async findOneBySlug(identifier: string) {
+    const isNumeric = /^\d+$/.test(identifier);
+
+    const content = await this.prisma.content.findFirst({
+      where: {
+        deletedAt: null,
+        OR: [
+          { slug: identifier },
+          ...(isNumeric ? [{ id: toBigInt(identifier) }] : []),
+        ],
+      },
       include: {
         type: true,
         author: true,

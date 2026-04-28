@@ -267,10 +267,10 @@ export class AuditInterceptor implements NestInterceptor {
         });
 
       // -----------------------------
-      // NEWSLETTER
+      // PUBLICATION
       // -----------------------------
-      case 'Newsletter':
-        return this.prisma.newsletter.findFirst({
+      case 'Publication':
+        return this.prisma.publication.findFirst({
           where: { id: bigId },
         });
 

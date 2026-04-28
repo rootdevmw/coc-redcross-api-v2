@@ -13,12 +13,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from '../auth/decorator/roles.decorator';
-import { NewslettersService } from './newsletters.service';
+import { PublicationService } from './publications.service';
 
-@Controller('newsletters')
+@Controller('publications')
 @Roles('MEDIA')
-export class NewslettersController {
-  constructor(private service: NewslettersService) {}
+export class PublicationsController {
+  constructor(private service: PublicationService) {}
 
   // -----------------------------
   // PUBLISH
@@ -38,7 +38,11 @@ export class NewslettersController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  create(@UploadedFile() file: Express.Multer.File, @Body() dto: any, @Req() req: any) {
+  create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: any,
+    @Req() req: any,
+  ) {
     return this.service.create(dto, req.user, file);
   }
 

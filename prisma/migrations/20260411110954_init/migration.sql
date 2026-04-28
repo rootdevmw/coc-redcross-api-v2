@@ -253,7 +253,7 @@ CREATE TABLE `Stream` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Newsletter` (
+CREATE TABLE `Publication` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `fileUrl` VARCHAR(191) NOT NULL,

@@ -5,10 +5,13 @@ import * as path from 'path';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import { ConfigService } from '@nestjs/config';
 import { AuditService } from '../audit/audit.service';
+import { CreatePublicationDto } from './dto/create-publication.dto';
+import { QueryPublicationDto } from './dto/query-publication.dto';
+import { UpdatePublicationDto } from './dto/update-publication.dto';
 
 @Injectable()
-export class NewslettersService {
-  private readonly logger = new Logger(NewslettersService.name);
+export class PublicationService {
+  private readonly logger = new Logger(PublicationService.name);
 
   constructor(
     private prisma: PrismaService,
@@ -19,8 +22,12 @@ export class NewslettersService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: any, user?: any, file?: Express.Multer.File) {
-    this.logger.log(`Creating newsletter: ${dto.title}`);
+  async create(
+    dto: CreatePublicationDto,
+    user?: any,
+    file?: Express.Multer.File,
+  ) {
+    this.logger.log(`Creating publication: ${dto.title}`);
 
     let fileUrl = '';
 
@@ -28,7 +35,7 @@ export class NewslettersService {
       fileUrl = this.saveFile(file);
     }
 
-    const newsletter = await this.prisma.newsletter.create({
+    const publication = await this.prisma.publication.create({
       data: {
         title: dto.title,
         description: dto.description,
@@ -38,16 +45,16 @@ export class NewslettersService {
     });
 
     await this.auditService.log({
-      action: 'NEWSLETTER_CREATED',
-      entity: 'Newsletter',
-      entityId: newsletter.id.toString(),
-      after: newsletter,
+      action: 'PUBLICATION_CREATED',
+      entity: 'Publication',
+      entityId: publication.id.toString(),
+      after: publication,
       userId: user?.id,
     });
 
     return {
       success: true,
-      data: newsletter,
+      data: publication,
       meta: {},
     };
   }
@@ -55,22 +62,22 @@ export class NewslettersService {
   // -----------------------------
   // FIND ALL (NO AUDIT)
   // -----------------------------
-  async findAll(query: any) {
+  async findAll(query: QueryPublicationDto) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    this.logger.log(`Fetching newsletters`);
+    this.logger.log(`Fetching publications`);
 
     const where = { deletedAt: null, publishedAt: { not: null } };
 
     const [data, total] = await Promise.all([
-      this.prisma.newsletter.findMany({
+      this.prisma.publication.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { publishedAt: 'desc' },
       }),
-      this.prisma.newsletter.count({ where }),
+      this.prisma.publication.count({ where }),
     ]);
 
     return {
@@ -84,17 +91,17 @@ export class NewslettersService {
   // FIND ONE (NO AUDIT)
   // -----------------------------
   async findOne(id: string) {
-    const newsletter = await this.prisma.newsletter.findFirst({
+    const publication = await this.prisma.publication.findFirst({
       where: { id: toBigIntOptional(id) },
     });
 
-    if (!newsletter) {
-      throw new NotFoundException('Newsletter not found');
+    if (!publication) {
+      throw new NotFoundException('publication not found');
     }
 
     return {
       success: true,
-      data: newsletter,
+      data: publication,
       meta: {},
     };
   }
@@ -102,17 +109,22 @@ export class NewslettersService {
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: any, user?: any, file?: Express.Multer.File) {
-    this.logger.log(`Updating newsletter ${id}`);
+  async update(
+    id: string,
+    dto: UpdatePublicationDto,
+    user?: any,
+    file?: Express.Multer.File,
+  ) {
+    this.logger.log(`Updating publication ${id}`);
 
-    const newsletterId = toBigIntOptional(id);
+    const publicationId = toBigIntOptional(id);
 
-    const before = await this.prisma.newsletter.findFirst({
-      where: { id: newsletterId },
+    const before = await this.prisma.publication.findFirst({
+      where: { id: publicationId },
     });
 
     if (!before) {
-      throw new NotFoundException('Newsletter not found');
+      throw new NotFoundException('publication not found');
     }
 
     let fileUrl: string | undefined;
@@ -121,8 +133,8 @@ export class NewslettersService {
       fileUrl = this.saveFile(file);
     }
 
-    const after = await this.prisma.newsletter.update({
-      where: { id: newsletterId },
+    const after = await this.prisma.publication.update({
+      where: { id: publicationId },
       data: {
         title: dto.title,
         description: dto.description,
@@ -137,8 +149,8 @@ export class NewslettersService {
     });
 
     await this.auditService.log({
-      action: 'NEWSLETTER_UPDATED',
-      entity: 'Newsletter',
+      action: 'PUBLICATION_UPDATED',
+      entity: 'Publication',
       entityId: id,
       before,
       after,
@@ -156,24 +168,24 @@ export class NewslettersService {
   // PUBLISH
   // -----------------------------
   async publish(id: string, user?: any) {
-    this.logger.log(`Publishing newsletter ${id}`);
+    this.logger.log(`Publishing publication ${id}`);
 
-    const newsletterId = toBigIntOptional(id);
+    const publicationId = toBigIntOptional(id);
 
-    const before = await this.prisma.newsletter.findFirst({
-      where: { id: newsletterId },
+    const before = await this.prisma.publication.findFirst({
+      where: { id: publicationId },
     });
 
-    const after = await this.prisma.newsletter.update({
-      where: { id: newsletterId },
+    const after = await this.prisma.publication.update({
+      where: { id: publicationId },
       data: {
         publishedAt: new Date(),
       },
     });
 
     await this.auditService.log({
-      action: 'NEWSLETTER_PUBLISHED',
-      entity: 'Newsletter',
+      action: 'PUBLICATION_PUBLISHED',
+      entity: 'Publication',
       entityId: id,
       before,
       after,
@@ -191,24 +203,24 @@ export class NewslettersService {
   // UNPUBLISH
   // -----------------------------
   async unpublish(id: string, user?: any) {
-    this.logger.log(`Unpublishing newsletter ${id}`);
+    this.logger.log(`Unpublishing publication ${id}`);
 
-    const newsletterId = toBigIntOptional(id);
+    const publicationId = toBigIntOptional(id);
 
-    const before = await this.prisma.newsletter.findFirst({
-      where: { id: newsletterId },
+    const before = await this.prisma.publication.findFirst({
+      where: { id: publicationId },
     });
 
-    const after = await this.prisma.newsletter.update({
-      where: { id: newsletterId },
+    const after = await this.prisma.publication.update({
+      where: { id: publicationId },
       data: {
         publishedAt: null,
       },
     });
 
     await this.auditService.log({
-      action: 'NEWSLETTER_UNPUBLISHED',
-      entity: 'Newsletter',
+      action: 'PUBLICATION_UNPUBLISHED',
+      entity: 'Publication',
       entityId: id,
       before,
       after,
@@ -226,21 +238,21 @@ export class NewslettersService {
   // DELETE
   // -----------------------------
   async remove(id: string, user?: any) {
-    this.logger.log(`Deleting newsletter ${id}`);
+    this.logger.log(`Deleting publication ${id}`);
 
-    const newsletterId = toBigIntOptional(id);
+    const publicationId = toBigIntOptional(id);
 
-    const before = await this.prisma.newsletter.findFirst({
-      where: { id: newsletterId },
+    const before = await this.prisma.publication.findFirst({
+      where: { id: publicationId },
     });
 
-    await this.prisma.newsletter.delete({
-      where: { id: newsletterId },
+    await this.prisma.publication.delete({
+      where: { id: publicationId },
     });
 
     await this.auditService.log({
-      action: 'NEWSLETTER_DELETED',
-      entity: 'Newsletter',
+      action: 'PUBLICATION_DELETED',
+      entity: 'Publication',
       entityId: id,
       before,
       userId: user?.id,
@@ -257,7 +269,7 @@ export class NewslettersService {
   // FILE STORAGE
   // -----------------------------
   private saveFile(file: Express.Multer.File): string {
-    const uploadDir = path.join(process.cwd(), 'uploads/newsletters');
+    const uploadDir = path.join(process.cwd(), 'uploads/publications');
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
@@ -275,7 +287,7 @@ export class NewslettersService {
 
     fs.writeFileSync(filePath, file.buffer);
 
-    return this.buildPublicUrl(`/uploads/newsletters/${fileName}`);
+    return this.buildPublicUrl(`/uploads/publications/${fileName}`);
   }
 
   private buildPublicUrl(filePath: string): string {

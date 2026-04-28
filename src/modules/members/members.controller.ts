@@ -9,6 +9,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { Roles } from '../auth/decorator/roles.decorator';
 import { MembersService } from './members.service';
@@ -16,11 +17,27 @@ import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
 import { SessionAuthGuard } from '../auth/guard/session.guard';
+import { Response } from 'express';
 
 @Controller('members')
 @Roles('DEACON')
 export class MembersController {
   constructor(private service: MembersService) {}
+
+  @Get('export/xlsx')
+  @UseGuards(SessionAuthGuard)
+  async exportXlsx(@Query() query: QueryMemberDto, @Res() res: Response) {
+    const { buffer, meta } = await this.service.exportToXlsx(query);
+
+    res.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="members-${Date.now()}.xlsx"`,
+      'Content-Length': buffer.length,
+    });
+
+    res.end(buffer);
+  }
 
   @Post()
   create(@Body() dto: CreateMemberDto, @Req() req: any) {
@@ -39,7 +56,11 @@ export class MembersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateMemberDto, @Req() req: any) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateMemberDto,
+    @Req() req: any,
+  ) {
     return this.service.update(id, dto, req.user);
   }
 

@@ -23,6 +23,7 @@ model User {
   sessions Session[]
 
   @@index([deletedAt])
+  prayerWarriors PrayerWarrior[]
 }
 
 model Role {
@@ -164,9 +165,15 @@ model ContentType {
   @@index([deletedAt])
 }
 
+
+/**UPDATE Content
+SET slug = CAST(id AS CHAR)
+WHERE slug IS NULL;
+**/
 model Content {
   id          BigInt   @id @default(autoincrement())
   title       String
+  slug String //@unique @default(cuid())
   body        String @db.LongText
   typeId      BigInt
   authorId    BigInt?
@@ -460,10 +467,10 @@ model StreamPlatform {
 }
 
 //////////////////////////////////////////////////////
-// NEWSLETTER
+// PUBLICATION
 //////////////////////////////////////////////////////
 
-model Newsletter {
+model Publication {
   id          BigInt   @id @default(autoincrement())
   title       String
   fileUrl     String
@@ -512,6 +519,16 @@ model PrayerRequest {
   updatedAt         DateTime @updatedAt
 
   status            PrayerRequestStatus @default(PENDING)
+}
+
+model PrayerWarrior {
+  userId BigInt @id
+
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 enum PrayerRequestStatus {

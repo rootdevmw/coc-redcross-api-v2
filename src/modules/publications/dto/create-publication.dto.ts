@@ -1,6 +1,6 @@
 import { IsOptional, IsString, IsDateString } from 'class-validator';
 
-export class CreateNewsletterDto {
+export class CreatePublicationDto {
   @IsString()
   title!: string;
 

@@ -15,9 +15,9 @@ import { EventsModule } from './modules/events/events.module';
 import { HomecellsModule } from './modules/homecells/homecells.module';
 import { MembersModule } from './modules/members/members.module';
 import { MinistriesModule } from './modules/ministries/ministries.module';
-import { NewslettersModule } from './modules/newsletters/newsletters.module';
 import { ProgramTemplatesModule } from './modules/program-templates/program-template.module';
 import { ProgramsModule } from './modules/programs/programs.module';
+import { PublicationsModule } from './modules/publications/publications.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { StreamsModule } from './modules/streams/streams.module';
 import { UsersModule } from './modules/users/users.module';
@@ -33,7 +33,7 @@ import { PrismaModule } from './prisma/prisma.module';
     AnnouncementsModule,
     ProgramsModule,
     EventsModule,
-    NewslettersModule,
+    PublicationsModule,
     StreamsModule,
     AuthModule,
     RolesModule,

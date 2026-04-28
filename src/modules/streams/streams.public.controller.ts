@@ -15,7 +15,7 @@ export class PublicStreamsController {
   @Get()
   @Public()
   findAll(@Query() query: any) {
-    return this.service.findAll(query);
+    return this.service.findAllInFuture(query);
   }
 
   //  STATIC ROUTES FIRST

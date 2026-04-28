@@ -282,9 +282,41 @@ export class StreamsService {
     };
   }
 
-  // -----------------------------
-  // GETTERS (NO AUDIT)
-  // -----------------------------
+  async findAllInFuture(query: any) {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+
+    const now = new Date();
+
+    const where = {
+      startsAt: {
+        gte: now,
+      },
+    };
+
+    const [data, total] = await Promise.all([
+      this.prisma.stream.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { startsAt: 'asc' }, // upcoming first
+        include: {
+          platforms: {
+            where: { platform: { deletedAt: null } },
+            include: { platform: true },
+          },
+        },
+      }),
+      this.prisma.stream.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: data.map((s) => this.format(s)),
+      meta: { page, limit, total },
+    };
+  }
+
   async findAll(query: any) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;

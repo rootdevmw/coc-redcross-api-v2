@@ -27,6 +27,7 @@ export class MinistriesService {
         description: dto.description,
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
+        purpose: dto.purpose,
       },
     });
 
@@ -168,6 +169,7 @@ export class MinistriesService {
         description: dto.description,
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
+        purpose: dto.purpose,
       },
     });
 

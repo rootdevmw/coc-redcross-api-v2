@@ -15,4 +15,7 @@ export class CreateMinistryDto {
   @IsOptional()
   @IsString()
   overseerId?: string;
+
+  @IsString()
+  purpose!: string;
 }

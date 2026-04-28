@@ -3004,6 +3004,7 @@ export const MinistryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  purpose: 'purpose',
   leaderId: 'leaderId',
   overseerId: 'overseerId',
   slug: 'slug',
@@ -3427,6 +3428,7 @@ export type MemberBioOrderByRelevanceFieldEnum = (typeof MemberBioOrderByRelevan
 export const MinistryOrderByRelevanceFieldEnum = {
   name: 'name',
   description: 'description',
+  purpose: 'purpose',
   slug: 'slug'
 } as const
 

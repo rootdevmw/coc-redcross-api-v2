@@ -136,6 +136,7 @@ model Ministry {
   id          BigInt   @id @default(autoincrement())
   name        String
   description String? @db.Text
+  purpose String @default("Serving together with purpose and unity.")
   leaderId    BigInt?
   overseerId  BigInt?
   slug        String?  @unique

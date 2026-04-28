@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { toBigIntOptional } from 'src/common/utils/to-bigint';
+import { toBigInt, toBigIntOptional } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 
 @Injectable()
@@ -287,6 +287,43 @@ export class ProgramsService {
     });
 
     return { success: true, data: type, meta: {} };
+  }
+
+  async updateType(id: string, name: string, user?: any) {
+    this.logger.log(`UPDATE_PROGRAM_TYPE_STARTED: id=${id}`);
+
+    const typeId = toBigInt(id);
+
+    const before = await this.prisma.programType.findFirst({
+      where: { id: typeId },
+    });
+
+    if (!before) {
+      this.logger.warn(`UPDATE_PROGRAM_TYPE_NOT_FOUND: id=${id}`);
+      throw new NotFoundException('Program type not found');
+    }
+
+    const after = await this.prisma.programType.update({
+      where: { id: typeId },
+      data: { name },
+    });
+
+    await this.auditService.log({
+      action: 'PROGRAM_TYPE_UPDATED',
+      entity: 'ProgramType',
+      entityId: id,
+      before,
+      after,
+      userId: user?.id,
+    });
+
+    this.logger.log(`UPDATE_PROGRAM_TYPE_SUCCESS: id=${id}`);
+
+    return {
+      success: true,
+      data: after,
+      meta: {},
+    };
   }
 
   async getTypes() {

@@ -24,13 +24,21 @@ export class ProgramsController {
     return this.service.createType(name);
   }
 
+  @Patch('types/:id')
+  updateType(@Param('id') id: string, @Body('name') name: string) {
+    return this.service.updateType(id, name);
+  }
+
   @Get('types')
   getTypes() {
     return this.service.getTypes();
   }
 
   @Post('from-template')
-  createFromTemplate(@Body() dto: CreateProgramFromTemplateDto, @Req() req: any) {
+  createFromTemplate(
+    @Body() dto: CreateProgramFromTemplateDto,
+    @Req() req: any,
+  ) {
     return this.service.createFromTemplate(dto, req.user);
   }
   // -------------------------

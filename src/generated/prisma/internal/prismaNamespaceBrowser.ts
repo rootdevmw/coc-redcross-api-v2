@@ -166,6 +166,7 @@ export const HomecellScalarFieldEnum = {
   id: 'id',
   name: 'name',
   location: 'location',
+  slug: 'slug',
   leaderId: 'leaderId',
   overseerId: 'overseerId',
   createdAt: 'createdAt',
@@ -299,6 +300,7 @@ export type ScriptureRefScalarFieldEnum = (typeof ScriptureRefScalarFieldEnum)[k
 export const AnnouncementScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  slug: 'slug',
   body: 'body',
   priority: 'priority',
   expiryDate: 'expiryDate',
@@ -366,6 +368,7 @@ export const ProgramScalarFieldEnum = {
   id: 'id',
   date: 'date',
   typeId: 'typeId',
+  slug: 'slug',
   homecellId: 'homecellId',
   location: 'location',
   createdAt: 'createdAt',
@@ -418,8 +421,10 @@ export type ProgramTemplateItemScalarFieldEnum = (typeof ProgramTemplateItemScal
 export const StreamScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  slug: 'slug',
   isLive: 'isLive',
   startsAt: 'startsAt',
+  endsAt: 'endsAt',
   createdAt: 'createdAt',
   deletedAt: 'deletedAt'
 } as const
@@ -607,7 +612,8 @@ export type MemberOrderByRelevanceFieldEnum = (typeof MemberOrderByRelevanceFiel
 
 export const HomecellOrderByRelevanceFieldEnum = {
   name: 'name',
-  location: 'location'
+  location: 'location',
+  slug: 'slug'
 } as const
 
 export type HomecellOrderByRelevanceFieldEnum = (typeof HomecellOrderByRelevanceFieldEnum)[keyof typeof HomecellOrderByRelevanceFieldEnum]
@@ -681,6 +687,7 @@ export type ScriptureRefOrderByRelevanceFieldEnum = (typeof ScriptureRefOrderByR
 
 export const AnnouncementOrderByRelevanceFieldEnum = {
   title: 'title',
+  slug: 'slug',
   body: 'body'
 } as const
 
@@ -719,6 +726,7 @@ export type ProgramTypeOrderByRelevanceFieldEnum = (typeof ProgramTypeOrderByRel
 
 
 export const ProgramOrderByRelevanceFieldEnum = {
+  slug: 'slug',
   location: 'location'
 } as const
 
@@ -751,7 +759,8 @@ export type ProgramTemplateItemOrderByRelevanceFieldEnum = (typeof ProgramTempla
 
 
 export const StreamOrderByRelevanceFieldEnum = {
-  title: 'title'
+  title: 'title',
+  slug: 'slug'
 } as const
 
 export type StreamOrderByRelevanceFieldEnum = (typeof StreamOrderByRelevanceFieldEnum)[keyof typeof StreamOrderByRelevanceFieldEnum]

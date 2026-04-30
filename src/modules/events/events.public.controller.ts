@@ -18,9 +18,9 @@ export class PublicEventsController {
     return this.service.findAll(query);
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Public()
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('slug') slug: string) {
+    return this.service.findBySlug(slug);
   }
 }

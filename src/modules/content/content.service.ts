@@ -4,18 +4,17 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { promises as fs } from 'fs';
 import { extname, join } from 'path';
+import { SlugService } from 'src/common/utils/slugify';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { QueryContentDto } from './dto/query-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
-import { ConfigService } from '@nestjs/config';
-import { Audit } from 'src/common/decorators/audit.decorator';
-import { AuditService } from '../audit/audit.service';
-import { slugify } from 'src/common/utils/slugify';
 
 @Injectable()
 export class ContentService {
@@ -28,6 +27,7 @@ export class ContentService {
     private prisma: PrismaService,
     private configService: ConfigService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   // -----------------------------
@@ -159,6 +159,8 @@ export class ContentService {
 
     const mediaRelations = await this.syncMedia(dto.body);
 
+    const slug = await this.slugify.generateUniqueSlug(dto.title, 'content');
+
     const content = await this.prisma.content.create({
       data: {
         title: dto.title,
@@ -166,7 +168,7 @@ export class ContentService {
         typeId: toBigInt(dto.typeId),
         authorId: toBigInt(dto.authorId),
         status: 'Draft',
-        slug: slugify(dto.title),
+        slug,
         tags:
           Array.isArray(dto.tags) && dto.tags.length > 0
             ? {
@@ -230,6 +232,12 @@ export class ContentService {
 
     const mediaRelations = await this.syncMedia(dto.body || '', contentId);
 
+    const titleChanged = dto.title && dto.title !== before.title;
+
+    const slug = titleChanged
+      ? await this.slugify.generateUniqueSlug(dto.title!, 'content')
+      : undefined;
+
     const after = await this.prisma.content.update({
       where: { id: contentId },
       data: {
@@ -237,6 +245,7 @@ export class ContentService {
         body: dto.body,
         typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
         authorId: dto.authorId ? toBigInt(dto.authorId) : undefined,
+        ...(slug && { slug }),
 
         tags: dto.tags
           ? {

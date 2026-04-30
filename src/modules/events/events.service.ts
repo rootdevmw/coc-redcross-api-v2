@@ -4,8 +4,8 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { QueryEventDto } from './dto/query-event.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
 import { AuditService } from '../audit/audit.service';
+import { SlugService } from 'src/common/utils/slugify';
 
 @Injectable()
 export class EventsService {
@@ -14,6 +14,7 @@ export class EventsService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   // -----------------------------
@@ -22,11 +23,14 @@ export class EventsService {
   async create(dto: CreateEventDto, user?: any) {
     this.logger.log(`CREATE_EVENT_STARTED: ${dto.title}`);
 
+    const slug = await this.slugify.generateUniqueSlug(dto.title, 'event');
+
     const event = await this.prisma.event.create({
       data: {
         title: dto.title,
         description: dto.description,
         location: dto.location,
+        slug,
         typeId: toBigInt(dto.typeId),
         startTime: new Date(dto.startTime),
         endTime: new Date(dto.endTime),
@@ -120,6 +124,28 @@ export class EventsService {
   }
 
   // -----------------------------
+  // FIND BY SLUG
+  // -----------------------------
+  async findBySlug(slug: string) {
+    this.logger.log(`FETCH_EVENT_BY_SLUG: ${slug}`);
+
+    const event = await this.prisma.event.findFirst({
+      where: { slug },
+      include: {
+        type: true,
+        ministries: {
+          where: { ministry: { deletedAt: null } },
+          include: { ministry: true },
+        },
+      },
+    });
+
+    if (!event) throw new NotFoundException(`Event not found`);
+
+    return { success: true, data: event, meta: {} };
+  }
+
+  // -----------------------------
   // UPDATE
   // -----------------------------
   async update(id: string, dto: UpdateEventDto, user?: any) {
@@ -129,19 +155,21 @@ export class EventsService {
 
     const before = await this.prisma.event.findFirst({
       where: { id: eventId },
-      include: {
-        ministries: true,
-      },
+      include: { ministries: true },
     });
 
     if (!before) throw new NotFoundException(`Event not found`);
 
-    // replace ministries if provided
     if (dto.ministryIds) {
       await this.prisma.eventMinistry.deleteMany({
         where: { eventId },
       });
     }
+
+    const slug =
+      dto.title && dto.title !== before.title
+        ? await this.slugify.generateUniqueSlug(dto.title, 'event')
+        : undefined;
 
     const after = await this.prisma.event.update({
       where: { id: eventId },
@@ -149,6 +177,7 @@ export class EventsService {
         title: dto.title,
         description: dto.description,
         location: dto.location,
+        ...(slug && { slug }),
         typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
         startTime: dto.startTime ? new Date(dto.startTime) : undefined,
         endTime: dto.endTime ? new Date(dto.endTime) : undefined,
@@ -166,10 +195,10 @@ export class EventsService {
       },
     });
 
-    //  SPECIAL CASE: detect reschedule
     const wasRescheduled =
-      before.startTime.getTime() !== after.startTime.getTime() ||
-      before.endTime.getTime() !== after.endTime.getTime();
+      (dto.startTime &&
+        before.startTime.getTime() !== after.startTime.getTime()) ||
+      (dto.endTime && before.endTime.getTime() !== after.endTime.getTime());
 
     await this.auditService.log({
       action: wasRescheduled ? 'EVENT_RESCHEDULED' : 'EVENT_UPDATED',
@@ -195,9 +224,7 @@ export class EventsService {
 
     const before = await this.prisma.event.findFirst({
       where: { id: eventId },
-      include: {
-        ministries: true,
-      },
+      include: { ministries: true },
     });
 
     if (!before) throw new NotFoundException(`Event not found`);

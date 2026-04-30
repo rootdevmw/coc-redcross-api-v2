@@ -13,15 +13,9 @@ export class PublicMinistriesController {
     return this.service.findAll(query);
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Public()
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
-  }
-
-  @Get(':id/members')
-  @Public()
-  getMembers(@Param('id') id: string) {
-    return this.service.getMembers(id);
+  findOne(@Param('slug') slug: string) {
+    return this.service.findBySlug(slug);
   }
 }

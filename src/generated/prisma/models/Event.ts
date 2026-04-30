@@ -295,7 +295,6 @@ export type EventOrderByWithRelationInput = {
 
 export type EventWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
-  slug?: string
   AND?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
   OR?: Prisma.EventWhereInput[]
   NOT?: Prisma.EventWhereInput | Prisma.EventWhereInput[]
@@ -304,6 +303,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   startTime?: Prisma.DateTimeFilter<"Event"> | Date | string
   endTime?: Prisma.DateTimeFilter<"Event"> | Date | string
   location?: Prisma.StringNullableFilter<"Event"> | string | null
+  slug?: Prisma.StringNullableFilter<"Event"> | string | null
   isCritical?: Prisma.BoolFilter<"Event"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Event"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Event"> | Date | string | null
@@ -312,7 +312,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   media?: Prisma.MediaListRelationFilter
   ministries?: Prisma.EventMinistryListRelationFilter
   eventMedia?: Prisma.EventMediaListRelationFilter
-}, "id" | "slug">
+}, "id">
 
 export type EventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

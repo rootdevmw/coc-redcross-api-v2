@@ -19,9 +19,9 @@ export class PublicAnnouncementsController {
     return this.service.findForMember(memberId);
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Public()
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('slug') slug: string) {
+    return this.service.findBySlug(slug);
   }
 }

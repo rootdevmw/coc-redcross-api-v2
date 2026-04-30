@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import { SlugService } from 'src/common/utils/slugify';
 
 @Injectable()
 export class StreamsService {
@@ -10,6 +11,7 @@ export class StreamsService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   // -----------------------------
@@ -17,11 +19,12 @@ export class StreamsService {
   // -----------------------------
   async create(dto: any, user?: any) {
     this.logger.log(`CREATE_STREAM_STARTED: ${dto.title}`);
-
+    const slug = await this.slugify.generateUniqueSlug(dto.title, 'stream');
     const stream = await this.prisma.stream.create({
       data: {
         title: dto.title,
         isLive: dto.isLive ?? false,
+        slug,
         startsAt: dto.startsAt ? new Date(dto.startsAt) : null,
 
         platforms: dto.platformIds
@@ -82,10 +85,17 @@ export class StreamsService {
       });
     }
 
+    const titleChanged = dto.title && dto.title !== before.title;
+
+    const slug = titleChanged
+      ? await this.slugify.generateUniqueSlug(dto.title, 'stream')
+      : undefined;
+
     const after = await this.prisma.stream.update({
       where: { id: streamId },
       data: {
         title: dto.title,
+        ...(slug && { slug }),
         isLive: dto.isLive,
         startsAt: dto.startsAt ? new Date(dto.startsAt) : undefined,
 
@@ -119,6 +129,32 @@ export class StreamsService {
     return {
       success: true,
       data: this.format(after),
+      meta: {},
+    };
+  }
+
+  async findBySlug(slug: string) {
+    this.logger.log(`FETCH_STREAM_BY_SLUG: ${slug}`);
+
+    const stream = await this.prisma.stream.findFirst({
+      where: {
+        slug,
+      },
+      include: {
+        platforms: {
+          where: { platform: { deletedAt: null } },
+          include: { platform: true },
+        },
+      },
+    });
+
+    if (!stream) {
+      throw new NotFoundException('Stream not found');
+    }
+
+    return {
+      success: true,
+      data: this.format(stream),
       meta: {},
     };
   }
@@ -288,10 +324,43 @@ export class StreamsService {
 
     const now = new Date();
 
-    const where = {
-      startsAt: {
-        gte: now,
-      },
+    this.logger.log(
+      `[STREAMS] Fetching future/active streams from: ${now.toISOString()}`,
+    );
+
+    const where: any = {
+      deletedAt: null,
+      OR: [
+        // upcoming streams
+        {
+          startsAt: {
+            gte: now,
+          },
+        },
+
+        // ongoing streams (started already but not ended)
+        {
+          AND: [
+            {
+              startsAt: {
+                lte: now,
+              },
+            },
+            {
+              OR: [
+                {
+                  endsAt: {
+                    gte: now,
+                  },
+                },
+                {
+                  endsAt: null,
+                },
+              ],
+            },
+          ],
+        },
+      ],
     };
 
     const [data, total] = await Promise.all([
@@ -299,7 +368,7 @@ export class StreamsService {
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { startsAt: 'asc' }, // upcoming first
+        orderBy: [{ startsAt: 'asc' }],
         include: {
           platforms: {
             where: { platform: { deletedAt: null } },
@@ -307,13 +376,20 @@ export class StreamsService {
           },
         },
       }),
+
       this.prisma.stream.count({ where }),
     ]);
+
+    this.logger.log(`[STREAMS] Found ${data.length} streams (total: ${total})`);
 
     return {
       success: true,
       data: data.map((s) => this.format(s)),
-      meta: { page, limit, total },
+      meta: {
+        page,
+        limit,
+        total,
+      },
     };
   }
 
@@ -344,8 +420,30 @@ export class StreamsService {
   }
 
   async findLive() {
+    const now = new Date();
+
+    this.logger.log(`[STREAMS] Fetching live streams at ${now.toISOString()}`);
+
     const stream = await this.prisma.stream.findFirst({
-      where: { isLive: true },
+      where: {
+        isLive: true,
+        startsAt: {
+          lte: now,
+        },
+        OR: [
+          {
+            endsAt: null,
+          },
+          {
+            endsAt: {
+              gte: now,
+            },
+          },
+        ],
+      },
+      orderBy: {
+        startsAt: 'desc',
+      },
       include: {
         platforms: {
           where: { platform: { deletedAt: null } },
@@ -353,6 +451,10 @@ export class StreamsService {
         },
       },
     });
+
+    this.logger.debug(
+      `[STREAMS LIVE RESULT] ${stream ? stream.id.toString() : 'none'}`,
+    );
 
     return {
       success: true,

@@ -103,7 +103,7 @@ model Homecell {
   id         BigInt   @id @default(autoincrement())
   name       String
   location   String?
-  slug       String?
+  slug       String @unique
   leaderId   BigInt?
   overseerId BigInt?
   createdAt  DateTime @default(now())
@@ -141,7 +141,7 @@ model Ministry {
   purpose String @default("Serving together with purpose and unity.")
   leaderId    BigInt?
   overseerId  BigInt?
-  slug        String  ?
+  slug        String  @unique
   createdAt   DateTime @default(now())
   deletedAt DateTime?
   leader   Member? @relation("MinistryLeader", fields: [leaderId], references: [id])
@@ -174,7 +174,7 @@ WHERE slug IS NULL;
 model Content {
   id          BigInt   @id @default(autoincrement())
   title       String
-  slug String 
+  slug String @unique //@default(cuid())
   body        String @db.LongText
   typeId      BigInt
   authorId    BigInt?
@@ -285,7 +285,7 @@ model ScriptureRef {
 model Announcement {
   id         BigInt   @id @default(autoincrement())
   title      String
-  slug       String ?
+  slug       String @unique
   body       String @db.Text
   priority   Int
   expiryDate DateTime?
@@ -327,7 +327,7 @@ model Event {
   startTime   DateTime
   endTime     DateTime
   location    String?
-  slug        String  ?
+  slug        String  @unique
   isCritical  Boolean  @default(false)
   createdAt   DateTime @default(now())
   deletedAt DateTime?
@@ -370,7 +370,7 @@ model Program {
   id         BigInt   @id @default(autoincrement())
   date       DateTime
   typeId     BigInt
-  slug       String?
+  slug       String @unique
   homecellId BigInt?
   location    String?
   createdAt  DateTime @default(now())
@@ -610,73 +610,3 @@ model AuditLog {
 
   createdAt   DateTime @default(now())
 }
-
-/**
-UPDATE Event
-SET slug = LOWER(
-  REPLACE(
-    REPLACE(
-      REPLACE(title, ' ', '-'),
-    ',', ''),
-  '.', '')
-)
-WHERE slug IS NULL;
-
-UPDATE Homecell
-SET slug = LOWER(
-  REPLACE(REPLACE(name, ' ', '-'), ',', '')
-)
-WHERE slug IS NULL;
-
-UPDATE Ministry
-SET slug = LOWER(
-  REPLACE(REPLACE(name, ' ', '-'), ',', '')
-)
-WHERE slug IS NULL;
-
-UPDATE Series
-SET slug = LOWER(
-  REPLACE(REPLACE(name, ' ', '-'), ',', '')
-)
-WHERE slug IS NULL;
-
-UPDATE Program
-SET slug = LOWER(
-  CONCAT(
-    DATE_FORMAT(date, '%Y-%m-%d'),
-    '-',
-    id
-  )
-)
-WHERE slug IS NULL;
-
-UPDATE Announcement
-SET slug = LOWER(
-  TRIM(
-    BOTH '-' FROM
-    REPLACE(
-      REPLACE(
-        REPLACE(
-          REPLACE(title, ' ', '-'),
-        ',', ''),
-      '.', ''),
-    '&', 'and')
-  )
-)
-WHERE slug IS NULL;
-
-UPDATE Stream
-SET slug = LOWER(
-  TRIM(
-    BOTH '-' FROM
-    REPLACE(
-      REPLACE(
-        REPLACE(
-          REPLACE(title, ' ', '-'),
-        ',', ''),
-      '.', ''),
-    '&', 'and')
-  )
-)
-WHERE slug IS NULL;
-**/

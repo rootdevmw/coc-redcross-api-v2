@@ -281,7 +281,6 @@ export type MinistryOrderByWithRelationInput = {
 
 export type MinistryWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
-  slug?: string
   AND?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
   OR?: Prisma.MinistryWhereInput[]
   NOT?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
@@ -290,13 +289,14 @@ export type MinistryWhereUniqueInput = Prisma.AtLeast<{
   purpose?: Prisma.StringFilter<"Ministry"> | string
   leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
+  slug?: Prisma.StringNullableFilter<"Ministry"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   overseer?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   members?: Prisma.MemberMinistryListRelationFilter
   events?: Prisma.EventMinistryListRelationFilter
-}, "id" | "slug">
+}, "id">
 
 export type MinistryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

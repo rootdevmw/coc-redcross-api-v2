@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigInt, toBigIntOptional } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import { SlugService } from 'src/common/utils/slugify';
 
 @Injectable()
 export class ProgramsService {
@@ -10,6 +11,7 @@ export class ProgramsService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   // -----------------------------
@@ -18,10 +20,14 @@ export class ProgramsService {
   async create(dto: any, user?: any) {
     this.logger.log(`Creating program for date ${dto.date}`);
 
+    const slugSource = [dto.location, dto.date].filter(Boolean).join(' ');
+    const slug = await this.slugify.generateUniqueSlug(slugSource, 'program');
+
     const program = await this.prisma.program.create({
       data: {
         date: new Date(dto.date),
         location: dto.location || undefined,
+        slug,
         typeId: dto.typeId,
         homecellId: dto.homecellId,
         items: {
@@ -74,14 +80,16 @@ export class ProgramsService {
       },
     });
 
-    if (!template) {
-      throw new NotFoundException('Template not found');
-    }
+    if (!template) throw new NotFoundException('Template not found');
+
+    const slugSource = [dto.location, dto.date].filter(Boolean).join(' ');
+    const slug = await this.slugify.generateUniqueSlug(slugSource, 'program');
 
     const program = await this.prisma.program.create({
       data: {
         date: new Date(dto.date),
         location: dto.location || undefined,
+        slug,
         typeId: template.typeId,
         homecellId: dto.homecellId ?? template.homecellId ?? null,
         items: {
@@ -187,6 +195,30 @@ export class ProgramsService {
   }
 
   // -----------------------------
+  // FIND BY SLUG
+  // -----------------------------
+  async findBySlug(slug: string) {
+    this.logger.log(`FETCH_PROGRAM_BY_SLUG: ${slug}`);
+
+    const program = await this.prisma.program.findFirst({
+      where: { slug, deletedAt: null },
+      include: {
+        type: true,
+        homecell: true,
+        items: {
+          where: { deletedAt: null },
+          include: { responsible: true },
+          orderBy: { sequence: 'asc' },
+        },
+      },
+    });
+
+    if (!program) throw new NotFoundException('Program not found');
+
+    return { success: true, data: program, meta: {} };
+  }
+
+  // -----------------------------
   // UPDATE PROGRAM
   // -----------------------------
   async update(id: string, dto: any, user?: any) {
@@ -207,11 +239,27 @@ export class ProgramsService {
       });
     }
 
+    const dateChanged =
+      dto.date && new Date(dto.date).getTime() !== before.date.getTime();
+    const locationChanged =
+      dto.location !== undefined && dto.location !== before.location;
+
+    const slug =
+      dateChanged || locationChanged
+        ? await this.slugify.generateUniqueSlug(
+            [dto.location ?? before.location, dto.date ?? before.date]
+              .filter(Boolean)
+              .join(' '),
+            'program',
+          )
+        : undefined;
+
     const after = await this.prisma.program.update({
       where: { id: programId },
       data: {
         date: dto.date ? new Date(dto.date) : undefined,
         location: dto.location || undefined,
+        ...(slug && { slug }),
         typeId: dto.typeId || undefined,
         homecellId: dto.homecellId || undefined,
         items: dto.items
@@ -319,11 +367,7 @@ export class ProgramsService {
 
     this.logger.log(`UPDATE_PROGRAM_TYPE_SUCCESS: id=${id}`);
 
-    return {
-      success: true,
-      data: after,
-      meta: {},
-    };
+    return { success: true, data: after, meta: {} };
   }
 
   async getTypes() {

@@ -1,11 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { toBigInt } from 'src/common/utils/to-bigint';
 import { PrismaService } from '../../prisma/prisma.service';
+import { AuditService } from '../audit/audit.service';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { QueryAnnouncementDto } from './dto/query-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
-import { toBigInt } from 'src/common/utils/to-bigint';
-import { Audit } from 'src/common/decorators/audit.decorator';
-import { AuditService } from '../audit/audit.service';
+import { SlugService } from 'src/common/utils/slugify';
 
 @Injectable()
 export class AnnouncementsService {
@@ -14,6 +14,7 @@ export class AnnouncementsService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   // -----------------------------
@@ -22,11 +23,17 @@ export class AnnouncementsService {
   async create(dto: CreateAnnouncementDto, user: any) {
     this.logger.log(`CREATE_ANNOUNCEMENT_STARTED: ${dto.title}`);
 
+    const slug = await this.slugify.generateUniqueSlug(
+      dto.title,
+      'announcement',
+    );
+
     const announcement = await this.prisma.announcement.create({
       data: {
         title: dto.title,
         body: dto.body,
         priority: dto.priority,
+        slug,
         expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : null,
 
         targets: {
@@ -52,6 +59,27 @@ export class AnnouncementsService {
     this.logger.log(`CREATE_ANNOUNCEMENT_SUCCESS: ${announcement.id}`);
 
     return { success: true, data: announcement, meta: {} };
+  }
+
+  async findBySlug(slug: string) {
+    this.logger.log(`FETCH_ANNOUNCEMENT_BY_SLUG: ${slug}`);
+
+    const announcement = await this.prisma.announcement.findFirst({
+      where: { slug },
+      include: {
+        targets: true,
+      },
+    });
+
+    if (!announcement) {
+      throw new NotFoundException('Announcement not found');
+    }
+
+    return {
+      success: true,
+      data: announcement,
+      meta: {},
+    };
   }
 
   // -----------------------------
@@ -184,12 +212,16 @@ export class AnnouncementsService {
 
     if (!before) throw new NotFoundException('Announcement not found');
 
-    // Replace targets if provided
     if (dto.targets) {
       await this.prisma.announcementTarget.deleteMany({
         where: { announcementId },
       });
     }
+
+    const slug =
+      dto.title && dto.title !== before.title
+        ? await this.slugify.generateUniqueSlug(dto.title, 'announcement')
+        : undefined;
 
     const after = await this.prisma.announcement.update({
       where: { id: announcementId },
@@ -197,6 +229,7 @@ export class AnnouncementsService {
         title: dto.title,
         body: dto.body,
         priority: dto.priority,
+        ...(slug && { slug }),
         expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : undefined,
 
         targets: dto.targets
@@ -222,11 +255,7 @@ export class AnnouncementsService {
 
     this.logger.log(`UPDATE_ANNOUNCEMENT_SUCCESS: ${id}`);
 
-    return {
-      success: true,
-      data: after,
-      meta: {},
-    };
+    return { success: true, data: after, meta: {} };
   }
 
   // -----------------------------

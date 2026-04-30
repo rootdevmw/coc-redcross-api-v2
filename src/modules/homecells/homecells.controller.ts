@@ -35,7 +35,11 @@ export class HomecellsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateHomecellDto, @Req() req: any) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateHomecellDto,
+    @Req() req: any,
+  ) {
     return this.service.update(id, dto, req.user);
   }
 
@@ -50,12 +54,20 @@ export class HomecellsController {
   }
 
   @Post(':id/members')
-  assignMember(@Param('id') homecellId: string, @Body() dto: AssignMemberDto, @Req() req: any) {
+  assignMember(
+    @Param('id') homecellId: string,
+    @Body() dto: AssignMemberDto,
+    @Req() req: any,
+  ) {
     return this.service.assignMember(homecellId, dto.memberId, req.user);
   }
 
   @Delete(':id/members/:memberId')
-  removeMember(@Param('id') homecellId: string, @Param('memberId') memberId: string, @Req() req: any) {
+  removeMember(
+    @Param('id') homecellId: string,
+    @Param('memberId') memberId: string,
+    @Req() req: any,
+  ) {
     return this.service.removeMember(homecellId, memberId, req.user);
   }
 }

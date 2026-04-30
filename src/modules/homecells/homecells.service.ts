@@ -4,6 +4,7 @@ import { CreateHomecellDto } from './dto/create-homecell.dto';
 import { UpdateHomecellDto } from './dto/update-homecell.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import { SlugService } from 'src/common/utils/slugify';
 
 @Injectable()
 export class HomecellsService {
@@ -12,14 +13,18 @@ export class HomecellsService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   async create(dto: CreateHomecellDto, user?: any) {
     this.logger.log('CREATE_HOMECELL_STARTED');
 
+    const slug = await this.slugify.generateUniqueSlug(dto.name, 'homecell');
+
     const homecell = await this.prisma.homecell.create({
       data: {
         name: dto.name,
+        slug,
         location: dto.location,
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : undefined,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : undefined,
@@ -122,6 +127,40 @@ export class HomecellsService {
     };
   }
 
+  async findBySlug(slug: string) {
+    this.logger.log(`FETCH_HOMECELL_BY_SLUG: ${slug}`);
+    const now = new Date();
+
+    const homecell = await this.prisma.homecell.findFirst({
+      where: { slug },
+      include: {
+        leader: {
+          include: { bio: true },
+        },
+        members: {
+          where: { deletedAt: null },
+        },
+        programs: {
+          where: {
+            deletedAt: null,
+            date: { gte: now },
+          },
+        },
+        overseer: {
+          include: { bio: true },
+        },
+      },
+    });
+
+    if (!homecell) throw new NotFoundException('Homecell not found');
+
+    return {
+      success: true,
+      data: homecell,
+      meta: {},
+    };
+  }
+
   async update(id: string, dto: UpdateHomecellDto, user?: any) {
     this.logger.log(`UPDATE_HOMECELL_STARTED: ${id}`);
 
@@ -133,10 +172,16 @@ export class HomecellsService {
 
     if (!before) throw new NotFoundException('Homecell not found');
 
+    const slug =
+      dto.name && dto.name !== before.name
+        ? await this.slugify.generateUniqueSlug(dto.name, 'homecell')
+        : undefined;
+
     const after = await this.prisma.homecell.update({
       where: { id: homecellId },
       data: {
         name: dto.name,
+        ...(slug && { slug }),
         location: dto.location,
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : undefined,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : undefined,
@@ -210,9 +255,7 @@ export class HomecellsService {
 
     if (!member) throw new NotFoundException('Member not found');
 
-    const before = await this.prisma.member.findFirst({
-      where: { id: toBigInt(memberId) },
-    });
+    const before = member;
 
     this.logger.log(
       `ASSIGN_MEMBER → ${member.firstName} ${member.lastName} → ${homecell.name}`,

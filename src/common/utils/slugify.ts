@@ -1,11 +1,33 @@
-export function slugify(text: string) {
-  const base = text
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+import { Injectable } from '@nestjs/common';
+import slugify from 'slugify';
+import { PrismaService } from '../../prisma/prisma.service';
 
-  const timestamp = Date.now().toString(36).slice(-5);
+@Injectable()
+export class SlugService {
+  constructor(private prisma: PrismaService) {}
 
-  return `${base}-${timestamp}`;
+  async generateUniqueSlug(
+    text: string,
+    model: keyof PrismaService,
+    field: string = 'slug',
+  ): Promise<string> {
+    const baseSlug = slugify(text, {
+      lower: true,
+      strict: true,
+    });
+
+    let slug = baseSlug;
+    let counter = 1;
+
+    while (true) {
+      const exists = await (this.prisma[model] as any).findFirst({
+        where: { [field]: slug },
+        select: { id: true },
+      });
+
+      if (!exists) return slug;
+
+      slug = `${baseSlug}-${counter++}`;
+    }
+  }
 }

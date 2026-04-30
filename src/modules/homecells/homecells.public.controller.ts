@@ -12,10 +12,10 @@ export class PublicHomecellsController {
     return this.service.findAll();
   }
 
-  @Get(':id')
+  @Get(':slug')
   @Public()
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('slug') slug: string) {
+    return this.service.findBySlug(slug);
   }
 
   @Get(':id/members')

@@ -5,6 +5,7 @@ import { UpdateMinistryDto } from './dto/update-ministry.dto';
 import { QueryMinistryDto } from './dto/query-ministry.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import { SlugService } from 'src/common/utils/slugify';
 
 @Injectable()
 export class MinistriesService {
@@ -13,6 +14,7 @@ export class MinistriesService {
   constructor(
     private prisma: PrismaService,
     private auditService: AuditService,
+    private slugify: SlugService,
   ) {}
 
   // -----------------------------
@@ -21,9 +23,12 @@ export class MinistriesService {
   async create(dto: CreateMinistryDto, user?: any) {
     this.logger.log(`Creating ministry: ${dto.name}`);
 
+    const slug = await this.slugify.generateUniqueSlug(dto.name, 'ministry');
+
     const ministry = await this.prisma.ministry.create({
       data: {
         name: dto.name,
+        slug,
         description: dto.description,
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
@@ -107,12 +112,10 @@ export class MinistriesService {
       include: {
         leader: { include: { bio: true } },
         overseer: { include: { bio: true } },
-
         members: {
           where: { member: { deletedAt: null } },
           include: { member: true },
         },
-
         events: {
           include: { event: true },
           where: {
@@ -147,6 +150,51 @@ export class MinistriesService {
   }
 
   // -----------------------------
+  // FIND BY SLUG
+  // -----------------------------
+  async findBySlug(slug: string) {
+    this.logger.log(`Fetching ministry by slug: ${slug}`);
+
+    const ministry = await this.prisma.ministry.findFirst({
+      where: { slug, deletedAt: null },
+      include: {
+        leader: { include: { bio: true } },
+        overseer: { include: { bio: true } },
+        members: {
+          where: { member: { deletedAt: null } },
+          include: { member: true },
+        },
+        events: {
+          include: { event: true },
+          where: {
+            event: {
+              deletedAt: null,
+              startTime: { gte: new Date() },
+            },
+          },
+          orderBy: {
+            event: { startTime: 'asc' },
+          },
+          take: 5,
+        },
+      },
+    });
+
+    if (!ministry) throw new NotFoundException('Ministry not found');
+
+    const flattenedEvents = ministry.events.map((e) => e.event);
+
+    return {
+      success: true,
+      data: {
+        ...ministry,
+        events: flattenedEvents,
+      },
+      meta: {},
+    };
+  }
+
+  // -----------------------------
   // UPDATE
   // -----------------------------
   async update(id: string, dto: UpdateMinistryDto, user?: any) {
@@ -158,14 +206,18 @@ export class MinistriesService {
       where: { id: ministryId },
     });
 
-    if (!before) {
-      throw new NotFoundException('Ministry not found');
-    }
+    if (!before) throw new NotFoundException('Ministry not found');
+
+    const slug =
+      dto.name && dto.name !== before.name
+        ? await this.slugify.generateUniqueSlug(dto.name, 'ministry')
+        : undefined;
 
     const after = await this.prisma.ministry.update({
       where: { id: ministryId },
       data: {
         name: dto.name,
+        ...(slug && { slug }),
         description: dto.description,
         leaderId: dto.leaderId ? toBigInt(dto.leaderId) : null,
         overseerId: dto.overseerId ? toBigInt(dto.overseerId) : null,
@@ -201,9 +253,7 @@ export class MinistriesService {
       where: { id: ministryId },
     });
 
-    if (!before) {
-      throw new NotFoundException('Ministry not found');
-    }
+    if (!before) throw new NotFoundException('Ministry not found');
 
     await this.prisma.ministry.delete({
       where: { id: ministryId },

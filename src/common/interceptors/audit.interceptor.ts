@@ -200,17 +200,6 @@ export class AuditInterceptor implements NestInterceptor {
         });
 
       // -----------------------------
-      // ANNOUNCEMENTS
-      // -----------------------------
-      case 'Announcement':
-        return this.prisma.announcement.findFirst({
-          where: { id: bigId },
-          include: {
-            targets: true,
-          },
-        });
-
-      // -----------------------------
       // EVENTS
       // -----------------------------
       case 'Event':

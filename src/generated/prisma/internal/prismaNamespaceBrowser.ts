@@ -68,8 +68,6 @@ export const ModelName = {
   ContentTag: 'ContentTag',
   Series: 'Series',
   ScriptureRef: 'ScriptureRef',
-  Announcement: 'Announcement',
-  AnnouncementTarget: 'AnnouncementTarget',
   EventType: 'EventType',
   Event: 'Event',
   EventMinistry: 'EventMinistry',
@@ -295,30 +293,6 @@ export const ScriptureRefScalarFieldEnum = {
 } as const
 
 export type ScriptureRefScalarFieldEnum = (typeof ScriptureRefScalarFieldEnum)[keyof typeof ScriptureRefScalarFieldEnum]
-
-
-export const AnnouncementScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  slug: 'slug',
-  body: 'body',
-  priority: 'priority',
-  expiryDate: 'expiryDate',
-  createdAt: 'createdAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
-
-
-export const AnnouncementTargetScalarFieldEnum = {
-  id: 'id',
-  announcementId: 'announcementId',
-  targetType: 'targetType',
-  targetId: 'targetId'
-} as const
-
-export type AnnouncementTargetScalarFieldEnum = (typeof AnnouncementTargetScalarFieldEnum)[keyof typeof AnnouncementTargetScalarFieldEnum]
 
 
 export const EventTypeScalarFieldEnum = {
@@ -683,22 +657,6 @@ export const ScriptureRefOrderByRelevanceFieldEnum = {
 } as const
 
 export type ScriptureRefOrderByRelevanceFieldEnum = (typeof ScriptureRefOrderByRelevanceFieldEnum)[keyof typeof ScriptureRefOrderByRelevanceFieldEnum]
-
-
-export const AnnouncementOrderByRelevanceFieldEnum = {
-  title: 'title',
-  slug: 'slug',
-  body: 'body'
-} as const
-
-export type AnnouncementOrderByRelevanceFieldEnum = (typeof AnnouncementOrderByRelevanceFieldEnum)[keyof typeof AnnouncementOrderByRelevanceFieldEnum]
-
-
-export const AnnouncementTargetOrderByRelevanceFieldEnum = {
-  targetType: 'targetType'
-} as const
-
-export type AnnouncementTargetOrderByRelevanceFieldEnum = (typeof AnnouncementTargetOrderByRelevanceFieldEnum)[keyof typeof AnnouncementTargetOrderByRelevanceFieldEnum]
 
 
 export const EventTypeOrderByRelevanceFieldEnum = {

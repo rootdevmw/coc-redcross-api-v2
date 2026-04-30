@@ -310,11 +310,11 @@ export type ContentOrderByWithRelationInput = {
 
 export type ContentWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
+  slug?: string
   AND?: Prisma.ContentWhereInput | Prisma.ContentWhereInput[]
   OR?: Prisma.ContentWhereInput[]
   NOT?: Prisma.ContentWhereInput | Prisma.ContentWhereInput[]
   title?: Prisma.StringFilter<"Content"> | string
-  slug?: Prisma.StringFilter<"Content"> | string
   body?: Prisma.StringFilter<"Content"> | string
   typeId?: Prisma.BigIntFilter<"Content"> | bigint | number
   authorId?: Prisma.BigIntNullableFilter<"Content"> | bigint | number | null
@@ -329,7 +329,7 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
   scriptures?: Prisma.ScriptureRefListRelationFilter
   series?: Prisma.XOR<Prisma.SeriesNullableScalarRelationFilter, Prisma.SeriesWhereInput> | null
   contentMedia?: Prisma.ContentMediaListRelationFilter
-}, "id">
+}, "id" | "slug">
 
 export type ContentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

@@ -218,7 +218,7 @@ export type MinistryGroupByOutputType = {
   purpose: string
   leaderId: bigint | null
   overseerId: bigint | null
-  slug: string | null
+  slug: string
   createdAt: Date
   deletedAt: Date | null
   _count: MinistryCountAggregateOutputType | null
@@ -253,7 +253,7 @@ export type MinistryWhereInput = {
   purpose?: Prisma.StringFilter<"Ministry"> | string
   leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
-  slug?: Prisma.StringNullableFilter<"Ministry"> | string | null
+  slug?: Prisma.StringFilter<"Ministry"> | string
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
@@ -269,7 +269,7 @@ export type MinistryOrderByWithRelationInput = {
   purpose?: Prisma.SortOrder
   leaderId?: Prisma.SortOrderInput | Prisma.SortOrder
   overseerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  slug?: Prisma.SortOrderInput | Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   leader?: Prisma.MemberOrderByWithRelationInput
@@ -281,6 +281,7 @@ export type MinistryOrderByWithRelationInput = {
 
 export type MinistryWhereUniqueInput = Prisma.AtLeast<{
   id?: bigint | number
+  slug?: string
   AND?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
   OR?: Prisma.MinistryWhereInput[]
   NOT?: Prisma.MinistryWhereInput | Prisma.MinistryWhereInput[]
@@ -289,14 +290,13 @@ export type MinistryWhereUniqueInput = Prisma.AtLeast<{
   purpose?: Prisma.StringFilter<"Ministry"> | string
   leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
-  slug?: Prisma.StringNullableFilter<"Ministry"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
   leader?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   overseer?: Prisma.XOR<Prisma.MemberNullableScalarRelationFilter, Prisma.MemberWhereInput> | null
   members?: Prisma.MemberMinistryListRelationFilter
   events?: Prisma.EventMinistryListRelationFilter
-}, "id">
+}, "id" | "slug">
 
 export type MinistryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -305,7 +305,7 @@ export type MinistryOrderByWithAggregationInput = {
   purpose?: Prisma.SortOrder
   leaderId?: Prisma.SortOrderInput | Prisma.SortOrder
   overseerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  slug?: Prisma.SortOrderInput | Prisma.SortOrder
+  slug?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MinistryCountOrderByAggregateInput
@@ -325,7 +325,7 @@ export type MinistryScalarWhereWithAggregatesInput = {
   purpose?: Prisma.StringWithAggregatesFilter<"Ministry"> | string
   leaderId?: Prisma.BigIntNullableWithAggregatesFilter<"Ministry"> | bigint | number | null
   overseerId?: Prisma.BigIntNullableWithAggregatesFilter<"Ministry"> | bigint | number | null
-  slug?: Prisma.StringNullableWithAggregatesFilter<"Ministry"> | string | null
+  slug?: Prisma.StringWithAggregatesFilter<"Ministry"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Ministry"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Ministry"> | Date | string | null
 }
@@ -335,7 +335,7 @@ export type MinistryCreateInput = {
   name: string
   description?: string | null
   purpose?: string
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
@@ -351,7 +351,7 @@ export type MinistryUncheckedCreateInput = {
   purpose?: string
   leaderId?: bigint | number | null
   overseerId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
@@ -363,7 +363,7 @@ export type MinistryUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
@@ -379,7 +379,7 @@ export type MinistryUncheckedUpdateInput = {
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
@@ -393,7 +393,7 @@ export type MinistryCreateManyInput = {
   purpose?: string
   leaderId?: bigint | number | null
   overseerId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
 }
@@ -403,7 +403,7 @@ export type MinistryUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -415,7 +415,7 @@ export type MinistryUncheckedUpdateManyInput = {
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -606,7 +606,7 @@ export type MinistryCreateWithoutLeaderInput = {
   name: string
   description?: string | null
   purpose?: string
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   overseer?: Prisma.MemberCreateNestedOneWithoutOverseeingMinistriesInput
@@ -620,7 +620,7 @@ export type MinistryUncheckedCreateWithoutLeaderInput = {
   description?: string | null
   purpose?: string
   overseerId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
@@ -642,7 +642,7 @@ export type MinistryCreateWithoutOverseerInput = {
   name: string
   description?: string | null
   purpose?: string
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
@@ -656,7 +656,7 @@ export type MinistryUncheckedCreateWithoutOverseerInput = {
   description?: string | null
   purpose?: string
   leaderId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
@@ -699,7 +699,7 @@ export type MinistryScalarWhereInput = {
   purpose?: Prisma.StringFilter<"Ministry"> | string
   leaderId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
   overseerId?: Prisma.BigIntNullableFilter<"Ministry"> | bigint | number | null
-  slug?: Prisma.StringNullableFilter<"Ministry"> | string | null
+  slug?: Prisma.StringFilter<"Ministry"> | string
   createdAt?: Prisma.DateTimeFilter<"Ministry"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Ministry"> | Date | string | null
 }
@@ -725,7 +725,7 @@ export type MinistryCreateWithoutMembersInput = {
   name: string
   description?: string | null
   purpose?: string
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
@@ -740,7 +740,7 @@ export type MinistryUncheckedCreateWithoutMembersInput = {
   purpose?: string
   leaderId?: bigint | number | null
   overseerId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   events?: Prisma.EventMinistryUncheckedCreateNestedManyWithoutMinistryInput
@@ -767,7 +767,7 @@ export type MinistryUpdateWithoutMembersInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
@@ -782,7 +782,7 @@ export type MinistryUncheckedUpdateWithoutMembersInput = {
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   events?: Prisma.EventMinistryUncheckedUpdateManyWithoutMinistryNestedInput
@@ -793,7 +793,7 @@ export type MinistryCreateWithoutEventsInput = {
   name: string
   description?: string | null
   purpose?: string
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   leader?: Prisma.MemberCreateNestedOneWithoutLeadingMinistriesInput
@@ -808,7 +808,7 @@ export type MinistryUncheckedCreateWithoutEventsInput = {
   purpose?: string
   leaderId?: bigint | number | null
   overseerId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
   members?: Prisma.MemberMinistryUncheckedCreateNestedManyWithoutMinistryInput
@@ -835,7 +835,7 @@ export type MinistryUpdateWithoutEventsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
@@ -850,7 +850,7 @@ export type MinistryUncheckedUpdateWithoutEventsInput = {
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
@@ -862,7 +862,7 @@ export type MinistryCreateManyLeaderInput = {
   description?: string | null
   purpose?: string
   overseerId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
 }
@@ -873,7 +873,7 @@ export type MinistryCreateManyOverseerInput = {
   description?: string | null
   purpose?: string
   leaderId?: bigint | number | null
-  slug?: string | null
+  slug: string
   createdAt?: Date | string
   deletedAt?: Date | string | null
 }
@@ -883,7 +883,7 @@ export type MinistryUpdateWithoutLeaderInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   overseer?: Prisma.MemberUpdateOneWithoutOverseeingMinistriesNestedInput
@@ -897,7 +897,7 @@ export type MinistryUncheckedUpdateWithoutLeaderInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
@@ -910,7 +910,7 @@ export type MinistryUncheckedUpdateManyWithoutLeaderInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   overseerId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -920,7 +920,7 @@ export type MinistryUpdateWithoutOverseerInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   leader?: Prisma.MemberUpdateOneWithoutLeadingMinistriesNestedInput
@@ -934,7 +934,7 @@ export type MinistryUncheckedUpdateWithoutOverseerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   members?: Prisma.MemberMinistryUncheckedUpdateManyWithoutMinistryNestedInput
@@ -947,7 +947,7 @@ export type MinistryUncheckedUpdateManyWithoutOverseerInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.StringFieldUpdateOperationsInput | string
   leaderId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -1047,7 +1047,7 @@ export type $MinistryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     purpose: string
     leaderId: bigint | null
     overseerId: bigint | null
-    slug: string | null
+    slug: string
     createdAt: Date
     deletedAt: Date | null
   }, ExtArgs["result"]["ministry"]>

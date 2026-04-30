@@ -106,16 +106,6 @@ export type Series = Prisma.SeriesModel
  */
 export type ScriptureRef = Prisma.ScriptureRefModel
 /**
- * Model Announcement
- * 
- */
-export type Announcement = Prisma.AnnouncementModel
-/**
- * Model AnnouncementTarget
- * 
- */
-export type AnnouncementTarget = Prisma.AnnouncementTargetModel
-/**
  * Model EventType
  * 
  */

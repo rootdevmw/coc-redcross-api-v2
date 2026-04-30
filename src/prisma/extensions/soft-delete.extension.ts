@@ -12,7 +12,6 @@ const SOFT_DELETE_MODELS = new Set([
   'Tag',
   'Series',
   'ScriptureRef',
-  'Announcement',
   'EventType',
   'Event',
   'ProgramType',

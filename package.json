@@ -23,7 +23,6 @@
     "test:homecells": "ts-node src/scripts/homecells-test.ts",
     "test:ministries": "ts-node src/scripts/ministries-test.ts",
     "test:contents": "ts-node src/scripts/contents-test.ts",
-    "test:announcements": "ts-node src/scripts/announcements-test.ts",
     "test:events": "ts-node src/scripts/events-test.ts",
     "test:programs": "ts-node src/scripts/programs-test.ts",
     "test:publications": "ts-node src/scripts/publications-test.ts",

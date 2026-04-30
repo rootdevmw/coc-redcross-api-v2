@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core/constants';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AnnouncementsModule } from './modules/announcements/announcements.module';
 import { AttentionModule } from './modules/attention/attention.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -30,7 +29,6 @@ import { PrismaModule } from './prisma/prisma.module';
     HomecellsModule,
     MinistriesModule,
     ContentModule,
-    AnnouncementsModule,
     ProgramsModule,
     EventsModule,
     PublicationsModule,

@@ -27,6 +27,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
       // Exact match
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);

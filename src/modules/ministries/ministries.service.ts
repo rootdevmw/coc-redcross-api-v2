@@ -56,7 +56,7 @@ export class MinistriesService {
   // -----------------------------
   async findAll(query: QueryMinistryDto) {
     const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
+    const limit = Number(query.limit) || 100;
 
     this.logger.log(`Fetching ministries (page=${page}, limit=${limit})`);
 

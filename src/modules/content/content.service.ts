@@ -159,7 +159,10 @@ export class ContentService {
 
     const mediaRelations = await this.syncMedia(dto.body);
 
-    const slug = await this.slugify.generateUniqueSlug(dto.title, 'content');
+    const slug = await this.slugify.generateUniqueSlug(
+      dto.slug?.trim() || dto.title,
+      'content',
+    );
 
     const content = await this.prisma.content.create({
       data: {
@@ -233,20 +236,22 @@ export class ContentService {
     const mediaRelations = await this.syncMedia(dto.body || '', contentId);
 
     const titleChanged = dto.title && dto.title !== before.title;
+    const slugChanged = dto.slug && dto.slug !== before.slug;
 
-    const slug = titleChanged
-      ? await this.slugify.generateUniqueSlug(dto.title!, 'content')
+    const slug = slugChanged
+      ? await this.slugify.generateUniqueSlug(dto.slug!, 'content', 'slug', contentId)
+      : titleChanged
+        ? await this.slugify.generateUniqueSlug(dto.title!, 'content', 'slug', contentId)
       : undefined;
 
     const after = await this.prisma.content.update({
       where: { id: contentId },
       data: {
         title: dto.title,
+        ...(slug && { slug }),
         body: dto.body,
         typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
         authorId: dto.authorId ? toBigInt(dto.authorId) : undefined,
-        ...(slug && { slug }),
-
         tags: dto.tags
           ? {
               deleteMany: {},
@@ -473,6 +478,7 @@ export class ContentService {
     const content = await this.prisma.content.findFirst({
       where: {
         deletedAt: null,
+        status: 'Published',
         OR: [
           { slug: identifier },
           ...(isNumeric ? [{ id: toBigInt(identifier) }] : []),

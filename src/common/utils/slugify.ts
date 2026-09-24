@@ -10,6 +10,7 @@ export class SlugService {
     text: string,
     model: keyof PrismaService,
     field: string = 'slug',
+    excludeId?: bigint,
   ): Promise<string> {
     const baseSlug = slugify(text, {
       lower: true,
@@ -21,7 +22,10 @@ export class SlugService {
 
     while (true) {
       const exists = await (this.prisma[model] as any).findFirst({
-        where: { [field]: slug },
+        where: {
+          [field]: slug,
+          ...(excludeId ? { id: { not: excludeId } } : {}),
+        },
         select: { id: true },
       });
 

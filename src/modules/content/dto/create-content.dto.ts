@@ -4,6 +4,10 @@ export class CreateContentDto {
   @IsString()
   title!: string;
 
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
   @IsString()
   body!: string;
 

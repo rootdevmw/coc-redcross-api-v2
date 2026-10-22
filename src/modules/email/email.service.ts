@@ -1,65 +1,39 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config/dist/config.service';
-import * as nodemailer from 'nodemailer';
+import { ConfigService } from '@nestjs/config';
+import type { PrayerRequest } from '../../generated/prisma/client';
+import {
+  createMailDelivery,
+  type EmailMessage,
+  type MailDelivery,
+} from './mail-delivery';
+
+type PrayerEmail = Pick<PrayerRequest, 'prayerFor' | 'request' | 'isUrgent'>;
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
-  private transporter: nodemailer.Transporter;
+  private readonly delivery: MailDelivery;
 
   constructor(private config: ConfigService) {
-    const user = process.env.GMAIL_USER;
-    const appPassword = process.env.GMAIL_APP_PASSWORD;
-    const from = process.env.GMAIL_FROM || user;
-
-    if (!user || !appPassword || !from) {
-      this.logger.warn(
-        'Gmail SMTP is not configured. Email delivery will be skipped until GMAIL_USER, GMAIL_APP_PASSWORD, and GMAIL_FROM are set.',
-      );
-      this.transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: '',
-          pass: '',
-        },
-      });
-      return;
-    }
-
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user,
-        pass: appPassword,
-      },
-    });
-
-    this.logger.log('Gmail SMTP initialized');
+    this.delivery = createMailDelivery((name) => this.config.get<string>(name));
+    if (!this.delivery.configured)
+      this.logger.warn(this.delivery.configurationError);
+    else
+      this.logger.log(`Email transport initialized: ${this.delivery.provider}`);
   }
 
-  private async sendEmailSafely(payload: any, context: string) {
-    if (
-      !process.env.GMAIL_USER ||
-      !process.env.GMAIL_APP_PASSWORD ||
-      !process.env.GMAIL_FROM
-    ) {
-      this.logger.warn(
-        `${context} skipped because Gmail SMTP is not configured.`,
+  private async sendEmailSafely(payload: EmailMessage, context: string) {
+    const result = await this.delivery.send(payload);
+    if (result.status === 'accepted')
+      this.logger.log(`${context} accepted by ${this.delivery.provider}`);
+    else if (result.status === 'not_configured')
+      this.logger.warn(`${context} not sent: ${result.code}`);
+    else
+      this.logger.error(
+        `${context} failed via ${this.delivery.provider}: ${result.code}`,
       );
-      return;
-    }
-
-    try {
-      await this.transporter.sendMail({
-        ...payload,
-        from: process.env.GMAIL_FROM,
-      });
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : JSON.stringify(error);
-      this.logger.error(`${context} failed: ${message}`);
-    }
+    return result;
   }
 
   private getExpiryText(ttl: number): string {
@@ -90,7 +64,7 @@ export class EmailService {
     const expiry = this.getExpiryText(ttl);
     this.logger.log(`Sending set password email → ${email}`);
 
-    await this.sendEmailSafely(
+    return await this.sendEmailSafely(
       {
         to: email,
         subject: 'Set Your Password — Church of Christ at Redcross',
@@ -173,7 +147,7 @@ export class EmailService {
 
     this.logger.log(`Sending reset password email → ${email}`);
 
-    await this.sendEmailSafely(
+    return await this.sendEmailSafely(
       {
         to: email,
         subject: 'Reset Your Password — Church of Christ at Redcross',
@@ -343,10 +317,10 @@ export class EmailService {
   }
 
   // PRAYER REQUEST NOTIFICATION
-  async sendPrayerRequestNotification(email: string, prayer: any) {
+  async sendPrayerRequestNotification(email: string, prayer: PrayerEmail) {
     this.logger.log(`Sending prayer request notification → ${email}`);
 
-    await this.sendEmailSafely(
+    return await this.sendEmailSafely(
       {
         to: email,
         subject: `New Prayer Request - ${prayer.prayerFor}`,
@@ -373,10 +347,10 @@ export class EmailService {
   }
 
   // PRAYER COMPLETED NOTIFICATION
-  async sendPrayerCompletedNotification(email: string, prayer: any) {
+  async sendPrayerCompletedNotification(email: string, prayer: PrayerEmail) {
     this.logger.log(`Sending prayer completed notification → ${email}`);
 
-    await this.sendEmailSafely(
+    return await this.sendEmailSafely(
       {
         to: email,
         subject: `Prayer Answered - ${prayer.prayerFor}`,

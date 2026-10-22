@@ -133,9 +133,12 @@ export class AuthService {
       },
     });
 
-    await this.emailService.sendResetPassword(normalizedEmail, rawToken);
-
-    this.logger.log(`RESET_EMAIL_SENT → ${normalizedEmail}`);
+    const delivery = await this.emailService.sendResetPassword(
+      normalizedEmail,
+      rawToken,
+    );
+    if (delivery.status === 'accepted') this.logger.log('RESET_EMAIL_ACCEPTED');
+    else this.logger.warn('RESET_EMAIL_NOT_ACCEPTED');
 
     return { success: true, data: {}, meta: {} };
   }

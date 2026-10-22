@@ -164,7 +164,12 @@ function fixture({
   const config = {
     get: (key) => (key === 'COOKIE_MAX_AGE' ? '3600000' : undefined),
   };
-  const email = { sendResetPassword: async (...args) => emails.push(args) };
+  const email = {
+    sendResetPassword: async (...args) => {
+      emails.push(args);
+      return { status: 'accepted' };
+    },
+  };
   return {
     service: new AuthService(prisma, config, email, audit),
     prisma,
@@ -284,6 +289,38 @@ test('password recovery keeps the same response for known/unknown emails and sto
     () => known.service.requestPasswordReset({}),
     badRequest,
   );
+});
+
+test('password recovery logs provider acceptance truthfully and preserves the generic response on mail failure', async () => {
+  const generic = await fixture({ missing: true }).service.requestPasswordReset(
+    'unknown@example.test',
+  );
+  for (const status of ['accepted', 'failed', 'not_configured']) {
+    const f = fixture(),
+      logs = [];
+    f.service.emailService.sendResetPassword = async () => ({
+      status,
+      code: 'ETIMEDOUT',
+    });
+    f.service.logger = {
+      log: (text) => logs.push(text),
+      warn: (text) => logs.push(text),
+    };
+    assert.deepEqual(
+      await f.service.requestPasswordReset('person@example.test'),
+      generic,
+    );
+    assert.equal(logs.includes('RESET_EMAIL_ACCEPTED'), status === 'accepted');
+    assert.equal(
+      logs.includes('RESET_EMAIL_NOT_ACCEPTED'),
+      status !== 'accepted',
+    );
+    assert.equal(
+      logs.some((text) => text.includes('RESET_EMAIL_SENT')),
+      false,
+    );
+    assert.equal(f.tokens.length, 1);
+  }
 });
 
 test('setup saves the password, consumes all reset links and revokes only the target account sessions atomically', async () => {

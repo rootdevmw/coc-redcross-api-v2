@@ -20,13 +20,18 @@ export class ProgramsController {
 
   // STATIC FIRST
   @Post('types')
-  createType(@Body('name') name: string) {
-    return this.service.createType(name);
+  createType(@Body('name') name: string, @Req() req: any) {
+    return this.service.createType(name, req.user);
   }
 
   @Patch('types/:id')
-  updateType(@Param('id') id: string, @Body('name') name: string) {
-    return this.service.updateType(id, name);
+  updateType(@Param('id') id: string, @Body('name') name: string, @Req() req: any) {
+    return this.service.updateType(id, name, req.user);
+  }
+
+  @Delete('types/:id')
+  removeType(@Param('id') id: string, @Req() req: any) {
+    return this.service.removeType(id, req.user);
   }
 
   @Get('types')

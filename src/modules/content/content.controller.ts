@@ -19,6 +19,7 @@ import { CreateContentTypeDto } from './dto/create-content-type.dto';
 import { CreateContentDto } from './dto/create-content.dto';
 import { QueryContentDto } from './dto/query-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
+import type { AccessListQuery } from '../../common/utils/access-list-filters';
 
 @Controller('content')
 @Roles('MEDIA')
@@ -57,6 +58,11 @@ export class ContentController {
   getTypes() {
     return this.service.getTypes();
   }
+  @Get('author-options')
+  authorOptions(@Query() query: AccessListQuery) {
+    return this.service.authorOptions(query);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);

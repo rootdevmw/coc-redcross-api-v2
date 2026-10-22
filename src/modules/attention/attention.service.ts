@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePrayerRequestDto } from './dto/createPrayerRequestDto';
@@ -6,6 +11,7 @@ import { CreateVisitorDto } from './dto/createVisitorsDto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import { EmailService } from '../email/email.service';
+import { prayerNotificationUser } from '../../common/utils/prayer-team';
 
 @Injectable()
 export class AttentionService {
@@ -49,16 +55,15 @@ export class AttentionService {
     // NOTIFY PRAYER WARRIORS
     // ─────────────────────────────
     const warriors = await this.prisma.prayerWarrior.findMany({
-      include: {
-        user: {
-          include: {
-            member: true,
-          },
-        },
+      where: { user: { is: prayerNotificationUser } },
+      select: {
+        user: { select: { email: true, member: { select: { id: true } } } },
       },
     });
 
-    const validWarriors = warriors.filter((w) => w.user?.member);
+    const validWarriors = warriors.filter(
+      (w) => w.user?.member && w.user.email.trim(),
+    );
 
     await Promise.all(
       validWarriors.map((w) =>
@@ -129,34 +134,44 @@ export class AttentionService {
   // ─────────────────────────────
   async markPrayed(id: string, user: any) {
     if (!user?.member?.id) {
-      throw new Error('User is not linked to a member');
+      throw new ForbiddenException(
+        'Link your account to a directory profile before recording follow-up.',
+      );
     }
 
     this.logger.log(`MARK_PRAYER_PRAYED_STARTED: ${id}`);
 
-    const before = await this.prisma.prayerRequest.findFirst({
-      where: { id: toBigInt(id) },
-    });
-
-    if (!before) {
-      throw new NotFoundException('Prayer request not found');
-    }
-
-    const updated = await this.prisma.prayerRequest.update({
-      where: { id: toBigInt(id) },
-      data: {
-        status: 'PRAYED_FOR',
+    const { before, updated, changed } = await this.prisma.$transaction(
+      async (tx) => {
+        const before = await tx.prayerRequest.findFirst({
+          where: { id: toBigInt(id) },
+        });
+        if (!before) throw new NotFoundException('Prayer request not found');
+        if (before.status === 'PRAYED_FOR')
+          return { before, updated: before, changed: false };
+        const transition = await tx.prayerRequest.updateMany({
+          where: { id: before.id, status: { in: ['PENDING', 'REVIEWED'] } },
+          data: { status: 'PRAYED_FOR' },
+        });
+        const updated = await tx.prayerRequest.findFirst({
+          where: { id: before.id },
+        });
+        if (!updated) throw new NotFoundException('Prayer request not found');
+        if (!transition.count) return { before, updated, changed: false };
+        await tx.attentionAction.create({
+          data: {
+            type: 'PRAYER_REQUEST',
+            referenceId: id,
+            action: 'PRAYED_FOR',
+            performedById: user.member.id,
+          },
+        });
+        return { before, updated, changed: true };
       },
-    });
-
-    await this.prisma.attentionAction.create({
-      data: {
-        type: 'PRAYER_REQUEST',
-        referenceId: id,
-        action: 'PRAYED_FOR',
-        performedById: user.member.id,
-      },
-    });
+      { isolationLevel: 'ReadCommitted' },
+    );
+    if (!changed)
+      return { success: true, data: updated, meta: { changed: false } };
 
     await this.auditService.log({
       action: 'PRAYER_MARKED_PRAYED',
@@ -173,16 +188,15 @@ export class AttentionService {
     // NOTIFY PRAYER WARRIORS (COMPLETED)
     // ─────────────────────────────
     const warriors = await this.prisma.prayerWarrior.findMany({
-      include: {
-        user: {
-          include: {
-            member: true,
-          },
-        },
+      where: { user: { is: prayerNotificationUser } },
+      select: {
+        user: { select: { email: true, member: { select: { id: true } } } },
       },
     });
 
-    const validWarriors = warriors.filter((w) => w.user?.member);
+    const validWarriors = warriors.filter(
+      (w) => w.user?.member && w.user.email.trim(),
+    );
 
     await Promise.all(
       validWarriors.map((w) =>
@@ -204,34 +218,44 @@ export class AttentionService {
 
   async acknowledgeVisitor(id: string, user: any) {
     if (!user?.member?.id) {
-      throw new Error('User is not linked to a member');
+      throw new ForbiddenException(
+        'Link your account to a directory profile before recording follow-up.',
+      );
     }
 
     this.logger.log(`ACKNOWLEDGE_VISITOR_STARTED: ${id}`);
 
-    const before = await this.prisma.visitor.findFirst({
-      where: { id: toBigInt(id) },
-    });
-
-    if (!before) {
-      throw new NotFoundException('Visitor not found');
-    }
-
-    const updated = await this.prisma.visitor.update({
-      where: { id: toBigInt(id) },
-      data: {
-        status: 'CONFIRMED',
+    const { before, updated, changed } = await this.prisma.$transaction(
+      async (tx) => {
+        const before = await tx.visitor.findFirst({
+          where: { id: toBigInt(id) },
+        });
+        if (!before) throw new NotFoundException('Visitor not found');
+        if (before.status !== 'PENDING')
+          return { before, updated: before, changed: false };
+        const transition = await tx.visitor.updateMany({
+          where: { id: before.id, status: 'PENDING' },
+          data: { status: 'CONFIRMED' },
+        });
+        const updated = await tx.visitor.findFirst({
+          where: { id: before.id },
+        });
+        if (!updated) throw new NotFoundException('Visitor not found');
+        if (!transition.count) return { before, updated, changed: false };
+        await tx.attentionAction.create({
+          data: {
+            type: 'VISITOR',
+            referenceId: id,
+            action: 'ACKNOWLEDGED',
+            performedById: user.member.id,
+          },
+        });
+        return { before, updated, changed: true };
       },
-    });
-
-    await this.prisma.attentionAction.create({
-      data: {
-        type: 'VISITOR',
-        referenceId: id,
-        action: 'ACKNOWLEDGED',
-        performedById: user.member.id,
-      },
-    });
+      { isolationLevel: 'ReadCommitted' },
+    );
+    if (!changed)
+      return { success: true, data: updated, meta: { changed: false } };
 
     await this.auditService.log({
       action: 'VISITOR_ACKNOWLEDGED',
@@ -252,83 +276,8 @@ export class AttentionService {
   }
 
   // ─────────────────────────────
-  // PRAYER WARRIORS
+  // Prayer-team reads and membership changes live in PrayerTeamService.
   // ─────────────────────────────
-
-  async addPrayerWarrior(userId: string, actorUserId: string) {
-    this.logger.log(`ADD_PRAYER_WARRIOR_STARTED: ${userId}`);
-
-    const user = await this.prisma.user.findFirst({
-      where: { id: toBigInt(userId) },
-      include: { member: true },
-    });
-
-    if (!user) throw new NotFoundException('User not found');
-
-    if (!user.email) {
-      throw new Error('User must have a valid email');
-    }
-
-    if (!user.member) {
-      throw new Error('User must be linked to a member');
-    }
-
-    const data = await this.prisma.prayerWarrior.create({
-      data: {
-        userId: user.id,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'PRAYER_WARRIOR_ADDED',
-      entity: 'PrayerWarrior',
-      entityId: userId,
-      userId: toBigInt(actorUserId),
-      after: data,
-    });
-
-    this.logger.log(`ADD_PRAYER_WARRIOR_SUCCESS: ${userId}`);
-
-    return { success: true, data };
-  }
-
-  async removePrayerWarrior(userId: string, actorUserId: string) {
-    this.logger.log(`REMOVE_PRAYER_WARRIOR_STARTED: ${userId}`);
-
-    await this.prisma.prayerWarrior.delete({
-      where: { userId: toBigInt(userId) },
-    });
-    await this.auditService.log({
-      action: 'PRAYER_WARRIOR_REMOVED',
-      entity: 'PrayerWarrior',
-      entityId: userId,
-      userId: toBigInt(actorUserId),
-    });
-
-    this.logger.log(`REMOVE_PRAYER_WARRIOR_SUCCESS: ${userId}`);
-
-    return { success: true };
-  }
-
-  async getPrayerWarriors() {
-    this.logger.log('FETCHING_PRAYER_WARRIORS');
-
-    const data = await this.prisma.prayerWarrior.findMany({
-      include: {
-        user: {
-          include: {
-            member: true,
-          },
-        },
-      },
-    });
-
-    return {
-      success: true,
-      data,
-      meta: {},
-    };
-  }
 
   // ─────────────────────────────
   // OVERVIEW + READ METHODS
@@ -343,7 +292,7 @@ export class AttentionService {
         take: 20,
       }),
       this.prisma.visitor.findMany({
-        where: { status: { not: 'CONFIRMED' } },
+        where: { status: 'PENDING' },
         orderBy: { createdAt: 'desc' },
         take: 20,
       }),
@@ -351,7 +300,7 @@ export class AttentionService {
         where: { status: { not: 'PRAYED_FOR' } },
       }),
       this.prisma.visitor.count({
-        where: { status: { not: 'CONFIRMED' } },
+        where: { status: 'PENDING' },
       }),
     ]);
 

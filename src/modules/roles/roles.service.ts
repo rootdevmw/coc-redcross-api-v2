@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import { accessListPagination, roleListWhere, type AccessListQuery } from '../../common/utils/access-list-filters';
 
 @Injectable()
 export class RolesService {
@@ -57,17 +58,18 @@ export class RolesService {
   // -----------------------------
   // GET ALL (NO AUDIT)
   // -----------------------------
-  async findAll(query: any) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
+  async findAll(query: AccessListQuery) {
+    const { page, limit } = accessListPagination(query);
+    const where = roleListWhere(query);
 
     const [data, total] = await Promise.all([
       this.prisma.role.findMany({
+        where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { name: 'asc' },
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
       }),
-      this.prisma.role.count(),
+      this.prisma.role.count({ where }),
     ]);
 
     return {

@@ -1,6 +1,6 @@
 import {
-  ConflictException,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnauthorizedException,
@@ -8,11 +8,17 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { toBigInt, toBigIntOptional } from 'src/common/utils/to-bigint';
+import { toBigInt } from 'src/common/utils/to-bigint';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { EmailService } from '../email/email.service';
 import { assertCanAssignRole } from './utils/role-hierarchy';
+import {
+  accountEmail,
+  accountLoginInput,
+  finishAccountPassword,
+  changeAccountPassword,
+} from './account-flows';
 
 @Injectable()
 export class AuthService {
@@ -28,101 +34,62 @@ export class AuthService {
   // -----------------------------
   // LOGIN (KEEP MANUAL AUDIT)
   // -----------------------------
-  async login(dto: any) {
-    const email = dto.email?.toLowerCase().trim();
-
-    this.logger.log(`LOGIN_ATTEMPT → ${email || 'NO_EMAIL'}`);
-
-    if (!email || !dto.password) {
-      this.logger.warn(`LOGIN_FAILED: missing credentials`);
-
-      await this.auditService.log({
-        action: 'LOGIN_FAILED',
-        entity: 'User',
-        entityId: '',
-        after: { email, reason: 'missing_credentials' },
-      });
-
-      throw new UnauthorizedException('Email and password are required');
-    }
-
+  async login(dto: unknown) {
+    const { email, password } = accountLoginInput(dto);
     const user = await this.prisma.user.findFirst({
-      where: { email },
-      include: { roles: { include: { role: true } } },
+      where: { email, deletedAt: null },
+      include: {
+        roles: {
+          where: { role: { deletedAt: null } },
+          include: { role: true },
+        },
+      },
     });
-
-    if (!user) {
-      this.logger.warn(`LOGIN_FAILED: user not found → ${email}`);
-
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       await this.auditService.log({
         action: 'LOGIN_FAILED',
         entity: 'User',
-        entityId: '',
-        after: { email, reason: 'user_not_found' },
+        entityId: user?.id.toString() ?? '',
+        after: { email, reason: 'invalid_credentials' },
       });
-
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Email and password were not accepted.');
     }
-
-    const valid = await bcrypt.compare(dto.password, user.password);
-
-    if (!valid) {
-      this.logger.warn(`LOGIN_FAILED: invalid password → ${email}`);
-
-      await this.auditService.log({
-        action: 'LOGIN_FAILED',
-        entity: 'User',
-        entityId: user.id.toString(),
-        after: { email, reason: 'invalid_password' },
-      });
-
-      throw new UnauthorizedException();
-    }
-
+    const duration = Number(this.config.get('COOKIE_MAX_AGE'));
+    if (
+      !Number.isSafeInteger(duration) ||
+      duration <= 0 ||
+      !Number.isFinite(new Date(Date.now() + duration).getTime())
+    )
+      throw new InternalServerErrorException(
+        'Session configuration is unavailable.',
+      );
     const sessionId = crypto.randomBytes(32).toString('hex');
-
     await this.prisma.session.create({
       data: {
         id: sessionId,
         userId: user.id,
-        expiresAt: new Date(
-          Date.now() + Number(this.config.get('COOKIE_MAX_AGE')),
-        ),
+        expiresAt: new Date(Date.now() + duration),
       },
     });
-
+    const safeUser = {
+      id: user.id,
+      email: user.email,
+      roles: user.roles.map((record) => record.role.name),
+    };
     await this.auditService.log({
       action: 'LOGIN_SUCCESS',
       entity: 'User',
       entityId: user.id.toString(),
-      after: {
-        email: user.email,
-        roles: user.roles.map((r) => r.role.name),
-        sessionId,
-      },
+      after: { email: safeUser.email, roles: safeUser.roles },
     });
-
-    this.logger.log(`LOGIN_SUCCESS → ${email}`);
-
-    return {
-      success: true,
-      data: {
-        sessionId,
-        user: {
-          id: user.id,
-          email: user.email,
-          roles: user.roles.map((r) => r.role.name),
-        },
-      },
-      meta: {},
-    };
+    return { success: true, data: { sessionId, user: safeUser }, meta: {} };
   }
 
   // -----------------------------
   // REQUEST RESET (KEEP MANUAL)
   // -----------------------------
   async requestPasswordReset(email: string) {
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = accountEmail(email);
 
     this.logger.log(`PASSWORD_RESET_REQUEST → ${normalizedEmail}`);
 
@@ -176,107 +143,39 @@ export class AuthService {
   // -----------------------------
   // SET PASSWORD (MIXED)
   // -----------------------------
-  async setPassword(dto: { token: string; password: string }) {
-    this.logger.log(`SET_PASSWORD_ATTEMPT`);
-
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(dto.token)
-      .digest('hex');
-
-    const record = await this.prisma.passwordResetToken.findUnique({
-      where: { token: hashedToken },
-    });
-
-    if (!record || record.expiresAt < new Date()) {
-      this.logger.warn(`SET_PASSWORD_FAILED: invalid/expired token`);
-
-      await this.auditService.log({
-        action: 'PASSWORD_RESET_FAILED',
-        entity: 'User',
-        entityId: '',
-        after: { reason: 'invalid_or_expired_token' },
-      });
-
-      throw new NotFoundException('Invalid or expired token');
-    }
-
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-    const user = await this.prisma.user.update({
-      where: { email: record.email },
-      data: { password: hashedPassword },
-    });
-
-    await this.prisma.passwordResetToken.delete({
-      where: { token: hashedToken },
-    });
-
-    await this.auditService.log({
-      action: 'PASSWORD_CHANGED_VIA_RESET',
-      entity: 'User',
-      entityId: user.id.toString(),
-      after: { email: user.email },
-    });
-
-    this.logger.log(`PASSWORD_SET_SUCCESS → ${record.email}`);
-
-    return { success: true, data: {}, meta: {} };
+  setPassword(dto: unknown) {
+    return this.finishPassword(dto, 'set');
   }
-
-  // -----------------------------
-  // CHANGE PASSWORD
-  // -----------------------------
-  async changePassword(
-    userId: string,
-    dto: { currentPassword: string; newPassword: string },
-    actorUser?: any,
+  private async finishPassword(dto: unknown, kind: 'set' | 'reset') {
+    try {
+      return await finishAccountPassword(
+        this.prisma,
+        this.auditService,
+        dto,
+        kind,
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException)
+        await this.auditService.log({
+          action: 'PASSWORD_RESET_FAILED',
+          entity: 'User',
+          after: { reason: 'invalid_or_expired_token' },
+        });
+      throw error;
+    }
+  }
+  changePassword(
+    userId: string | bigint,
+    dto: unknown,
+    actorUser?: { id?: bigint },
   ) {
-    this.logger.log(`CHANGE_PASSWORD → user ${userId}`);
-
-    const user = await this.prisma.user.findUnique({
-      where: { id: toBigIntOptional(userId) },
-    });
-
-    if (!user) {
-      this.logger.warn(`CHANGE_PASSWORD_FAILED: user not found`);
-
-      throw new NotFoundException();
-    }
-
-    const valid = await bcrypt.compare(dto.currentPassword, user.password);
-
-    if (!valid) {
-      this.logger.warn(`CHANGE_PASSWORD_FAILED: incorrect password`);
-
-      await this.auditService.log({
-        action: 'PASSWORD_CHANGE_FAILED',
-        entity: 'User',
-        entityId: user.id.toString(),
-        after: { reason: 'incorrect_current_password' },
-        userId: actorUser?.id,
-      });
-
-      throw new ConflictException('Incorrect password');
-    }
-
-    const hashed = await bcrypt.hash(dto.newPassword, 10);
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { password: hashed },
-    });
-
-    await this.auditService.log({
-      action: 'PASSWORD_CHANGED',
-      entity: 'User',
-      entityId: user.id.toString(),
-      userId: actorUser?.id,
-    });
-
-    this.logger.log(`PASSWORD_CHANGED_SUCCESS → ${user.email}`);
-
-    return { success: true, data: {}, meta: {} };
+    return changeAccountPassword(
+      this.prisma,
+      this.auditService,
+      userId,
+      dto,
+      actorUser?.id,
+    );
   }
 
   // -----------------------------
@@ -435,45 +334,7 @@ export class AuthService {
   // -----------------------------
   // RESET PASSWORD (SET NEW PASSWORD)
   // -----------------------------
-  async resetPassword(dto: { token: string; password: string }) {
-    this.logger.log(`RESET_PASSWORD_ATTEMPT`);
-
-    const hashedToken = crypto
-      .createHash('sha256')
-      .update(dto.token)
-      .digest('hex');
-
-    const record = await this.prisma.passwordResetToken.findUnique({
-      where: { token: hashedToken },
-    });
-
-    if (!record || record.expiresAt < new Date()) {
-      await this.auditService.log({
-        action: 'PASSWORD_RESET_FAILED',
-        entity: 'User',
-        after: { reason: 'invalid_or_expired_token' },
-      });
-
-      throw new NotFoundException('Invalid or expired token');
-    }
-
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-
-    const user = await this.prisma.user.update({
-      where: { email: record.email },
-      data: { password: hashedPassword },
-    });
-
-    await this.prisma.passwordResetToken.delete({
-      where: { token: hashedToken },
-    });
-
-    await this.auditService.log({
-      action: 'PASSWORD_RESET_SUCCESS',
-      entity: 'User',
-      entityId: user.id.toString(),
-    });
-
-    return { success: true, data: {}, meta: {} };
+  resetPassword(dto: unknown) {
+    return this.finishPassword(dto, 'reset');
   }
 }

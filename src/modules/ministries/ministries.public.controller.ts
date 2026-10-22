@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
-import { QueryMinistryDto } from './dto/query-ministry.dto';
+import type { PublicGroupQuery } from '../../common/utils/public-groups';
 import { MinistriesService } from './ministries.service';
 
 @Controller('public/ministries')
@@ -9,8 +9,8 @@ export class PublicMinistriesController {
 
   @Get()
   @Public()
-  findAll(@Query() query: QueryMinistryDto) {
-    return this.service.findAll(query);
+  findAll(@Query() query: PublicGroupQuery = {}) {
+    return this.service.findPublic(query);
   }
 
   @Get(':slug')

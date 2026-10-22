@@ -46,6 +46,7 @@ export type MemberMinAggregateOutputType = {
   lastName: string | null
   phone: string | null
   status: string | null
+  imageUrl: string | null
   baptized: boolean | null
   baptismDate: Date | null
   location: string | null
@@ -62,6 +63,7 @@ export type MemberMaxAggregateOutputType = {
   lastName: string | null
   phone: string | null
   status: string | null
+  imageUrl: string | null
   baptized: boolean | null
   baptismDate: Date | null
   location: string | null
@@ -78,6 +80,7 @@ export type MemberCountAggregateOutputType = {
   lastName: number
   phone: number
   status: number
+  imageUrl: number
   baptized: number
   baptismDate: number
   location: number
@@ -108,6 +111,7 @@ export type MemberMinAggregateInputType = {
   lastName?: true
   phone?: true
   status?: true
+  imageUrl?: true
   baptized?: true
   baptismDate?: true
   location?: true
@@ -124,6 +128,7 @@ export type MemberMaxAggregateInputType = {
   lastName?: true
   phone?: true
   status?: true
+  imageUrl?: true
   baptized?: true
   baptismDate?: true
   location?: true
@@ -140,6 +145,7 @@ export type MemberCountAggregateInputType = {
   lastName?: true
   phone?: true
   status?: true
+  imageUrl?: true
   baptized?: true
   baptismDate?: true
   location?: true
@@ -243,6 +249,7 @@ export type MemberGroupByOutputType = {
   lastName: string
   phone: string | null
   status: string
+  imageUrl: string | null
   baptized: boolean
   baptismDate: Date | null
   location: string | null
@@ -282,6 +289,7 @@ export type MemberWhereInput = {
   lastName?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   status?: Prisma.StringFilter<"Member"> | string
+  imageUrl?: Prisma.StringNullableFilter<"Member"> | string | null
   baptized?: Prisma.BoolFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableFilter<"Member"> | string | null
@@ -310,6 +318,7 @@ export type MemberOrderByWithRelationInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -342,6 +351,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   lastName?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   status?: Prisma.StringFilter<"Member"> | string
+  imageUrl?: Prisma.StringNullableFilter<"Member"> | string | null
   baptized?: Prisma.BoolFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableFilter<"Member"> | string | null
@@ -370,6 +380,7 @@ export type MemberOrderByWithAggregationInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrderInput | Prisma.SortOrder
   location?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -394,6 +405,7 @@ export type MemberScalarWhereWithAggregatesInput = {
   lastName?: Prisma.StringWithAggregatesFilter<"Member"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   status?: Prisma.StringWithAggregatesFilter<"Member"> | string
+  imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
   baptized?: Prisma.BoolWithAggregatesFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
@@ -409,6 +421,7 @@ export type MemberCreateInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -436,6 +449,7 @@ export type MemberUncheckedCreateInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -461,6 +475,7 @@ export type MemberUpdateInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -488,6 +503,7 @@ export type MemberUncheckedUpdateInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -514,6 +530,7 @@ export type MemberCreateManyInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -529,6 +546,7 @@ export type MemberUpdateManyMutationInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -544,6 +562,7 @@ export type MemberUncheckedUpdateManyInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -571,6 +590,7 @@ export type MemberCountOrderByAggregateInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -593,6 +613,7 @@ export type MemberMaxOrderByAggregateInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -609,6 +630,7 @@ export type MemberMinOrderByAggregateInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
   baptized?: Prisma.SortOrder
   baptismDate?: Prisma.SortOrder
   location?: Prisma.SortOrder
@@ -889,6 +911,7 @@ export type MemberCreateWithoutUserInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -914,6 +937,7 @@ export type MemberUncheckedCreateWithoutUserInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -955,6 +979,7 @@ export type MemberUpdateWithoutUserInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -980,6 +1005,7 @@ export type MemberUncheckedUpdateWithoutUserInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1005,6 +1031,7 @@ export type MemberCreateWithoutMinistriesInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1031,6 +1058,7 @@ export type MemberUncheckedCreateWithoutMinistriesInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1071,6 +1099,7 @@ export type MemberUpdateWithoutMinistriesInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1097,6 +1126,7 @@ export type MemberUncheckedUpdateWithoutMinistriesInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1121,6 +1151,7 @@ export type MemberCreateWithoutLeadingHomecellsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1147,6 +1178,7 @@ export type MemberUncheckedCreateWithoutLeadingHomecellsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1176,6 +1208,7 @@ export type MemberCreateWithoutHomecellsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1202,6 +1235,7 @@ export type MemberUncheckedCreateWithoutHomecellsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1231,6 +1265,7 @@ export type MemberCreateWithoutHomecellInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1257,6 +1292,7 @@ export type MemberUncheckedCreateWithoutHomecellInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1302,6 +1338,7 @@ export type MemberUpdateWithoutLeadingHomecellsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1328,6 +1365,7 @@ export type MemberUncheckedUpdateWithoutLeadingHomecellsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1363,6 +1401,7 @@ export type MemberUpdateWithoutHomecellsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1389,6 +1428,7 @@ export type MemberUncheckedUpdateWithoutHomecellsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1433,6 +1473,7 @@ export type MemberScalarWhereInput = {
   lastName?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   status?: Prisma.StringFilter<"Member"> | string
+  imageUrl?: Prisma.StringNullableFilter<"Member"> | string | null
   baptized?: Prisma.BoolFilter<"Member"> | boolean
   baptismDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   location?: Prisma.StringNullableFilter<"Member"> | string | null
@@ -1448,6 +1489,7 @@ export type MemberCreateWithoutBioInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1474,6 +1516,7 @@ export type MemberUncheckedCreateWithoutBioInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1514,6 +1557,7 @@ export type MemberUpdateWithoutBioInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1540,6 +1584,7 @@ export type MemberUncheckedUpdateWithoutBioInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1564,6 +1609,7 @@ export type MemberCreateWithoutLeadingMinistriesInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1590,6 +1636,7 @@ export type MemberUncheckedCreateWithoutLeadingMinistriesInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1619,6 +1666,7 @@ export type MemberCreateWithoutOverseeingMinistriesInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1645,6 +1693,7 @@ export type MemberUncheckedCreateWithoutOverseeingMinistriesInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1685,6 +1734,7 @@ export type MemberUpdateWithoutLeadingMinistriesInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1711,6 +1761,7 @@ export type MemberUncheckedUpdateWithoutLeadingMinistriesInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1746,6 +1797,7 @@ export type MemberUpdateWithoutOverseeingMinistriesInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1772,6 +1824,7 @@ export type MemberUncheckedUpdateWithoutOverseeingMinistriesInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1796,6 +1849,7 @@ export type MemberCreateWithoutContentsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1822,6 +1876,7 @@ export type MemberUncheckedCreateWithoutContentsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1862,6 +1917,7 @@ export type MemberUpdateWithoutContentsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1888,6 +1944,7 @@ export type MemberUncheckedUpdateWithoutContentsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1912,6 +1969,7 @@ export type MemberCreateWithoutProgramItemsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1938,6 +1996,7 @@ export type MemberUncheckedCreateWithoutProgramItemsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -1978,6 +2037,7 @@ export type MemberUpdateWithoutProgramItemsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2004,6 +2064,7 @@ export type MemberUncheckedUpdateWithoutProgramItemsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2028,6 +2089,7 @@ export type MemberCreateWithoutProgramTemplateItemsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -2054,6 +2116,7 @@ export type MemberUncheckedCreateWithoutProgramTemplateItemsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -2094,6 +2157,7 @@ export type MemberUpdateWithoutProgramTemplateItemsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2120,6 +2184,7 @@ export type MemberUncheckedUpdateWithoutProgramTemplateItemsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2144,6 +2209,7 @@ export type MemberCreateWithoutAttentionActionsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -2170,6 +2236,7 @@ export type MemberUncheckedCreateWithoutAttentionActionsInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -2210,6 +2277,7 @@ export type MemberUpdateWithoutAttentionActionsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2236,6 +2304,7 @@ export type MemberUncheckedUpdateWithoutAttentionActionsInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2261,6 +2330,7 @@ export type MemberCreateManyHomecellInput = {
   lastName: string
   phone?: string | null
   status: string
+  imageUrl?: string | null
   baptized?: boolean
   baptismDate?: Date | string | null
   location?: string | null
@@ -2275,6 +2345,7 @@ export type MemberUpdateWithoutHomecellInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2301,6 +2372,7 @@ export type MemberUncheckedUpdateWithoutHomecellInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2326,6 +2398,7 @@ export type MemberUncheckedUpdateManyWithoutHomecellInput = {
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   baptized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   baptismDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2444,6 +2517,7 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   lastName?: boolean
   phone?: boolean
   status?: boolean
+  imageUrl?: boolean
   baptized?: boolean
   baptismDate?: boolean
   location?: boolean
@@ -2475,6 +2549,7 @@ export type MemberSelectScalar = {
   lastName?: boolean
   phone?: boolean
   status?: boolean
+  imageUrl?: boolean
   baptized?: boolean
   baptismDate?: boolean
   location?: boolean
@@ -2483,7 +2558,7 @@ export type MemberSelectScalar = {
   homecellId?: boolean
 }
 
-export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "prefix" | "firstName" | "lastName" | "phone" | "status" | "baptized" | "baptismDate" | "location" | "createdAt" | "deletedAt" | "homecellId", ExtArgs["result"]["member"]>
+export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "prefix" | "firstName" | "lastName" | "phone" | "status" | "imageUrl" | "baptized" | "baptismDate" | "location" | "createdAt" | "deletedAt" | "homecellId", ExtArgs["result"]["member"]>
 export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
   ministries?: boolean | Prisma.Member$ministriesArgs<ExtArgs>
@@ -2524,6 +2599,7 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     lastName: string
     phone: string | null
     status: string
+    imageUrl: string | null
     baptized: boolean
     baptismDate: Date | null
     location: string | null
@@ -2918,6 +2994,7 @@ export interface MemberFieldRefs {
   readonly lastName: Prisma.FieldRef<"Member", 'String'>
   readonly phone: Prisma.FieldRef<"Member", 'String'>
   readonly status: Prisma.FieldRef<"Member", 'String'>
+  readonly imageUrl: Prisma.FieldRef<"Member", 'String'>
   readonly baptized: Prisma.FieldRef<"Member", 'Boolean'>
   readonly baptismDate: Prisma.FieldRef<"Member", 'DateTime'>
   readonly location: Prisma.FieldRef<"Member", 'String'>

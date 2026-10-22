@@ -18,6 +18,7 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { QueryMemberDto } from './dto/query-member.dto';
 import { SessionAuthGuard } from '../auth/guard/session.guard';
 import { Response } from 'express';
+import type { LeadershipQuery } from '../../common/utils/church-group-editor';
 
 @Controller('members')
 @Roles('DEACON')
@@ -48,6 +49,11 @@ export class MembersController {
   @Get()
   findAll(@Query() query: QueryMemberDto) {
     return this.service.findAll(query);
+  }
+
+  @Get('leadership-options')
+  leadershipOptions(@Query() query: LeadershipQuery) {
+    return this.service.leadershipOptions(query);
   }
 
   @Get(':id')

@@ -21,10 +21,12 @@ import { RolesModule } from './modules/roles/roles.module';
 import { StreamsModule } from './modules/streams/streams.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
     PrismaModule,
+    DashboardModule,
     MembersModule,
     HomecellsModule,
     MinistriesModule,

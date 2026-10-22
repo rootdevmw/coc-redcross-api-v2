@@ -12,10 +12,14 @@ export class AuditController {
   findByEntity(@Param('entity') entity: string, @Query() query: any) {
     return this.auditReader.findByEntity({
       entity,
-      page: Number(query.page) || 1,
-      limit: Number(query.limit) || 10,
+      page: query.page,
+      limit: query.limit,
       action: query.action,
       search: query.search,
+      actionSearch: query.actionSearch,
+      actorId: query.actorId,
+      from: query.from,
+      to: query.to,
     });
   }
 

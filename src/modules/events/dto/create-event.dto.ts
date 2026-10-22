@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsDateString, IsArray } from 'class-validator';
 
 export class CreateEventDto {
   @IsString()
@@ -22,6 +22,7 @@ export class CreateEventDto {
   typeId!: string;
 
   @IsOptional()
-  @IsString()
+  @IsArray()
+  @IsString({ each: true })
   ministryIds?: string[];
 }

@@ -1,17 +1,64 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config/dist/config.service';
-import sgMail from '@sendgrid/mail';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
+  private transporter: nodemailer.Transporter;
+
   constructor(private config: ConfigService) {
-    if (!process.env.SENDGRID_API_KEY) {
-      this.logger.error('SENDGRID_API_KEY is not set');
-    } else {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-      this.logger.log('SendGrid initialized');
+    const user = process.env.GMAIL_USER;
+    const appPassword = process.env.GMAIL_APP_PASSWORD;
+    const from = process.env.GMAIL_FROM || user;
+
+    if (!user || !appPassword || !from) {
+      this.logger.warn(
+        'Gmail SMTP is not configured. Email delivery will be skipped until GMAIL_USER, GMAIL_APP_PASSWORD, and GMAIL_FROM are set.',
+      );
+      this.transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: '',
+          pass: '',
+        },
+      });
+      return;
+    }
+
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user,
+        pass: appPassword,
+      },
+    });
+
+    this.logger.log('Gmail SMTP initialized');
+  }
+
+  private async sendEmailSafely(payload: any, context: string) {
+    if (
+      !process.env.GMAIL_USER ||
+      !process.env.GMAIL_APP_PASSWORD ||
+      !process.env.GMAIL_FROM
+    ) {
+      this.logger.warn(
+        `${context} skipped because Gmail SMTP is not configured.`,
+      );
+      return;
+    }
+
+    try {
+      await this.transporter.sendMail({
+        ...payload,
+        from: process.env.GMAIL_FROM,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : JSON.stringify(error);
+      this.logger.error(`${context} failed: ${message}`);
     }
   }
 
@@ -43,11 +90,11 @@ export class EmailService {
     const expiry = this.getExpiryText(ttl);
     this.logger.log(`Sending set password email → ${email}`);
 
-    await sgMail.send({
-      to: email,
-      from: process.env.SENDGRID_FROM!,
-      subject: 'Set Your Password — Church of Christ at Redcross',
-      html: this.wrapEmail(`
+    await this.sendEmailSafely(
+      {
+        to: email,
+        subject: 'Set Your Password — Church of Christ at Redcross',
+        html: this.wrapEmail(`
         <p style="
           margin:0 0 8px;
           font-size:11px;
@@ -109,7 +156,9 @@ export class EmailService {
           This link expires in ${expiry}. If you did not expect this email, you can ignore it.
         </p>
       `),
-    });
+      },
+      'Set password email',
+    );
   }
 
   // --------------------------------------------------
@@ -124,11 +173,11 @@ export class EmailService {
 
     this.logger.log(`Sending reset password email → ${email}`);
 
-    await sgMail.send({
-      to: email,
-      from: process.env.SENDGRID_FROM!,
-      subject: 'Reset Your Password — Church of Christ at Redcross',
-      html: this.wrapEmail(`
+    await this.sendEmailSafely(
+      {
+        to: email,
+        subject: 'Reset Your Password — Church of Christ at Redcross',
+        html: this.wrapEmail(`
         <p style="
           margin:0 0 8px;
           font-size:11px;
@@ -190,7 +239,9 @@ export class EmailService {
           This link expires in ${expiry}. If you did not request this, you can ignore this email.
         </p>
       `),
-    });
+      },
+      'Reset password email',
+    );
   }
 
   // --------------------------------------------------
@@ -295,11 +346,11 @@ export class EmailService {
   async sendPrayerRequestNotification(email: string, prayer: any) {
     this.logger.log(`Sending prayer request notification → ${email}`);
 
-    await sgMail.send({
-      to: email,
-      from: process.env.SENDGRID_FROM!,
-      subject: `New Prayer Request - ${prayer.prayerFor}`,
-      html: this.wrapEmail(`
+    await this.sendEmailSafely(
+      {
+        to: email,
+        subject: `New Prayer Request - ${prayer.prayerFor}`,
+        html: this.wrapEmail(`
       <h2 style="color:#fff;">New Prayer Request</h2>
 
       <p style="color:#9ca3af;">
@@ -316,18 +367,20 @@ export class EmailService {
         Please remember to mark it as <strong>prayed for</strong> in the system once you have prayed.
       </p>
     `),
-    });
+      },
+      'Prayer request notification',
+    );
   }
 
   // PRAYER COMPLETED NOTIFICATION
   async sendPrayerCompletedNotification(email: string, prayer: any) {
     this.logger.log(`Sending prayer completed notification → ${email}`);
 
-    await sgMail.send({
-      to: email,
-      from: process.env.SENDGRID_FROM!,
-      subject: `Prayer Answered - ${prayer.prayerFor}`,
-      html: this.wrapEmail(`
+    await this.sendEmailSafely(
+      {
+        to: email,
+        subject: `Prayer Answered - ${prayer.prayerFor}`,
+        html: this.wrapEmail(`
       <h2 style="color:#fff;">Prayer Marked as Prayed For</h2>
 
       <p style="color:#9ca3af;">
@@ -343,6 +396,8 @@ export class EmailService {
         Thank you for your faithful intercession.
       </p>
     `),
-    });
+      },
+      'Prayer completed notification',
+    );
   }
 }

@@ -25,15 +25,17 @@ export class AuthController {
   ) {}
 
   private getCookieName(): string {
-    return this.config.get<string>('COOKIE_NAME')!;
+    return this.config.get<string>('COOKIE_NAME') || 'session_id';
   }
 
-  private getCookieOptions() {
+  private getCookieOptions(persistent = true) {
     return {
       httpOnly: this.config.get<string>('COOKIE_HTTP_ONLY') === 'true',
       secure: this.config.get<string>('COOKIE_SECURE') === 'true',
       sameSite: this.config.get<'lax' | 'strict' | 'none'>('COOKIE_SAME_SITE'),
-      maxAge: Number(this.config.get<string>('COOKIE_MAX_AGE')),
+      ...(persistent && {
+        maxAge: Number(this.config.get<string>('COOKIE_MAX_AGE')),
+      }),
     };
   }
 
@@ -64,9 +66,11 @@ export class AuthController {
   @Post('logout')
   @Public()
   async logout(@Req() req: any, @Res({ passthrough: true }) res: Response) {
-    const result = await this.service.logout(req.cookies?.session_id);
+    const result = await this.service.logout(
+      req.cookies?.[this.getCookieName()],
+    );
 
-    res.clearCookie(this.getCookieName(), this.getCookieOptions());
+    res.clearCookie(this.getCookieName(), this.getCookieOptions(false));
 
     return result;
   }
@@ -80,13 +84,24 @@ export class AuthController {
     return this.service.requestPasswordReset(email);
   }
 
+  @Post('forgot-password')
+  @Public()
+  forgotPassword(@Body('email') email: string) {
+    return this.service.requestPasswordReset(email);
+  }
+
   // -----------------------------
   // SET PASSWORD (FIRST TIME)
   // -----------------------------
   @Post('set-password')
   @Public()
-  setPassword(@Body() dto: { token: string; password: string }) {
-    return this.service.setPassword(dto);
+  async setPassword(
+    @Body() dto: { token: string; password: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.service.setPassword(dto);
+    res.clearCookie(this.getCookieName(), this.getCookieOptions(false));
+    return result;
   }
 
   // -----------------------------
@@ -94,8 +109,13 @@ export class AuthController {
   // -----------------------------
   @Post('reset-password')
   @Public()
-  resetPassword(@Body() dto: { token: string; password: string }) {
-    return this.service.resetPassword(dto);
+  async resetPassword(
+    @Body() dto: { token: string; password: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.service.resetPassword(dto);
+    res.clearCookie(this.getCookieName(), this.getCookieOptions(false));
+    return result;
   }
 
   // -----------------------------
@@ -104,11 +124,18 @@ export class AuthController {
   @Post('change-password')
   @UseGuards(SessionAuthGuard)
   @Roles('VISITOR')
-  changePassword(
+  async changePassword(
     @Request() req: any,
     @Body() dto: { currentPassword: string; newPassword: string },
+    @Res({ passthrough: true }) res: Response,
   ) {
-    return this.service.changePassword(req.user.id, dto, req.user);
+    const result = await this.service.changePassword(
+      req.user.id,
+      dto,
+      req.user,
+    );
+    res.clearCookie(this.getCookieName(), this.getCookieOptions(false));
+    return result;
   }
 
   // -----------------------------

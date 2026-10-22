@@ -5,6 +5,13 @@ import { UpdateHomecellDto } from './dto/update-homecell.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import { SlugService } from 'src/common/utils/slugify';
+import { saveChurchGroup } from '../../common/utils/church-group-editor';
+import {
+  listPublicGroups,
+  readPublicGroup,
+  publicHomecellMembers,
+  type PublicGroupQuery,
+} from '../../common/utils/public-groups';
 
 @Injectable()
 export class HomecellsService {
@@ -16,36 +23,16 @@ export class HomecellsService {
     private slugify: SlugService,
   ) {}
 
-  async create(dto: CreateHomecellDto, user?: any) {
-    this.logger.log('CREATE_HOMECELL_STARTED');
+  async create(dto: CreateHomecellDto, user?: { id: bigint }) {
+    return saveChurchGroup(this.prisma, this.auditService, this.slugify, 'homecell', dto, user?.id);
+  }
 
-    const slug = await this.slugify.generateUniqueSlug(dto.name, 'homecell');
+  findPublic(query: PublicGroupQuery = {}) {
+    return listPublicGroups(this.prisma, 'homecell', query);
+  }
 
-    const homecell = await this.prisma.homecell.create({
-      data: {
-        name: dto.name,
-        slug,
-        location: dto.location,
-        leaderId: dto.leaderId ? toBigInt(dto.leaderId) : undefined,
-        overseerId: dto.overseerId ? toBigInt(dto.overseerId) : undefined,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'HOMECELL_CREATED',
-      entity: 'Homecell',
-      entityId: homecell.id.toString(),
-      after: homecell,
-      userId: user?.id,
-    });
-
-    this.logger.log(`CREATE_HOMECELL_SUCCESS: ${homecell.name}`);
-
-    return {
-      success: true,
-      data: homecell,
-      meta: {},
-    };
+  getPublicMembers(id: string) {
+    return publicHomecellMembers(this.prisma, id);
   }
 
   async findAll() {
@@ -127,83 +114,12 @@ export class HomecellsService {
     };
   }
 
-  async findBySlug(slug: string) {
-    this.logger.log(`FETCH_HOMECELL_BY_SLUG: ${slug}`);
-    const now = new Date();
-
-    const homecell = await this.prisma.homecell.findFirst({
-      where: { slug },
-      include: {
-        leader: {
-          include: { bio: true },
-        },
-        members: {
-          where: { deletedAt: null },
-        },
-        programs: {
-          where: {
-            deletedAt: null,
-            date: { gte: now },
-          },
-        },
-        overseer: {
-          include: { bio: true },
-        },
-      },
-    });
-
-    if (!homecell) throw new NotFoundException('Homecell not found');
-
-    return {
-      success: true,
-      data: homecell,
-      meta: {},
-    };
+  findBySlug(slug: string) {
+    return readPublicGroup(this.prisma, 'homecell', slug);
   }
 
-  async update(id: string, dto: UpdateHomecellDto, user?: any) {
-    this.logger.log(`UPDATE_HOMECELL_STARTED: ${id}`);
-
-    const homecellId = toBigInt(id);
-
-    const before = await this.prisma.homecell.findFirst({
-      where: { id: homecellId },
-    });
-
-    if (!before) throw new NotFoundException('Homecell not found');
-
-    const slug =
-      dto.name && dto.name !== before.name
-        ? await this.slugify.generateUniqueSlug(dto.name, 'homecell')
-        : undefined;
-
-    const after = await this.prisma.homecell.update({
-      where: { id: homecellId },
-      data: {
-        name: dto.name,
-        ...(slug && { slug }),
-        location: dto.location,
-        leaderId: dto.leaderId ? toBigInt(dto.leaderId) : undefined,
-        overseerId: dto.overseerId ? toBigInt(dto.overseerId) : undefined,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'HOMECELL_UPDATED',
-      entity: 'Homecell',
-      entityId: id,
-      before,
-      after,
-      userId: user?.id,
-    });
-
-    this.logger.log(`UPDATE_HOMECELL_SUCCESS: ${id}`);
-
-    return {
-      success: true,
-      data: after,
-      meta: {},
-    };
+  async update(id: string, dto: UpdateHomecellDto, user?: { id: bigint }) {
+    return saveChurchGroup(this.prisma, this.auditService, this.slugify, 'homecell', dto, user?.id, id);
   }
 
   async remove(id: string, user?: any) {

@@ -6,6 +6,8 @@ import { QueryMemberDto } from './dto/query-member.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import ExcelJS from 'exceljs';
+import { saveMemberEditor } from './member-editor';
+import { leadershipOptions, type LeadershipQuery } from '../../common/utils/church-group-editor';
 
 @Injectable()
 export class MembersService {
@@ -19,45 +21,12 @@ export class MembersService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateMemberDto, user?: any) {
-    this.logger.log(`CREATE_MEMBER_STARTED: ${dto.firstName} ${dto.lastName}`);
+  async create(dto: CreateMemberDto, user?: { id: bigint }) {
+    return saveMemberEditor(this.prisma, this.auditService, dto, user?.id);
+  }
 
-    const member = await this.prisma.member.create({
-      data: {
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        prefix: dto.prefix,
-        phone: dto.phone,
-        status: dto.status,
-        location: dto.location,
-        homecell: dto.homecellId
-          ? { connect: { id: toBigInt(dto.homecellId) } }
-          : undefined,
-        baptized: dto.isBaptized,
-        baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : null,
-        bio: dto.bio?.trim() ? { create: { bio: dto.bio } } : undefined,
-      },
-      include: {
-        bio: true,
-        homecell: true,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'MEMBER_CREATED',
-      entity: 'Member',
-      entityId: member.id.toString(),
-      after: member,
-      userId: user?.id,
-    });
-
-    this.logger.log(`CREATE_MEMBER_SUCCESS: ${member.id}`);
-
-    return {
-      success: true,
-      data: member,
-      meta: {},
-    };
+  leadershipOptions(query: LeadershipQuery) {
+    return leadershipOptions(this.prisma, query);
   }
 
   // -----------------------------
@@ -89,6 +58,7 @@ export class MembersService {
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
+          bio: true,
           homecell: true,
           ministries: {
             where: {
@@ -123,6 +93,7 @@ export class MembersService {
     const member = await this.prisma.member.findFirst({
       where: { id: toBigInt(id) },
       include: {
+        bio: true,
         homecell: true,
         ministries: {
           where: {
@@ -144,63 +115,47 @@ export class MembersService {
   }
 
   // -----------------------------
-  // UPDATE
+  // PUBLIC MEMBER LOOKUPS
   // -----------------------------
-  async update(id: string, dto: UpdateMemberDto, user?: any) {
-    const memberId = toBigInt(id);
+  async findByPrefix(prefix: string) {
+    const normalizedPrefix = prefix.toUpperCase();
 
-    this.logger.log(`UPDATE_MEMBER_STARTED: ${id}`);
-
-    const before = await this.prisma.member.findFirst({
-      where: { id: memberId },
-    });
-
-    if (!before) throw new NotFoundException('Member not found');
-
-    const after = await this.prisma.member.update({
-      where: { id: memberId },
-      data: {
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        prefix: dto.prefix,
-        phone: dto.phone,
-        status: dto.status,
-        baptized: dto.isBaptized,
-        location: dto.location,
-        homecellId: dto.homecellId ? toBigInt(dto.homecellId) : undefined,
-        baptismDate: dto.baptismDate ? new Date(dto.baptismDate) : undefined,
-        bio:
-          dto.bio !== undefined
-            ? {
-                upsert: {
-                  create: { bio: dto.bio },
-                  update: { bio: dto.bio },
-                },
-              }
-            : undefined,
+    const members = await this.prisma.member.findMany({
+      where: {
+        prefix: normalizedPrefix,
+        deletedAt: null,
       },
-      include: {
-        bio: true,
-        homecell: true,
+      orderBy: { firstName: 'asc' },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        prefix: true,
+        imageUrl: true,
+        bio: { select: { id: true, bio: true } },
       },
     });
-
-    await this.auditService.log({
-      action: 'MEMBER_UPDATED',
-      entity: 'Member',
-      entityId: id,
-      before,
-      after,
-      userId: user?.id,
-    });
-
-    this.logger.log(`UPDATE_MEMBER_SUCCESS: ${id}`);
 
     return {
       success: true,
-      data: after,
-      meta: {},
+      data: members,
+      meta: { total: members.length },
     };
+  }
+
+  async findPastors() {
+    return this.findByPrefix('PASTOR');
+  }
+
+  async findElders() {
+    return this.findByPrefix('ELDER');
+  }
+
+  // -----------------------------
+  // UPDATE
+  // -----------------------------
+  async update(id: string, dto: UpdateMemberDto, user?: { id: bigint }) {
+    return saveMemberEditor(this.prisma, this.auditService, dto, user?.id, id);
   }
 
   // -----------------------------

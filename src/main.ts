@@ -18,7 +18,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new BigIntInterceptor());
   app.useGlobalInterceptors(new ResponseWrapperInterceptor());
   app.useGlobalFilters(new GlobalExceptionFilter());
-
+  app.getHttpAdapter().getInstance().set('trust proxy', true);
   const config = app.get(ConfigService);
 
   const raw = config.get<string>('CORS_ORIGIN');

@@ -6,6 +6,14 @@ import { QueryEventDto } from './dto/query-event.dto';
 import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import { SlugService } from 'src/common/utils/slugify';
+import { eventListWhere } from '../../common/utils/schedule-list-filters';
+import { saveEventEditor, createEventEditorType } from './event-editor';
+import {
+  listPublicEvents,
+  readPublicEvent,
+  listPublicEventTypes,
+  type PublicEventQuery,
+} from '../../common/utils/public-events';
 
 @Injectable()
 export class EventsService {
@@ -20,71 +28,39 @@ export class EventsService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateEventDto, user?: any) {
-    this.logger.log(`CREATE_EVENT_STARTED: ${dto.title}`);
-
-    const slug = await this.slugify.generateUniqueSlug(dto.title, 'event');
-
-    const event = await this.prisma.event.create({
-      data: {
-        title: dto.title,
-        description: dto.description,
-        location: dto.location,
-        slug,
-        typeId: toBigInt(dto.typeId),
-        startTime: new Date(dto.startTime),
-        endTime: new Date(dto.endTime),
-
-        ministries: dto.ministryIds
-          ? {
-              create: dto.ministryIds.map((ministryId) => ({
-                ministryId: toBigInt(ministryId),
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        ministries: { include: { ministry: true } },
-      },
-    });
-
-    await this.auditService.log({
-      action: 'EVENT_CREATED',
-      entity: 'Event',
-      entityId: event.id.toString(),
-      after: event,
-      userId: user?.id,
-    });
-
-    this.logger.log(`CREATE_EVENT_SUCCESS: ${event.id}`);
-
-    return { success: true, data: event, meta: {} };
+  async create(dto: CreateEventDto, user?: { id?: bigint }) {
+    return saveEventEditor(
+      this.prisma,
+      this.auditService,
+      this.slugify,
+      dto,
+      user?.id,
+    );
   }
 
   // -----------------------------
   // FIND ALL
   // -----------------------------
+  findPublic(query: PublicEventQuery = {}) {
+    return listPublicEvents(this.prisma, query);
+  }
+
+  getPublicTypes() {
+    return listPublicEventTypes(this.prisma);
+  }
+
   async findAll(query: QueryEventDto) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    const where: any = { deletedAt: null };
-
-    if (query.typeId) where.typeId = query.typeId;
-
-    if (query.startDate || query.endDate) {
-      where.startTime = {
-        gte: query.startDate ? new Date(query.startDate) : undefined,
-        lte: query.endDate ? new Date(query.endDate) : undefined,
-      };
-    }
+    const where = eventListWhere(query);
 
     const [data, total] = await Promise.all([
       this.prisma.event.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { startTime: 'asc' },
+        orderBy: [{ startTime: 'asc' }, { id: 'asc' }],
         include: {
           type: true,
           ministries: {
@@ -126,92 +102,22 @@ export class EventsService {
   // -----------------------------
   // FIND BY SLUG
   // -----------------------------
-  async findBySlug(slug: string) {
-    this.logger.log(`FETCH_EVENT_BY_SLUG: ${slug}`);
-
-    const event = await this.prisma.event.findFirst({
-      where: { slug },
-      include: {
-        type: true,
-        ministries: {
-          where: { ministry: { deletedAt: null } },
-          include: { ministry: true },
-        },
-      },
-    });
-
-    if (!event) throw new NotFoundException(`Event not found`);
-
-    return { success: true, data: event, meta: {} };
+  findBySlug(slug: string) {
+    return readPublicEvent(this.prisma, slug);
   }
 
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: UpdateEventDto, user?: any) {
-    const eventId = toBigInt(id);
-
-    this.logger.log(`UPDATE_EVENT_STARTED: ${id}`);
-
-    const before = await this.prisma.event.findFirst({
-      where: { id: eventId },
-      include: { ministries: true },
-    });
-
-    if (!before) throw new NotFoundException(`Event not found`);
-
-    if (dto.ministryIds) {
-      await this.prisma.eventMinistry.deleteMany({
-        where: { eventId },
-      });
-    }
-
-    const slug =
-      dto.title && dto.title !== before.title
-        ? await this.slugify.generateUniqueSlug(dto.title, 'event')
-        : undefined;
-
-    const after = await this.prisma.event.update({
-      where: { id: eventId },
-      data: {
-        title: dto.title,
-        description: dto.description,
-        location: dto.location,
-        ...(slug && { slug }),
-        typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
-        startTime: dto.startTime ? new Date(dto.startTime) : undefined,
-        endTime: dto.endTime ? new Date(dto.endTime) : undefined,
-
-        ministries: dto.ministryIds
-          ? {
-              create: dto.ministryIds.map((ministryId) => ({
-                ministryId: toBigInt(ministryId),
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        ministries: { include: { ministry: true } },
-      },
-    });
-
-    const wasRescheduled =
-      (dto.startTime &&
-        before.startTime.getTime() !== after.startTime.getTime()) ||
-      (dto.endTime && before.endTime.getTime() !== after.endTime.getTime());
-
-    await this.auditService.log({
-      action: wasRescheduled ? 'EVENT_RESCHEDULED' : 'EVENT_UPDATED',
-      entity: 'Event',
-      entityId: id,
-      before,
-      after,
-      userId: user?.id,
-    });
-
-    this.logger.log(`UPDATE_EVENT_SUCCESS: ${id}`);
-
-    return { success: true, data: after, meta: {} };
+  async update(id: string, dto: UpdateEventDto, user?: { id?: bigint }) {
+    return saveEventEditor(
+      this.prisma,
+      this.auditService,
+      this.slugify,
+      dto,
+      user?.id,
+      id,
+    );
   }
 
   // -----------------------------
@@ -249,22 +155,13 @@ export class EventsService {
   // -----------------------------
   // CREATE TYPE
   // -----------------------------
-  async createType(name: string, user?: any) {
-    this.logger.log(`CREATE_EVENT_TYPE: ${name}`);
-
-    const type = await this.prisma.eventType.create({
-      data: { name },
-    });
-
-    await this.auditService.log({
-      action: 'EVENT_TYPE_CREATED',
-      entity: 'EventType',
-      entityId: type.id.toString(),
-      after: type,
-      userId: user?.id,
-    });
-
-    return { success: true, data: type, meta: {} };
+  async createType(name: string, user?: { id?: bigint }) {
+    return createEventEditorType(
+      this.prisma,
+      this.auditService,
+      name,
+      user?.id,
+    );
   }
 
   async getTypes() {

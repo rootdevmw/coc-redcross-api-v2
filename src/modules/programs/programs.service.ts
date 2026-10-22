@@ -1,8 +1,17 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { saveProgramEditor, createProgramEditorFromTemplate } from '../../common/utils/program-editor';
+import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { toBigInt, toBigIntOptional } from 'src/common/utils/to-bigint';
+import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import { SlugService } from 'src/common/utils/slugify';
+import { programListWhere } from '../../common/utils/schedule-list-filters';
+import { catalogTypeId, catalogTypeName, rethrowCatalogWrite } from '../../common/utils/type-catalog';
+import {
+  listPublicPrograms,
+  readPublicProgram,
+  listPublicProgramTypes,
+  type PublicProgramQuery,
+} from '../../common/utils/public-programs';
 
 @Injectable()
 export class ProgramsService {
@@ -17,132 +26,33 @@ export class ProgramsService {
   // -----------------------------
   // CREATE PROGRAM
   // -----------------------------
-  async create(dto: any, user?: any) {
-    this.logger.log(`Creating program for date ${dto.date}`);
-
-    const slugSource = [dto.location, dto.date].filter(Boolean).join(' ');
-    const slug = await this.slugify.generateUniqueSlug(slugSource, 'program');
-
-    const program = await this.prisma.program.create({
-      data: {
-        date: new Date(dto.date),
-        location: dto.location || undefined,
-        slug,
-        typeId: dto.typeId,
-        homecellId: dto.homecellId,
-        items: {
-          create: dto.items.map((item: any) => ({
-            title: item.title,
-            description: item.description,
-            time: item.time,
-            sequence: item.sequence,
-            responsibleId: item.responsibleId,
-          })),
-        },
-      },
-      include: {
-        type: true,
-        homecell: true,
-        items: {
-          include: { responsible: true },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    await this.auditService.log({
-      action: 'PROGRAM_CREATED',
-      entity: 'Program',
-      entityId: program.id.toString(),
-      after: program,
-      userId: user?.id,
-    });
-
-    return { success: true, data: program, meta: {} };
+  async create(dto: unknown, user?: { id?: bigint }) {
+    return saveProgramEditor(this.prisma, this.auditService, 'program', dto, user?.id, undefined, this.slugify);
   }
 
   // -----------------------------
   // CREATE FROM TEMPLATE
   // -----------------------------
-  async createFromTemplate(dto: any, user?: any) {
-    this.logger.log(`Creating program from template ${dto.templateId}`);
-
-    const template = await this.prisma.programTemplate.findFirst({
-      where: {
-        id: toBigIntOptional(dto.templateId),
-        deletedAt: null,
-      },
-      include: {
-        items: {
-          where: { deletedAt: null },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    if (!template) throw new NotFoundException('Template not found');
-
-    const slugSource = [dto.location, dto.date].filter(Boolean).join(' ');
-    const slug = await this.slugify.generateUniqueSlug(slugSource, 'program');
-
-    const program = await this.prisma.program.create({
-      data: {
-        date: new Date(dto.date),
-        location: dto.location || undefined,
-        slug,
-        typeId: template.typeId,
-        homecellId: dto.homecellId ?? template.homecellId ?? null,
-        items: {
-          create: template.items.map((item) => ({
-            title: item.title,
-            description: item.description,
-            time: item.time,
-            sequence: item.sequence,
-            responsibleId: item.responsibleId,
-          })),
-        },
-      },
-      include: {
-        type: true,
-        homecell: true,
-        items: {
-          include: { responsible: true },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    await this.auditService.log({
-      action: 'PROGRAM_CREATED_FROM_TEMPLATE',
-      entity: 'Program',
-      entityId: program.id.toString(),
-      after: program,
-      userId: user?.id,
-    });
-
-    return { success: true, data: program, meta: {} };
+  async createFromTemplate(dto: unknown, user?: { id?: bigint }) {
+    return createProgramEditorFromTemplate(this.prisma, this.auditService, this.slugify, dto, user?.id);
   }
 
   // -----------------------------
   // FIND ALL (NO AUDIT)
   // -----------------------------
+  findPublic(query: PublicProgramQuery = {}) {
+    return listPublicPrograms(this.prisma, query);
+  }
+
+  getPublicTypes() {
+    return listPublicProgramTypes(this.prisma);
+  }
+
   async findAll(query: any) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    const where: any = { deletedAt: null };
-
-    if (query.homecellId) where.homecellId = query.homecellId;
-    if (query.typeId) where.typeId = query.typeId;
-
-    if (query.date) {
-      const start = new Date(query.date);
-      const end = new Date(query.date);
-      end.setHours(23, 59, 59, 999);
-      where.date = { gte: start, lte: end };
-    } else if (query.fromDate) {
-      where.date = { gte: new Date(query.fromDate) };
-    }
+    const where = programListWhere(query);
 
     const orderDir: 'asc' | 'desc' = query.fromDate ? 'asc' : 'desc';
 
@@ -151,7 +61,7 @@ export class ProgramsService {
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { date: orderDir },
+        orderBy: [{ date: orderDir }, { id: orderDir }],
         include: {
           type: true,
           homecell: true,
@@ -197,104 +107,15 @@ export class ProgramsService {
   // -----------------------------
   // FIND BY SLUG
   // -----------------------------
-  async findBySlug(slug: string) {
-    this.logger.log(`FETCH_PROGRAM_BY_SLUG: ${slug}`);
-
-    const program = await this.prisma.program.findFirst({
-      where: { slug, deletedAt: null },
-      include: {
-        type: true,
-        homecell: true,
-        items: {
-          where: { deletedAt: null },
-          include: { responsible: true },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    if (!program) throw new NotFoundException('Program not found');
-
-    return { success: true, data: program, meta: {} };
+  findBySlug(slug: string) {
+    return readPublicProgram(this.prisma, slug);
   }
 
   // -----------------------------
   // UPDATE PROGRAM
   // -----------------------------
-  async update(id: string, dto: any, user?: any) {
-    this.logger.log(`Updating program ${id}`);
-
-    const programId = toBigIntOptional(id);
-
-    const before = await this.prisma.program.findFirst({
-      where: { id: programId },
-      include: { items: true },
-    });
-
-    if (!before) throw new NotFoundException('Program not found');
-
-    if (dto.items) {
-      await this.prisma.programItem.deleteMany({
-        where: { programId },
-      });
-    }
-
-    const dateChanged =
-      dto.date && new Date(dto.date).getTime() !== before.date.getTime();
-    const locationChanged =
-      dto.location !== undefined && dto.location !== before.location;
-
-    const slug =
-      dateChanged || locationChanged
-        ? await this.slugify.generateUniqueSlug(
-            [dto.location ?? before.location, dto.date ?? before.date]
-              .filter(Boolean)
-              .join(' '),
-            'program',
-          )
-        : undefined;
-
-    const after = await this.prisma.program.update({
-      where: { id: programId },
-      data: {
-        date: dto.date ? new Date(dto.date) : undefined,
-        location: dto.location || undefined,
-        ...(slug && { slug }),
-        typeId: dto.typeId || undefined,
-        homecellId: dto.homecellId || undefined,
-        items: dto.items
-          ? {
-              create: dto.items.map((item: any) => ({
-                title: item.title,
-                description: item.description,
-                time: item.time,
-                sequence: item.sequence,
-                responsibleId: item.responsibleId || undefined,
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        type: true,
-        homecell: true,
-        items: {
-          where: { deletedAt: null },
-          include: { responsible: true },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    await this.auditService.log({
-      action: 'PROGRAM_UPDATED',
-      entity: 'Program',
-      entityId: id,
-      before,
-      after,
-      userId: user?.id,
-    });
-
-    return { success: true, data: after, meta: {} };
+  async update(id: string, dto: unknown, user?: { id?: bigint }) {
+    return saveProgramEditor(this.prisma, this.auditService, 'program', dto, user?.id, id, this.slugify);
   }
 
   // -----------------------------
@@ -329,9 +150,15 @@ export class ProgramsService {
   // -----------------------------
   // PROGRAM TYPES
   // -----------------------------
-  async createType(name: string) {
+  async createType(name: string, user?: { id?: bigint }) {
+    const validName = catalogTypeName(name);
     const type = await this.prisma.programType.create({
-      data: { name },
+      data: { name: validName },
+    }).catch(rethrowCatalogWrite);
+
+    await this.auditService.log({
+      action: 'PROGRAM_TYPE_CREATED', entity: 'ProgramType',
+      entityId: type.id.toString(), after: type, userId: user?.id,
     });
 
     return { success: true, data: type, meta: {} };
@@ -340,10 +167,11 @@ export class ProgramsService {
   async updateType(id: string, name: string, user?: any) {
     this.logger.log(`UPDATE_PROGRAM_TYPE_STARTED: id=${id}`);
 
-    const typeId = toBigInt(id);
+    const typeId = catalogTypeId(id);
+    const validName = catalogTypeName(name);
 
     const before = await this.prisma.programType.findFirst({
-      where: { id: typeId },
+      where: { id: typeId, deletedAt: null },
     });
 
     if (!before) {
@@ -353,8 +181,8 @@ export class ProgramsService {
 
     const after = await this.prisma.programType.update({
       where: { id: typeId },
-      data: { name },
-    });
+      data: { name: validName },
+    }).catch(rethrowCatalogWrite);
 
     await this.auditService.log({
       action: 'PROGRAM_TYPE_UPDATED',
@@ -372,9 +200,29 @@ export class ProgramsService {
 
   async getTypes() {
     const types = await this.prisma.programType.findMany({
-      orderBy: { name: 'asc' },
+      where: { deletedAt: null },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
     });
 
     return { success: true, data: types, meta: {} };
+  }
+
+  async removeType(id: string, user?: { id?: bigint }) {
+    const typeId = catalogTypeId(id);
+    const before = await this.prisma.$transaction(async (tx) => {
+      const type = await tx.programType.findFirst({ where: { id: typeId, deletedAt: null } });
+      if (!type) throw new NotFoundException('Program type not found');
+      const [programs, templates] = await Promise.all([
+        tx.program.count({ where: { typeId, deletedAt: null } }),
+        tx.programTemplate.count({ where: { typeId, deletedAt: null } }),
+      ]);
+      if (programs || templates) {
+        throw new ConflictException('This type is used by programs or templates. Reassign those records before deleting it.');
+      }
+      await tx.programType.update({ where: { id: typeId }, data: { deletedAt: new Date() } });
+      return type;
+    }, { isolationLevel: 'Serializable' });
+    await this.auditService.log({ action: 'PROGRAM_TYPE_DELETED', entity: 'ProgramType', entityId: id, before, userId: user?.id });
+    return { success: true, data: {}, meta: {} };
   }
 }

@@ -1,11 +1,13 @@
 import {
   Injectable,
+  Optional,
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { IS_PUBLIC_KEY } from 'src/common/decorators/public.decorator';
 
@@ -16,6 +18,7 @@ export class SessionAuthGuard implements CanActivate {
   constructor(
     private prisma: PrismaService,
     private reflector: Reflector,
+    @Optional() private config?: ConfigService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,13 +33,14 @@ export class SessionAuthGuard implements CanActivate {
     }
 
     const req = context.switchToHttp().getRequest();
-    const sessionId = req.cookies?.session_id;
+    const cookieName = this.config?.get<string>('COOKIE_NAME') || 'session_id';
+    const sessionId = req.cookies?.[cookieName];
 
     this.logger.log(`Auth attempt from IP: ${req.ip}`);
     this.logger.log(`Guard triggered for ${req.url}`);
 
     if (!sessionId) {
-      this.logger.warn('No session_id cookie found');
+      this.logger.warn('No session cookie found');
       throw new UnauthorizedException('No session');
     }
 
@@ -52,7 +56,7 @@ export class SessionAuthGuard implements CanActivate {
       },
     });
 
-    if (!session || session.expiresAt < new Date()) {
+    if (!session || session.expiresAt <= new Date() || session.user.deletedAt) {
       this.logger.warn(`Invalid or expired session`);
       throw new UnauthorizedException('Invalid session');
     }
@@ -60,7 +64,9 @@ export class SessionAuthGuard implements CanActivate {
     req.user = {
       id: session.user.id,
       email: session.user.email,
-      roles: session.user.roles.map((r) => r.role.name),
+      roles: session.user.roles
+        .filter((record) => !record.role.deletedAt)
+        .map((r) => r.role.name),
       member: {
         id: session.user.member?.id,
         firstName: session.user.member?.firstName,

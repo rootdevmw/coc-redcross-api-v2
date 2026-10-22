@@ -11,6 +11,7 @@ import * as crypto from 'crypto';
 import { EmailService } from '../email/email.service';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { AuditService } from '../audit/audit.service';
+import { accessListPagination, userListWhere, type AccessListQuery } from '../../common/utils/access-list-filters';
 
 @Injectable()
 export class UsersService {
@@ -281,23 +282,24 @@ export class UsersService {
   // -----------------------------
   // READS (NO AUDIT)
   // -----------------------------
-  async findAll(query: any) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
+  async findAll(query: AccessListQuery) {
+    const { page, limit } = accessListPagination(query);
+    const where = userListWhere(query);
 
     const [data, total] = await Promise.all([
       this.prisma.user.findMany({
-        where: { deletedAt: null },
+        where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: {
-          roles: { include: { role: true } },
-          member: true,
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        select: {
+          id: true, email: true, createdAt: true,
+          roles: { select: { role: { select: { name: true } } } },
+          member: { select: { id: true, firstName: true, lastName: true } },
         },
       }),
       this.prisma.user.count({
-        where: { deletedAt: null },
+        where,
       }),
     ]);
 

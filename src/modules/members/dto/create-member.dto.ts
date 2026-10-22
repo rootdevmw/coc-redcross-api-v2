@@ -1,4 +1,12 @@
-import { IsOptional, IsString, IsDateString, IsBoolean } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsBoolean,
+  IsArray,
+  ArrayUnique,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateMemberDto {
   @IsString()
@@ -21,6 +29,7 @@ export class CreateMemberDto {
   isBaptized!: boolean;
 
   @IsOptional()
+  @ValidateIf((_object: unknown, value: unknown) => value !== '')
   @IsDateString()
   baptismDate?: string;
 
@@ -31,6 +40,16 @@ export class CreateMemberDto {
   @IsOptional()
   @IsString()
   homecellId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsString({ each: true })
+  ministryIds?: string[];
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 
   @IsOptional()
   @IsString()

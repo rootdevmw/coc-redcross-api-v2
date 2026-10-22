@@ -2,6 +2,10 @@ import { IsOptional, IsString, IsNumberString } from 'class-validator';
 
 export class QueryEventDto {
   @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
   @IsNumberString()
   page?: number;
 

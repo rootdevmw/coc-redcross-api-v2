@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { EventsService } from './events.service';
+import type { PublicEventQuery } from '../../common/utils/public-events';
 
 @Controller('public/events')
 export class PublicEventsController {
@@ -9,13 +10,13 @@ export class PublicEventsController {
   @Get('types')
   @Public()
   getTypes() {
-    return this.service.getTypes();
+    return this.service.getPublicTypes();
   }
 
   @Get()
   @Public()
-  findAll(@Query() query: any) {
-    return this.service.findAll(query);
+  findAll(@Query() query: PublicEventQuery = {}) {
+    return this.service.findPublic(query);
   }
 
   @Get(':slug')

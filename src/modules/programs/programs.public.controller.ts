@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ProgramsService } from './programs.service';
 import { Public } from 'src/common/decorators/public.decorator';
+import type { PublicProgramQuery } from '../../common/utils/public-programs';
 
 @Controller('public/programs')
 export class PublicProgramsController {
@@ -9,13 +10,13 @@ export class PublicProgramsController {
   @Get('types')
   @Public()
   getTypes() {
-    return this.service.getTypes();
+    return this.service.getPublicTypes();
   }
 
   @Get()
   @Public()
-  findAll(@Query() query: any) {
-    return this.service.findAll(query);
+  findAll(@Query() query: PublicProgramQuery = {}) {
+    return this.service.findPublic(query);
   }
 
   @Get(':slug')

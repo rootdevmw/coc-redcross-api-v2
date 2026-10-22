@@ -1,6 +1,14 @@
-import { IsOptional, IsNumberString } from 'class-validator';
+import { IsOptional, IsNumberString, IsString } from 'class-validator';
 
 export class QueryPublicationDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  status?: string;
+
   @IsOptional()
   @IsNumberString()
   page?: number;

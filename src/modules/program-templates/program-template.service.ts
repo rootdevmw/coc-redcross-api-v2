@@ -1,7 +1,9 @@
+import { saveProgramEditor } from '../../common/utils/program-editor';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toBigIntOptional } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
+import { templateListWhere } from '../../common/utils/schedule-list-filters';
 
 @Injectable()
 export class ProgramTemplatesService {
@@ -15,44 +17,8 @@ export class ProgramTemplatesService {
   // -----------------------------
   // CREATE TEMPLATE
   // -----------------------------
-  async create(dto: any, user?: any) {
-    this.logger.log(`Creating template: ${dto.name}`);
-
-    const template = await this.prisma.programTemplate.create({
-      data: {
-        name: dto.name,
-        typeId: dto.typeId,
-        homecellId: dto.homecellId,
-
-        items: {
-          create: dto.items.map((item: any) => ({
-            title: item.title,
-            description: item.description,
-            time: item.time,
-            sequence: item.sequence,
-            responsibleId: item.responsibleId,
-          })),
-        },
-      },
-      include: {
-        type: true,
-        homecell: true,
-        items: {
-          include: { responsible: true },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    await this.auditService.log({
-      action: 'PROGRAM_TEMPLATE_CREATED',
-      entity: 'ProgramTemplate',
-      entityId: template.id.toString(),
-      after: template,
-      userId: user?.id,
-    });
-
-    return { success: true, data: template, meta: {} };
+  async create(dto: unknown, user?: { id?: bigint }) {
+    return saveProgramEditor(this.prisma, this.auditService, 'template', dto, user?.id, undefined);
   }
 
   // -----------------------------
@@ -62,18 +28,14 @@ export class ProgramTemplatesService {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
-    const where: any = { deletedAt: null };
-
-    if (query.homecellId) {
-      where.homecellId = toBigIntOptional(query.homecellId);
-    }
+    const where = templateListWhere(query);
 
     const [data, total] = await Promise.all([
       this.prisma.programTemplate.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 
         include: {
           type: true,
@@ -126,69 +88,8 @@ export class ProgramTemplatesService {
   // -----------------------------
   // UPDATE TEMPLATE
   // -----------------------------
-  async update(id: string, dto: any, user?: any) {
-    this.logger.log(`Updating template ${id}`);
-
-    const templateId = toBigIntOptional(id);
-
-    const before = await this.prisma.programTemplate.findFirst({
-      where: { id: templateId },
-      include: {
-        items: true,
-      },
-    });
-
-    if (!before) {
-      throw new NotFoundException('Template not found');
-    }
-
-    if (dto.items) {
-      await this.prisma.programTemplateItem.deleteMany({
-        where: { templateId },
-      });
-    }
-
-    const after = await this.prisma.programTemplate.update({
-      where: { id: templateId },
-      data: {
-        name: dto.name,
-        typeId: dto.typeId,
-        homecellId: dto.homecellId,
-
-        items: dto.items
-          ? {
-              create: dto.items.map((item: any) => ({
-                title: item.title,
-                description: item.description,
-                time: item.time,
-                sequence: item.sequence,
-                responsibleId: item.responsibleId,
-              })),
-            }
-          : undefined,
-      },
-
-      include: {
-        type: true,
-        homecell: true,
-        items: {
-          where: { deletedAt: null },
-          include: { responsible: true },
-          orderBy: { sequence: 'asc' },
-        },
-      },
-    });
-
-    await this.auditService.log({
-      action: 'PROGRAM_TEMPLATE_UPDATED',
-      entity: 'ProgramTemplate',
-      entityId: id,
-      before,
-      after,
-      userId: user?.id,
-    });
-
-    return { success: true, data: after, meta: {} };
+  async update(id: string, dto: unknown, user?: { id?: bigint }) {
+    return saveProgramEditor(this.prisma, this.auditService, 'template', dto, user?.id, id);
   }
 
   // -----------------------------

@@ -1,3 +1,5 @@
+import { saveContentEditor, contentAuthorOptions } from './content-editor';
+import type { AccessListQuery } from '../../common/utils/access-list-filters';
 import {
   BadRequestException,
   Injectable,
@@ -15,13 +17,15 @@ import { AuditService } from '../audit/audit.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { QueryContentDto } from './dto/query-content.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
+import { contentListWhere } from '../../common/utils/editorial-list-filters';
+import { catalogTypeName, rethrowCatalogWrite } from '../../common/utils/type-catalog';
+import { publicMessageIdentifier, publicMessageQuery, publicMessageSelect } from './public-messages';
 
 @Injectable()
 export class ContentService {
   private readonly logger = new Logger(ContentService.name);
 
   private readonly TMP_DIR = join(process.cwd(), 'uploads', 'tmp');
-  private readonly FINAL_DIR = join(process.cwd(), 'uploads');
 
   constructor(
     private prisma: PrismaService,
@@ -29,86 +33,6 @@ export class ContentService {
     private auditService: AuditService,
     private slugify: SlugService,
   ) {}
-
-  // -----------------------------
-  // MEDIA EXTRACTION
-  // -----------------------------
-  private extractMediaUrls(html: string) {
-    const results: { url: string; type: string }[] = [];
-
-    if (!html) return results;
-
-    const patterns = [
-      { regex: /<img[^>]+src="([^"]+)"/g, type: 'image' },
-      { regex: /<video[^>]+src="([^"]+)"/g, type: 'video' },
-      { regex: /<audio[^>]+src="([^"]+)"/g, type: 'audio' },
-      { regex: /<source[^>]+src="([^"]+)"/g, type: 'video' },
-      { regex: /<iframe[^>]+src="([^"]+)"/g, type: 'video' },
-    ];
-
-    for (const { regex, type } of patterns) {
-      let match;
-      while ((match = regex.exec(html))) {
-        results.push({ url: match[1], type });
-      }
-    }
-
-    return Array.from(new Map(results.map((m) => [m.url, m])).values());
-  }
-
-  // -----------------------------
-  // MEDIA SYNC
-  // -----------------------------
-  private async syncMedia(html: string, contentId?: bigint) {
-    this.logger.log(`Syncing media for contentId=${contentId ?? 'NEW'}`);
-
-    const extracted = this.extractMediaUrls(html);
-    const newUrls = extracted.map((m) => m.url);
-
-    const existing = contentId
-      ? await this.prisma.contentMedia.findMany({
-          where: { contentId },
-          include: { media: true },
-        })
-      : [];
-
-    // REMOVE UNUSED
-    const removed = existing.filter((m) => !newUrls.includes(m.media.url));
-
-    for (const item of removed) {
-      const relativePath = item.media.url.replace(
-        this.configService.get<string>('APP_URL')!,
-        '',
-      );
-
-      const filePath = join(process.cwd(), relativePath);
-
-      try {
-        await fs.unlink(filePath);
-      } catch {}
-    }
-
-    if (removed.length) {
-      await this.prisma.media.deleteMany({
-        where: { id: { in: removed.map((r) => r.media.id) } },
-      });
-    }
-
-    // UPSERT
-    const mediaRecords = await Promise.all(
-      extracted.map((m) =>
-        this.prisma.media.upsert({
-          where: { url: m.url },
-          update: {},
-          create: { url: m.url, type: m.type },
-        }),
-      ),
-    );
-
-    return mediaRecords.map((media) => ({
-      media: { connect: { id: media.id } },
-    }));
-  }
 
   // -----------------------------
   // UPLOAD MEDIA
@@ -154,144 +78,15 @@ export class ContentService {
   // -----------------------------
   // CREATE
   // -----------------------------
-  async create(dto: CreateContentDto, user?: any) {
-    this.logger.log(`CREATE_CONTENT_STARTED: ${dto.title}`);
-
-    const mediaRelations = await this.syncMedia(dto.body);
-
-    const slug = await this.slugify.generateUniqueSlug(dto.title, 'content');
-
-    const content = await this.prisma.content.create({
-      data: {
-        title: dto.title,
-        body: dto.body,
-        typeId: toBigInt(dto.typeId),
-        authorId: toBigInt(dto.authorId),
-        status: 'Draft',
-        slug,
-        tags:
-          Array.isArray(dto.tags) && dto.tags.length > 0
-            ? {
-                create: dto.tags.filter(Boolean).map((name) => ({
-                  tag: {
-                    connectOrCreate: {
-                      where: { name },
-                      create: { name },
-                    },
-                  },
-                })),
-              }
-            : undefined,
-
-        scriptures: dto.scriptures?.length
-          ? { create: dto.scriptures }
-          : undefined,
-
-        contentMedia: mediaRelations.length
-          ? { create: mediaRelations }
-          : undefined,
-      },
-      include: {
-        tags: true,
-        scriptures: true,
-        contentMedia: true,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'CONTENT_CREATED',
-      entity: 'Content',
-      entityId: content.id.toString(),
-      after: content,
-      userId: user?.id,
-    });
-
-    this.logger.log(`CREATE_CONTENT_SUCCESS: ${content.id}`);
-
-    return { success: true, data: content, meta: {} };
+  async create(dto: CreateContentDto, user?: { id?: bigint }) {
+    return saveContentEditor(this.prisma, this.auditService, this.slugify, dto, user?.id);
   }
 
   // -----------------------------
   // UPDATE
   // -----------------------------
-  async update(id: string, dto: UpdateContentDto, user?: any) {
-    const contentId = toBigInt(id);
-
-    this.logger.log(`UPDATE_CONTENT_STARTED: ${id}`);
-
-    const before = await this.prisma.content.findFirst({
-      where: { id: contentId },
-      include: {
-        tags: { include: { tag: true } },
-        scriptures: true,
-        contentMedia: { include: { media: true } },
-      },
-    });
-
-    if (!before) throw new NotFoundException('Content not found');
-
-    const mediaRelations = await this.syncMedia(dto.body || '', contentId);
-
-    const titleChanged = dto.title && dto.title !== before.title;
-
-    const slug = titleChanged
-      ? await this.slugify.generateUniqueSlug(dto.title!, 'content')
-      : undefined;
-
-    const after = await this.prisma.content.update({
-      where: { id: contentId },
-      data: {
-        title: dto.title,
-        body: dto.body,
-        typeId: dto.typeId ? toBigInt(dto.typeId) : undefined,
-        authorId: dto.authorId ? toBigInt(dto.authorId) : undefined,
-        ...(slug && { slug }),
-
-        tags: dto.tags
-          ? {
-              deleteMany: {},
-              create: dto.tags.map((name) => ({
-                tag: {
-                  connectOrCreate: {
-                    where: { name },
-                    create: { name },
-                  },
-                },
-              })),
-            }
-          : undefined,
-
-        scriptures: dto.scriptures
-          ? {
-              deleteMany: {},
-              create: dto.scriptures,
-            }
-          : undefined,
-
-        contentMedia: {
-          deleteMany: {},
-          create: mediaRelations,
-        },
-      },
-      include: {
-        tags: true,
-        scriptures: true,
-        contentMedia: true,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'CONTENT_UPDATED',
-      entity: 'Content',
-      entityId: id,
-      before,
-      after,
-      userId: user?.id,
-    });
-
-    this.logger.log(`UPDATE_CONTENT_SUCCESS: ${id}`);
-
-    return { success: true, data: after, meta: {} };
+  async update(id: string, dto: UpdateContentDto, user?: { id?: bigint }) {
+    return saveContentEditor(this.prisma, this.auditService, this.slugify, dto, user?.id, id);
   }
 
   // -----------------------------
@@ -306,7 +101,7 @@ export class ContentService {
       where: { id: contentId },
       include: {
         tags: true,
-        scriptures: true,
+        scriptures: { where: { deletedAt: null }, orderBy: { id: 'asc' } },
         contentMedia: true,
       },
     });
@@ -372,8 +167,8 @@ export class ContentService {
     this.logger.log(`CREATE_CONTENT_TYPE: ${name}`);
 
     const type = await this.prisma.contentType.create({
-      data: { name },
-    });
+      data: { name: catalogTypeName(name) },
+    }).catch(rethrowCatalogWrite);
 
     await this.auditService.log({
       action: 'CONTENT_TYPE_CREATED',
@@ -386,44 +181,35 @@ export class ContentService {
     return { success: true, data: type, meta: {} };
   }
 
+  authorOptions(query: AccessListQuery) { return contentAuthorOptions(this.prisma, query); }
+
   async getTypes() {
     const types = await this.prisma.contentType.findMany({
-      orderBy: { name: 'asc' },
+      where: { deletedAt: null },
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
     });
 
     return { success: true, data: types, meta: {} };
   }
 
-  async findAll(query: QueryContentDto) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
+  async findAll(query: QueryContentDto, publicOnly = false) {
+    const publicQuery = publicOnly ? publicMessageQuery(query) : null;
+    const page = publicQuery?.page ?? (Number(query.page) || 1);
+    const limit = publicQuery?.limit ?? (Number(query.limit) || 10);
 
     this.logger.log(`Fetching content page=${page}, limit=${limit}`);
 
-    const where: any = { deletedAt: null };
-
-    if (query.typeId) where.typeId = toBigInt(query.typeId);
-
-    if (query.status) where.status = query.status;
-
-    if (query.search) {
-      where.OR = [
-        { title: { contains: query.search } },
-        { body: { contains: query.search } },
-      ];
-    }
+    const where = publicQuery?.where ?? contentListWhere(query);
+    const read = { where, skip: (page - 1) * limit, take: limit, orderBy: [{ createdAt: 'desc' as const }, { id: 'desc' as const }] };
 
     const [data, total] = await Promise.all([
-      this.prisma.content.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
+      publicOnly ? this.prisma.content.findMany({ ...read, select: publicMessageSelect }) : this.prisma.content.findMany({
+        ...read,
         include: {
           type: true,
           author: true,
-          tags: { include: { tag: true } },
-          scriptures: true,
+          tags: { where: { tag: { deletedAt: null } }, include: { tag: true } },
+          scriptures: { where: { deletedAt: null }, orderBy: { id: 'asc' } },
           contentMedia: { include: { media: true } },
         },
       }),
@@ -450,8 +236,8 @@ export class ContentService {
       include: {
         type: true,
         author: true,
-        tags: { include: { tag: true } },
-        scriptures: true,
+        tags: { where: { tag: { deletedAt: null } }, include: { tag: true } },
+        scriptures: { where: { deletedAt: null }, orderBy: { id: 'asc' } },
         contentMedia: { include: { media: true } },
       },
     });
@@ -468,23 +254,20 @@ export class ContentService {
   }
 
   async findOneBySlug(identifier: string) {
-    const isNumeric = /^\d+$/.test(identifier);
-
-    const content = await this.prisma.content.findFirst({
+    const { slug, legacyId } = publicMessageIdentifier(identifier);
+    let content = await this.prisma.content.findFirst({
       where: {
         deletedAt: null,
-        OR: [
-          { slug: identifier },
-          ...(isNumeric ? [{ id: toBigInt(identifier) }] : []),
-        ],
+        status: 'Published',
+        OR: [{ slug }],
       },
-      include: {
-        type: true,
-        author: true,
-        tags: { include: { tag: true } },
-        scriptures: true,
-        contentMedia: { include: { media: true } },
-      },
+      select: publicMessageSelect,
+    });
+
+    // A numeric slug wins over a different record's legacy numeric ID.
+    if (!content && legacyId !== null) content = await this.prisma.content.findFirst({
+      where: { id: legacyId, deletedAt: null, status: 'Published' },
+      select: publicMessageSelect,
     });
 
     if (!content) {

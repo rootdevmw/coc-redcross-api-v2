@@ -11,7 +11,7 @@ export class PublicContentController {
   @Get()
   @Public()
   findAll(@Query() query: QueryContentDto) {
-    return this.service.findAll(query);
+    return this.service.findAll(query, true);
   }
 
   @Get('types')

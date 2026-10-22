@@ -2890,6 +2890,7 @@ export const MemberScalarFieldEnum = {
   lastName: 'lastName',
   phone: 'phone',
   status: 'status',
+  imageUrl: 'imageUrl',
   baptized: 'baptized',
   baptismDate: 'baptismDate',
   location: 'location',
@@ -3327,6 +3328,7 @@ export const MemberOrderByRelevanceFieldEnum = {
   lastName: 'lastName',
   phone: 'phone',
   status: 'status',
+  imageUrl: 'imageUrl',
   location: 'location'
 } as const
 

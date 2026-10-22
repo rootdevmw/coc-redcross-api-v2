@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Public } from 'src/common/decorators/public.decorator';
 import { HomecellsService } from './homecells.service';
+import type { PublicGroupQuery } from '../../common/utils/public-groups';
 
 @Controller('public/homecells')
 export class PublicHomecellsController {
@@ -8,8 +9,8 @@ export class PublicHomecellsController {
 
   @Get()
   @Public()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query() query: PublicGroupQuery = {}) {
+    return this.service.findPublic(query);
   }
 
   @Get(':slug')
@@ -21,6 +22,6 @@ export class PublicHomecellsController {
   @Get(':id/members')
   @Public()
   getMembers(@Param('id') id: string) {
-    return this.service.getMembers(id);
+    return this.service.getPublicMembers(id);
   }
 }

@@ -58,6 +58,7 @@ model Member {
   lastName     String
   phone        String?
   status       String
+  imageUrl     String?
 
   baptized     Boolean  @default(false)
   baptismDate  DateTime?

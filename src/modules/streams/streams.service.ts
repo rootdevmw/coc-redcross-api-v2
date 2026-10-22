@@ -4,6 +4,13 @@ import { AuditService } from '../audit/audit.service';
 import { SlugService } from 'src/common/utils/slugify';
 import { streamListWhere } from '../../common/utils/editorial-list-filters';
 import {
+  listPublicBroadcasts,
+  readPublicBroadcast,
+  readLiveBroadcast,
+  publicBroadcastPlatforms,
+  type PublicLibraryQuery,
+} from '../../common/utils/public-library';
+import {
   saveStreamEditor,
   saveStreamPlatform,
   streamEditorId,
@@ -28,6 +35,15 @@ export class StreamsService {
       user?.id,
     );
   }
+  findPublic(query: PublicLibraryQuery = {}) {
+    return listPublicBroadcasts(this.prisma, query);
+  }
+  findPublicLive() {
+    return readLiveBroadcast(this.prisma);
+  }
+  getPublicPlatforms() {
+    return publicBroadcastPlatforms(this.prisma);
+  }
   update(id: string, dto: unknown, user?: { id?: bigint }) {
     return saveStreamEditor(
       this.prisma,
@@ -39,30 +55,8 @@ export class StreamsService {
     );
   }
 
-  async findBySlug(slug: string) {
-    this.logger.log(`FETCH_STREAM_BY_SLUG: ${slug}`);
-
-    const stream = await this.prisma.stream.findFirst({
-      where: {
-        slug,
-      },
-      include: {
-        platforms: {
-          where: { platform: { deletedAt: null } },
-          include: { platform: true },
-        },
-      },
-    });
-
-    if (!stream) {
-      throw new NotFoundException('Stream not found');
-    }
-
-    return {
-      success: true,
-      data: this.format(stream),
-      meta: {},
-    };
+  findBySlug(slug: string) {
+    return readPublicBroadcast(this.prisma, slug);
   }
 
   // -----------------------------

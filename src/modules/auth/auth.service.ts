@@ -8,11 +8,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
-import { toBigInt } from 'src/common/utils/to-bigint';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { EmailService } from '../email/email.service';
-import { assertCanAssignRole } from './utils/role-hierarchy';
+import { changeAccountRole } from './role-changes';
 import {
   accountEmail,
   accountLoginInput,
@@ -211,124 +210,28 @@ export class AuthService {
   // -----------------------------
   // SET ROLE (ELEVATE / DEMOTE)
   // -----------------------------
-  async setRole(userId: string, roleId: string, actorUser?: any) {
-    this.logger.log(`SET_ROLE → user=${userId}, role=${roleId}`);
-
-    const userIdBigInt = toBigInt(userId);
-    const roleIdBigInt = toBigInt(roleId);
-
-    const role = await this.prisma.role.findUnique({
-      where: { id: roleIdBigInt },
-    });
-
-    if (!role) {
-      throw new NotFoundException(`Role ${roleId} not found`);
-    }
-
-    // permission check (hierarchy-aware)
-    assertCanAssignRole(actorUser?.roles ?? [], role.name);
-
-    // fetch current role (if any)
-    const existing = await this.prisma.userRole.findFirst({
-      where: { userId: userIdBigInt },
-      include: { role: true },
-    });
-
-    const before = existing
-      ? {
-          userId,
-          roleId: existing.roleId.toString(),
-          roleName: existing.role.name,
-        }
-      : null;
-
-    // remove existing role (enforce single-role system)
-    if (existing) {
-      await this.prisma.userRole.delete({
-        where: {
-          userId_roleId: {
-            userId: userIdBigInt,
-            roleId: existing.roleId,
-          },
-        },
-      });
-    }
-
-    // set new role
-    const rel = await this.prisma.userRole.create({
-      data: {
-        userId: userIdBigInt,
-        roleId: roleIdBigInt,
-      },
-    });
-
-    const after = {
+  setRole(
+    userId: string,
+    roleId: string,
+    actorUser?: { id?: unknown; roles?: string[] },
+  ) {
+    return changeAccountRole(
+      this.prisma,
+      this.auditService,
       userId,
       roleId,
-      roleName: role.name,
-    };
-
-    await this.auditService.log({
-      action: 'ROLE_CHANGED',
-      entity: 'UserRole',
-      entityId: userId,
-      before,
-      after,
-      userId: actorUser?.id,
-    });
-
-    this.logger.log(`ROLE_SET_SUCCESS → user=${userId}`);
-
-    return { success: true, data: rel, meta: {} };
+      actorUser,
+    );
   }
 
-  // -----------------------------
-  // REMOVE ROLE
-  // -----------------------------
-  async removeRole(userId: string, actorUser?: any) {
-    this.logger.log(`REMOVE_ROLE → user=${userId}`);
-
-    const userIdBigInt = toBigInt(userId);
-
-    const before = await this.prisma.userRole.findFirst({
-      where: { userId: userIdBigInt },
-      include: { role: true },
-    });
-
-    if (!before) {
-      return { success: true, data: {}, meta: {} };
-    }
-
-    const visitorRole = await this.prisma.role.findFirst({
-      where: { name: 'VISITOR' },
-    });
-
-    if (!visitorRole) {
-      throw new Error('VISITOR role not found');
-    }
-
-    // Replace instead of delete
-    await this.prisma.userRole.deleteMany({
-      where: { userId: userIdBigInt },
-    });
-
-    const rel = await this.prisma.userRole.create({
-      data: {
-        userId: userIdBigInt,
-        roleId: visitorRole.id,
-      },
-    });
-
-    await this.auditService.log({
-      action: 'ROLE_RESET_TO_VISITOR',
-      entity: 'UserRole',
-      entityId: userId,
-      before,
-      after: { role: 'VISITOR' },
-      userId: actorUser?.id,
-    });
-
-    return { success: true, data: rel, meta: {} };
+  removeRole(userId: string, actorUser?: { id?: unknown; roles?: string[] }) {
+    return changeAccountRole(
+      this.prisma,
+      this.auditService,
+      userId,
+      undefined,
+      actorUser,
+    );
   }
 
   // -----------------------------

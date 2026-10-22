@@ -12,6 +12,11 @@ import { QueryPublicationDto } from './dto/query-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
 import { publicationListWhere } from '../../common/utils/editorial-list-filters';
 import {
+  listPublicDocuments,
+  readPublicDocument,
+  type PublicLibraryQuery,
+} from '../../common/utils/public-library';
+import {
   savePublicationEditor,
   storePublicationFile,
   publicationEditorId,
@@ -83,6 +88,12 @@ export class PublicationService {
       data,
       meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
+  }
+  findPublic(query: PublicLibraryQuery = {}) {
+    return listPublicDocuments(this.prisma, query);
+  }
+  readPublic(id: string) {
+    return readPublicDocument(this.prisma, id);
   }
   async findOne(id: string, scope: 'public' | 'management' = 'public') {
     const publication = await this.prisma.publication.findFirst({

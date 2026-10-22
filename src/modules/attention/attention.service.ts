@@ -12,6 +12,7 @@ import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import { EmailService } from '../email/email.service';
 import { prayerNotificationUser } from '../../common/utils/prayer-team';
+import { publicPrayerInput } from '../../common/utils/public-prayer';
 
 @Injectable()
 export class AttentionService {
@@ -31,14 +32,7 @@ export class AttentionService {
 
     const data = await this.prisma.prayerRequest.create({
       data: {
-        name: dto.name || null,
-        phone: dto.phone || null,
-        email: dto.email || null,
-        requestType: dto.requestType || null,
-        prayerFor: dto.prayerFor,
-        request: dto.request,
-        isUrgent: dto.isUrgent ?? false,
-        shareWithElders: dto.shareWithElders !== 'No',
+        ...publicPrayerInput(dto),
       },
     });
 
@@ -73,7 +67,7 @@ export class AttentionService {
 
     this.logger.log(`PRAYER_REQUEST_NOTIFIED_WARRIORS: ${warriors.length}`);
 
-    return { success: true, data, meta: {} };
+    return { success: true, data: { id: data.id }, meta: {} };
   }
 
   async getPrayerRequests() {

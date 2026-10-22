@@ -182,6 +182,8 @@ test('actual controller metadata keeps management reads authenticated and preven
   const service = {
     findAll: (...args) => calls.push(args),
     findOne: (...args) => calls.push(args),
+    findPublic: (...args) => calls.push(args),
+    readPublic: (...args) => calls.push(args),
   };
   const query = { status: 'Draft', scope: 'management' };
   new PublicationsController(service).findAll(query);

@@ -48,7 +48,8 @@
     "test:public-messages": "node --test test/public-messages.test.cjs",
     "test:public-groups": "node --test test/public-groups.test.cjs",
     "test:public-events": "node --test test/public-events.test.cjs",
-    "test:public-programs": "node --test test/public-programs.test.cjs"
+    "test:public-programs": "node --test test/public-programs.test.cjs",
+    "test:public-finish": "node --test test/public-finish.test.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

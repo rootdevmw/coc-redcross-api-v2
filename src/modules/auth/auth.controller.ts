@@ -143,7 +143,7 @@ export class AuthController {
   // -----------------------------
   @Post('users/:userId/role/:roleId')
   @UseGuards(SessionAuthGuard)
-  @Roles('MEMBER')
+  @Roles('ROOT')
   setRole(
     @Param('userId') userId: string,
     @Param('roleId') roleId: string,
@@ -157,7 +157,7 @@ export class AuthController {
   // -----------------------------
   @Delete('users/:userId/role')
   @UseGuards(SessionAuthGuard)
-  @Roles('MEMBER')
+  @Roles('ROOT')
   removeRole(@Param('userId') userId: string, @Req() req: any) {
     return this.service.removeRole(userId, req.user);
   }

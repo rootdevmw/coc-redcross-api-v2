@@ -20,4 +20,4 @@ ALTER TABLE `programitem` DROP COLUMN `order`,
 CREATE INDEX `ProgramItem_programId_sequence_idx` ON `ProgramItem`(`programId`, `sequence`);
 
 -- AddForeignKey
-ALTER TABLE `Program` ADD CONSTRAINT `Program_homecellId_fkey` FOREIGN KEY (`homecellId`) REFERENCES `Homecell`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `ProgramItem` ADD CONSTRAINT `ProgramItem_programId_fkey` FOREIGN KEY (`programId`) REFERENCES `Program`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

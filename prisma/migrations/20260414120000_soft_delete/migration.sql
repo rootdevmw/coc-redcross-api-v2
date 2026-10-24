@@ -51,11 +51,11 @@ CREATE INDEX `Program_deletedAt_idx` ON `Program`(`deletedAt`);
 ALTER TABLE `ProgramItem` ADD COLUMN `deletedAt` DATETIME(3) NULL;
 CREATE INDEX `ProgramItem_deletedAt_idx` ON `ProgramItem`(`deletedAt`);
 
-ALTER TABLE `Stream` ADD COLUMN `deletedAt` DATETIME(3) NULL;
-CREATE INDEX `Stream_deletedAt_idx` ON `Stream`(`deletedAt`);
+-- ALTER TABLE `Stream` ADD COLUMN `deletedAt` DATETIME(3) NULL;
+-- CREATE INDEX `Stream_deletedAt_idx` ON `Stream`(`deletedAt`);
 
-ALTER TABLE `Platform` ADD COLUMN `deletedAt` DATETIME(3) NULL;
-CREATE INDEX `Platform_deletedAt_idx` ON `Platform`(`deletedAt`);
+-- ALTER TABLE `Platform` ADD COLUMN `deletedAt` DATETIME(3) NULL;
+-- CREATE INDEX `Platform_deletedAt_idx` ON `Platform`(`deletedAt`);
 
 ALTER TABLE `Publication` ADD COLUMN `deletedAt` DATETIME(3) NULL;
 CREATE INDEX `Publication_deletedAt_idx` ON `Publication`(`deletedAt`);

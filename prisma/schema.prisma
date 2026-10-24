@@ -248,7 +248,7 @@ model ContentTag {
 model Series {
   id          BigInt   @id @default(autoincrement())
   name        String
-  description String?
+  description String? @db.Text
   slug        String?  @unique
   createdAt   DateTime @default(now())
   deletedAt DateTime?
@@ -294,7 +294,7 @@ model EventType {
 model Event {
   id          BigInt   @id @default(autoincrement())
   title       String
-  description String? @db.Text
+  description String?
   startTime   DateTime
   endTime     DateTime
   location    String?

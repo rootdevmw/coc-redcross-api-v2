@@ -200,6 +200,9 @@ test('live broadcast requires a real flag, active record and current time window
     broadcast(3, { deletedAt: now }),
     broadcast(4, { isLive: false }),
     broadcast(5),
+    broadcast(6, { startsAt: new Date('2000-01-01'), endsAt: null }),
+    broadcast(7, { startsAt: null }),
+    broadcast(8, { startsAt: null, endsAt: null }),
   ]);
   const result = await library.readLiveBroadcast(f.db, now);
   assert.equal(result.data.id, 5n);
@@ -212,6 +215,43 @@ test('live broadcast requires a real flag, active record and current time window
     (await library.readLiveBroadcast(fixture([]).db, now)).data,
     null,
   );
+});
+
+test('old open-ended selections are excluded from live and retained in the past library', async () => {
+  const old = broadcast(10, { startsAt: new Date('2000-01-01'), endsAt: null });
+  const f = fixture([old]);
+  assert.equal((await library.readLiveBroadcast(f.db, now)).data, null);
+  assert.equal(
+    (await library.listPublicBroadcasts(f.db, {}, now)).data.length,
+    0,
+  );
+  assert.deepEqual(
+    (
+      await library.listPublicBroadcasts(f.db, { period: 'past' }, now)
+    ).data.map((row) => row.id),
+    [10n],
+  );
+  assert.equal(
+    (await library.readPublicBroadcast(f.db, old.slug)).data.id,
+    10n,
+  );
+});
+
+test('read-only selection review identifies legacy issues without changing records', () => {
+  const { reviewLiveSelection } = require('../scripts/audit-live-streams.cjs');
+  for (const [extra, expected] of [
+    [{ startsAt: null }, 'missing-start'],
+    [{ endsAt: null }, 'missing-end'],
+    [{ endsAt: new Date('2026-10-22T08:00Z') }, 'invalid-window'],
+    [{ endsAt: now }, 'expired'],
+    [{ startsAt: new Date('2026-10-22T10:01Z') }, 'future-selection'],
+    [{}, 'current-window-confirm-provider'],
+  ]) {
+    const row = broadcast(1, extra),
+      before = structuredClone(row);
+    assert.equal(reviewLiveSelection(row, now.getTime()), expected);
+    assert.deepEqual(row, before);
+  }
 });
 test('upcoming and past broadcasts exclude archives and respect boundary times', async () => {
   const f = fixture([

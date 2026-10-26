@@ -129,7 +129,7 @@ export async function saveStreamEditor(
   input: unknown,
   userId?: bigint,
   id?: string,
-  action?: 'STREAM_SET_LIVE',
+  action?: 'STREAM_SET_LIVE' | 'STREAM_ENDED',
 ) {
   const fields = streamEditorInput(input, id !== undefined),
     streamId = id === undefined ? undefined : streamEditorId(id);
@@ -159,9 +159,23 @@ export async function saveStreamEditor(
           throw new NotFoundException('Stream not found.');
         const start =
           fields.startsAt === undefined ? before?.startsAt : fields.startsAt;
-        const end =
-          fields.endsAt === undefined ? before?.endsAt : fields.endsAt;
-        if (end && (!start || end.getTime() <= start.getTime()))
+        let end = fields.endsAt === undefined ? before?.endsAt : fields.endsAt;
+        const now = new Date();
+        // Ending is safe for legacy selections with missing or future schedules too.
+        if (
+          action === 'STREAM_ENDED' &&
+          before?.isLive &&
+          start &&
+          start.getTime() < now.getTime() &&
+          (!end || end > now)
+        ) {
+          fields.endsAt = end = now;
+        }
+        if (
+          action !== 'STREAM_ENDED' &&
+          end &&
+          (!start || end.getTime() <= start.getTime())
+        )
           throw new BadRequestException('End time must be after start time.');
         const platforms =
           fields.platformIds === undefined
@@ -181,11 +195,13 @@ export async function saveStreamEditor(
         if (fields.isLive ?? before?.isLive ?? false) {
           if (
             !start ||
-            (end && end.getTime() <= Date.now()) ||
+            !end ||
+            start.getTime() > now.getTime() ||
+            end.getTime() <= now.getTime() ||
             !platforms.some((platform) => streamPlatformUrl(platform.url))
           )
             throw new BadRequestException(
-              'Live selection requires a start time, an available platform link and an end time that has not passed.',
+              'Go live requires a start time that has arrived, a future end time and an available platform link. Confirm the broadcast is airing on its provider first.',
             );
         }
         if (fields.isLive === true)

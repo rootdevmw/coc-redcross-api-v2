@@ -29,14 +29,12 @@ const publicationSelect = {
   fileUrl: true,
   publishedAt: true,
 } satisfies Prisma.PublicationSelect;
-function activeBroadcast(now: Date): Prisma.StreamWhereInput {
+export function activeBroadcast(now: Date): Prisma.StreamWhereInput {
   return {
     deletedAt: null,
     isLive: true,
-    AND: [
-      { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
-      { OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
-    ],
+    startsAt: { lte: now },
+    endsAt: { gt: now },
   };
 }
 function visibleStream(
@@ -63,7 +61,11 @@ export async function listPublicBroadcasts(
       ? {
           OR: [
             { endsAt: { lte: now } },
-            { isLive: false, startsAt: { lte: now } },
+            {
+              startsAt: { lte: now },
+              OR: [{ isLive: false }, { endsAt: null }],
+            },
+            { startsAt: null },
           ],
         }
       : { OR: [{ startsAt: { gt: now } }, activeBroadcast(now)] }),

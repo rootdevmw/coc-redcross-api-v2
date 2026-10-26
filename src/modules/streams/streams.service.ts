@@ -3,8 +3,10 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { SlugService } from 'src/common/utils/slugify';
 import { streamListWhere } from '../../common/utils/editorial-list-filters';
+import type { Prisma } from '../../generated/prisma/client';
 import {
   listPublicBroadcasts,
+  activeBroadcast,
   readPublicBroadcast,
   readLiveBroadcast,
   publicBroadcastPlatforms,
@@ -15,6 +17,14 @@ import {
   saveStreamPlatform,
   streamEditorId,
 } from './stream-editor';
+
+type StreamWithPlatforms = Prisma.StreamGetPayload<{
+  include: { platforms: { include: { platform: true } } };
+}>;
+export type StreamQuery = Parameters<typeof streamListWhere>[0] & {
+  page?: string;
+  limit?: string;
+};
 
 @Injectable()
 export class StreamsService {
@@ -62,7 +72,7 @@ export class StreamsService {
   // -----------------------------
   // DELETE STREAM
   // -----------------------------
-  async remove(id: string, user?: any) {
+  async remove(id: string, user?: { id?: bigint }) {
     const streamId = streamEditorId(id);
 
     this.logger.warn(`DELETE_STREAM_STARTED: ${id}`);
@@ -113,11 +123,22 @@ export class StreamsService {
       'STREAM_SET_LIVE',
     );
   }
+  endLive(id: string, user?: { id?: bigint }) {
+    return saveStreamEditor(
+      this.prisma,
+      this.auditService,
+      this.slugify,
+      { isLive: false },
+      user?.id,
+      id,
+      'STREAM_ENDED',
+    );
+  }
   createPlatform(dto: unknown, user?: { id?: bigint }) {
     return saveStreamPlatform(this.prisma, this.auditService, dto, user?.id);
   }
   updatePlatform(
-    dto: { id: string; name?: string; url?: string },
+    dto: { id: string; name?: unknown; url?: unknown },
     user?: { id?: bigint },
   ) {
     const id = streamEditorId(dto.id).toString();
@@ -130,7 +151,7 @@ export class StreamsService {
     );
   }
 
-  async findAllInFuture(query: any) {
+  async findAllInFuture(query: StreamQuery) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
 
@@ -140,39 +161,9 @@ export class StreamsService {
       `[STREAMS] Fetching future/active streams from: ${now.toISOString()}`,
     );
 
-    const where: any = {
+    const where: Prisma.StreamWhereInput = {
       deletedAt: null,
-      OR: [
-        // upcoming streams
-        {
-          startsAt: {
-            gte: now,
-          },
-        },
-
-        // ongoing streams (started already but not ended)
-        {
-          AND: [
-            {
-              startsAt: {
-                lte: now,
-              },
-            },
-            {
-              OR: [
-                {
-                  endsAt: {
-                    gte: now,
-                  },
-                },
-                {
-                  endsAt: null,
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      OR: [{ startsAt: { gt: now } }, activeBroadcast(now)],
     };
 
     const [data, total] = await Promise.all([
@@ -205,7 +196,7 @@ export class StreamsService {
     };
   }
 
-  async findAll(query: any) {
+  async findAll(query: StreamQuery) {
     const page = Number(query.page) || 1;
     const limit = Number(query.limit) || 10;
     const where = streamListWhere(query);
@@ -239,22 +230,7 @@ export class StreamsService {
     this.logger.log(`[STREAMS] Fetching live streams at ${now.toISOString()}`);
 
     const stream = await this.prisma.stream.findFirst({
-      where: {
-        isLive: true,
-        startsAt: {
-          lte: now,
-        },
-        OR: [
-          {
-            endsAt: null,
-          },
-          {
-            endsAt: {
-              gte: now,
-            },
-          },
-        ],
-      },
+      where: activeBroadcast(now),
       orderBy: {
         startsAt: 'desc',
       },
@@ -313,10 +289,10 @@ export class StreamsService {
   // -----------------------------
   // HELPERS
   // -----------------------------
-  private format(stream: any) {
+  private format(stream: StreamWithPlatforms) {
     return {
       ...stream,
-      platforms: stream.platforms.map((p: any) => p.platform),
+      platforms: stream.platforms.map((p) => p.platform),
     };
   }
 }

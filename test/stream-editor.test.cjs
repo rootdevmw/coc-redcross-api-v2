@@ -364,8 +364,16 @@ test('platform deltas retain existing links and validate all selected active tar
   assert.equal(missing.writes.length, 0);
 });
 
+function liveFixture(options = {}) {
+  return fixture({
+    startsAt: new Date(Date.now() - 60000),
+    endsAt: new Date(Date.now() + 3600000),
+    ...options,
+  });
+}
+
 test('selecting live through edit and create switches the previous active selection off in the same transaction', async () => {
-  const f = fixture();
+  const f = liveFixture();
   await f.service.update('7', { isLive: true });
   assert.equal(f.streams[0].isLive, true);
   assert.equal(f.streams[1].isLive, false);
@@ -374,11 +382,12 @@ test('selecting live through edit and create switches the previous active select
     f.writes.map(([kind]) => kind),
     ['selection', 'update'],
   );
-  const created = fixture();
+  const created = liveFixture();
   const result = await created.service.create({
     title: 'New live service',
     isLive: true,
-    startsAt: start.toISOString(),
+    startsAt: new Date(Date.now() - 60000).toISOString(),
+    endsAt: new Date(Date.now() + 3600000).toISOString(),
     platformIds: ['5'],
   });
   assert.equal(result.data.isLive, true);
@@ -389,6 +398,8 @@ test('selecting live through edit and create switches the previous active select
 test('separate live action shares platform/start/end guards and audits its own action without disabling another stream on failure', async () => {
   for (const options of [
     { startsAt: null },
+    { startsAt: start },
+    { endsAt: null },
     { platformIds: [] },
     { platformIds: [6n] },
     { platformIds: [10n] },
@@ -397,12 +408,12 @@ test('separate live action shares platform/start/end guards and audits its own a
       endsAt: new Date('2000-01-01T08:00Z'),
     },
   ]) {
-    const f = fixture(options);
+    const f = liveFixture(options);
     await assert.rejects(() => f.service.setLive('7'), badRequest);
     assert.equal(f.streams[1].isLive, true);
     assert.equal(f.writes.length, 0);
   }
-  const valid = fixture();
+  const valid = liveFixture();
   await valid.service.setLive('7', { id: 3n });
   assert.equal(valid.audits[0].action, 'STREAM_SET_LIVE');
   assert.equal(valid.streams[1].isLive, false);
@@ -410,7 +421,7 @@ test('separate live action shares platform/start/end guards and audits its own a
 
 test('failed target or relationship writes roll back both connections and previous live selection', async () => {
   for (const options of [{ failWrite: true }, { failRelations: true }]) {
-    const f = fixture(options);
+    const f = liveFixture(options);
     await assert.rejects(
       () => f.service.update('7', { isLive: true, platformIds: ['5'] }),
       /write failed/,
@@ -423,16 +434,55 @@ test('failed target or relationship writes roll back both connections and previo
 });
 
 test('transaction conflicts are explicit while later audit failures retain the committed record and selection', async () => {
-  const conflict = fixture({ conflict: true });
+  const conflict = liveFixture({ conflict: true });
   await assert.rejects(
     () => conflict.service.setLive('7'),
     (error) => error.getStatus() === 409,
   );
   assert.equal(conflict.streams[1].isLive, true);
-  const audit = fixture({ failAudit: true });
+  const audit = liveFixture({ failAudit: true });
   await assert.rejects(() => audit.service.setLive('7'), /audit failed/);
   assert.equal(audit.streams[0].isLive, true);
   assert.equal(audit.streams[1].isLive, false);
+});
+
+test('ending a live broadcast clears the selection, records its end and keeps recordings and platforms', async () => {
+  const f = liveFixture({ selected: true });
+  const before = Date.now();
+  const result = await f.service.endLive('7', { id: 3n });
+  assert.equal(result.data.isLive, false);
+  assert.ok(result.data.endsAt.getTime() >= before);
+  assert.ok(result.data.endsAt.getTime() <= Date.now());
+  assert.equal(result.data.slug, 'stable-stream-address');
+  assert.deepEqual(
+    result.data.platforms.map((p) => p.id),
+    [4n],
+  );
+  assert.deepEqual(
+    f.writes.map(([kind]) => kind),
+    ['update'],
+  );
+  assert.equal(f.audits[0].action, 'STREAM_ENDED');
+  assert.equal(f.audits[0].userId, 3n);
+  const end = result.data.endsAt;
+  assert.equal((await f.service.endLive('7')).data.endsAt, end);
+});
+
+test('ending legacy selections works without dates or with a future start and does not alter another selection', async () => {
+  for (const options of [
+    { startsAt: null, endsAt: null },
+    { startsAt: null },
+    { startsAt: start, endsAt: new Date('2099-10-22T08:00Z') },
+  ]) {
+    const f = liveFixture({ selected: true, ...options });
+    const result = await f.service.endLive('7');
+    assert.equal(result.data.isLive, false);
+    assert.equal(f.streams[1].isLive, true);
+    assert.deepEqual(
+      f.writes.map(([kind]) => kind),
+      ['update'],
+    );
+  }
 });
 
 test('platform validation accepts canonical public web addresses and rejects credentials, unsafe schemes and storage overflow', async () => {
@@ -519,6 +569,7 @@ test('actual controller paths retain MEDIA authorization and override spoofed pl
     update: (...args) => calls.push(args),
     updatePlatform: (...args) => calls.push(args),
     setLive: (...args) => calls.push(args),
+    endLive: (...args) => calls.push(args),
   });
   controller.create(body, { user });
   controller.update('7', body, { user });
@@ -528,10 +579,12 @@ test('actual controller paths retain MEDIA authorization and override spoofed pl
     { user },
   );
   controller.setLive('7', { user });
+  controller.endLive('7', { user });
   assert.deepEqual(calls, [
     [body, user],
     ['7', body, user],
     [{ id: '4', url: 'https://example.com' }, user],
+    ['7', user],
     ['7', user],
   ]);
   const {

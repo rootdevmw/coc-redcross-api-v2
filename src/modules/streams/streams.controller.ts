@@ -10,7 +10,9 @@ import {
   Delete,
 } from '@nestjs/common';
 import { Roles } from '../auth/decorator/roles.decorator';
-import { StreamsService } from './streams.service';
+import { StreamsService, type StreamQuery } from './streams.service';
+
+type StreamRequest = { user?: { id?: bigint } };
 
 @Controller('streams')
 @Roles('MEDIA')
@@ -21,12 +23,16 @@ export class StreamsController {
   // PLATFORMS
   // -------------------------
   @Post('platforms')
-  createPlatform(@Body() dto: any, @Req() req: any) {
+  createPlatform(@Body() dto: unknown, @Req() req: StreamRequest) {
     return this.service.createPlatform(dto, req.user);
   }
 
   @Patch('platforms/:id')
-  updatePlatform(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+  updatePlatform(
+    @Param('id') id: string,
+    @Body() dto: { name?: unknown; url?: unknown },
+    @Req() req: StreamRequest,
+  ) {
     return this.service.updatePlatform({ ...dto, id }, req.user);
   }
 
@@ -37,12 +43,12 @@ export class StreamsController {
 
   // -------------------------
   @Post()
-  create(@Body() dto: any, @Req() req: any) {
+  create(@Body() dto: unknown, @Req() req: StreamRequest) {
     return this.service.create(dto, req.user);
   }
 
   @Get()
-  findAll(@Query() query: any) {
+  findAll(@Query() query: StreamQuery) {
     return this.service.findAll(query);
   }
 
@@ -59,18 +65,26 @@ export class StreamsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: any, @Req() req: any) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: unknown,
+    @Req() req: StreamRequest,
+  ) {
     return this.service.update(id, dto, req.user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: any) {
+  remove(@Param('id') id: string, @Req() req: StreamRequest) {
     return this.service.remove(id, req.user);
   }
 
   //  SET LIVE
   @Post(':id/live')
-  setLive(@Param('id') id: string, @Req() req: any) {
+  setLive(@Param('id') id: string, @Req() req: StreamRequest) {
     return this.service.setLive(id, req.user);
+  }
+  @Post(':id/end')
+  endLive(@Param('id') id: string, @Req() req: StreamRequest) {
+    return this.service.endLive(id, req.user);
   }
 }

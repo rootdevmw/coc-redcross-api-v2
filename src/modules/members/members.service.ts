@@ -7,6 +7,7 @@ import { toBigInt } from 'src/common/utils/to-bigint';
 import { AuditService } from '../audit/audit.service';
 import ExcelJS from 'exceljs';
 import { saveMemberEditor } from './member-editor';
+import { memberPrefixWhere } from './member-titles';
 import { leadershipOptions, type LeadershipQuery } from '../../common/utils/church-group-editor';
 
 @Injectable()
@@ -42,7 +43,7 @@ export class MembersService {
 
     if (query.status) where.status = query.status;
     if (query.homecellId) where.homecellId = query.homecellId;
-    if (query.prefix) where.prefix = query.prefix;
+    if (query.prefix) where.prefix = memberPrefixWhere(query.prefix);
 
     if (query.search) {
       where.OR = [
@@ -118,7 +119,7 @@ export class MembersService {
   // PUBLIC MEMBER LOOKUPS
   // -----------------------------
   async findByPrefix(prefix: string) {
-    const normalizedPrefix = prefix.toUpperCase();
+    const normalizedPrefix = memberPrefixWhere(prefix);
 
     const members = await this.prisma.member.findMany({
       where: {
@@ -277,7 +278,7 @@ export class MembersService {
     const where: any = {};
     if (query.status) where.status = query.status;
     if (query.homecellId) where.homecellId = query.homecellId;
-    if (query.prefix) where.prefix = query.prefix;
+    if (query.prefix) where.prefix = memberPrefixWhere(query.prefix);
     if (query.search) {
       where.OR = [
         { firstName: { contains: query.search } },

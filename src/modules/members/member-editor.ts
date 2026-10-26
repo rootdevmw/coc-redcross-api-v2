@@ -2,6 +2,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { Prisma } from '../../generated/prisma/client';
 import type { PrismaService } from '../../prisma/prisma.service';
 import type { AuditService } from '../audit/audit.service';
+import { normalizeMemberPrefix } from './member-titles';
 
 export function memberEditorId(value: unknown) {
   if (
@@ -69,9 +70,11 @@ export function memberEditorInput(input: unknown, partial = false) {
         'Name, contact and photo URL fields must fit within 191 characters.',
       );
   }
+  if (result.prefix !== undefined)
+    result.prefix = normalizeMemberPrefix(result.prefix);
   if (
     result.prefix !== undefined &&
-    !['PASTOR', 'ELDER', 'DEACON', 'SISTER', 'BROTHER'].includes(result.prefix)
+    !['PASTOR', 'DEACON', 'SISTER', 'BROTHER'].includes(result.prefix)
   )
     throw new BadRequestException('Choose a valid church title.');
   if (

@@ -50,8 +50,9 @@
     "test:public-events": "node --test test/public-events.test.cjs",
     "test:public-programs": "node --test test/public-programs.test.cjs",
     "test:public-finish": "node --test test/public-finish.test.cjs",
-    "test:email-delivery": "node --test test/email-delivery.test.cjs test/gmail-api-delivery.test.cjs test/gmail-oauth.test.cjs",
-    "gmail:authorize": "node --env-file=.env scripts/gmail-oauth.cjs"
+    "test:email-delivery": "node --test test/email-delivery.test.cjs test/gmail-api-delivery.test.cjs test/gmail-oauth.test.cjs test/gmail-check.test.cjs",
+    "gmail:authorize": "node --env-file=.env scripts/gmail-oauth.cjs",
+    "gmail:check": "node scripts/gmail-check.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

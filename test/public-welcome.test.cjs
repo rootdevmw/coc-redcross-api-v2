@@ -59,7 +59,9 @@ function fixture(rows = []) {
           return rows
             .filter(
               (row) =>
-                row.prefix === options.where.prefix &&
+                (typeof options.where.prefix === 'string'
+                  ? row.prefix === options.where.prefix
+                  : options.where.prefix.in.includes(row.prefix)) &&
                 row.deletedAt === options.where.deletedAt,
             )
             .sort((a, b) => a.firstName.localeCompare(b.firstName))
@@ -82,52 +84,84 @@ test('public pastor, elder and prefix lookups return profile fields without pers
     member(2, 'B', 'ELDER'),
     member(3, 'C', 'DEACON'),
   ]);
-  for (const response of [
-    await controller.findPastors(),
-    await controller.findElders(),
-    await controller.findByPrefix('deacon'),
+  for (const [response, total] of [
+    [await controller.findPastors(), 2],
+    [await controller.findElders(), 2],
+    [await controller.findByPrefix('deacon'), 1],
   ]) {
     assert.equal(response.success, true);
-    assert.equal(response.meta.total, 1);
-    const [profile] = response.data;
-    assert.deepEqual(Object.keys(profile).sort(), [
-      'bio',
-      'firstName',
-      'id',
-      'imageUrl',
-      'lastName',
-      'prefix',
-    ]);
-    assert.deepEqual(Object.keys(profile.bio).sort(), ['bio', 'id']);
-    assert.equal(profile.bio.bio, 'A published biography.');
-    assert.doesNotMatch(
-      JSON.stringify(profile, (_, value) =>
-        typeof value === 'bigint' ? String(value) : value,
-      ),
-      /PRIVATE_/,
-    );
+    assert.equal(response.meta.total, total);
+    for (const profile of response.data) {
+      assert.deepEqual(Object.keys(profile).sort(), [
+        'bio',
+        'firstName',
+        'id',
+        'imageUrl',
+        'lastName',
+        'prefix',
+      ]);
+      assert.deepEqual(Object.keys(profile.bio).sort(), ['bio', 'id']);
+      assert.equal(profile.bio.bio, 'A published biography.');
+      assert.doesNotMatch(
+        JSON.stringify(profile, (_, value) =>
+          typeof value === 'bigint' ? String(value) : value,
+        ),
+        /PRIVATE_/,
+      );
+    }
   }
 });
 
-test('public leadership lookups keep roles independent, exclude archived people and sort by first name', async () => {
+test('pastor and historical elder lookups share one office, exclude archived people and sort by first name', async () => {
   const { controller, reads } = fixture([
     member(1, 'Z', 'PASTOR'),
     member(2, 'A', 'PASTOR'),
     member(3, 'Archived', 'PASTOR', new Date()),
     member(4, 'Elder', 'ELDER'),
+    member(5, 'Archived elder', 'ELDER', new Date()),
   ]);
   assert.deepEqual(
     (await controller.findPastors()).data.map((row) => row.id),
-    [2n, 1n],
+    [2n, 4n, 1n],
   );
   assert.deepEqual(
     (await controller.findElders()).data.map((row) => row.id),
-    [4n],
+    [2n, 4n, 1n],
   );
+  for (const prefix of ['PASTOR', 'ELDER'])
+    assert.deepEqual(
+      (await controller.findByPrefix(prefix)).data.map((row) => row.id),
+      [2n, 4n, 1n],
+    );
   reads.forEach((query) => {
     assert.equal(query.where.deletedAt, null);
     assert.deepEqual(query.orderBy, { firstName: 'asc' });
   });
+});
+
+test('the Pastor directory filter and export include historical Elder records', async () => {
+  const reads = [];
+  const service = new MembersService(
+    {
+      member: {
+        findMany: async (options) => {
+          reads.push(options);
+          return [];
+        },
+        count: async (options) => {
+          reads.push(options);
+          return 0;
+        },
+      },
+    },
+    {},
+  );
+  await service.findAll({ prefix: 'PASTOR' });
+  await service.exportToXlsx({ prefix: 'PASTOR' });
+  assert.equal(reads.length, 3);
+  reads.forEach(({ where }) =>
+    assert.deepEqual(where.prefix, { in: ['PASTOR', 'ELDER'] }),
+  );
 });
 
 test('empty public leadership lists stay explicit and unavailable reads do not fabricate profiles', async () => {

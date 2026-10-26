@@ -132,6 +132,19 @@ test('creation saves biography/homecell/ministry links in the same member write 
   assert.equal(f.audits[0].action, 'MEMBER_CREATED');
 });
 
+test('historical Elder input is saved as Pastor for both create and update', async () => {
+  const input = { ...values, prefix: 'ELDER' };
+  assert.equal(memberEditorInput(input).prefix, 'PASTOR');
+  assert.equal(input.prefix, 'ELDER', 'input remains unchanged');
+  const f = fixture();
+  await f.service.create(input, { id: 9n });
+  await f.service.update('7', { prefix: 'ELDER' }, { id: 9n });
+  assert.deepEqual(
+    f.writes.map(({ prefix }) => prefix),
+    ['PASTOR', 'PASTOR'],
+  );
+});
+
 test('updates clear homecell/date/photo explicitly and keep omitted optional values and relationships untouched', async () => {
   const f = fixture();
   await f.service.update(

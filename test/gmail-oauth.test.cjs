@@ -28,7 +28,10 @@ test('local OAuth uses independent random state and PKCE with only Gmail send pe
   );
   assert.equal(url.searchParams.get('scope'), SCOPE);
   assert.equal(url.searchParams.get('access_type'), 'offline');
-  assert.equal(url.searchParams.get('prompt'), 'consent');
+  assert.deepEqual(
+    new Set(url.searchParams.get('prompt').split(/\s+/)),
+    new Set(['select_account', 'consent']),
+  );
   assert.equal(url.searchParams.get('redirect_uri'), input.redirectUri);
   assert.equal(url.searchParams.get('login_hint'), input.user);
   assert.equal(url.searchParams.get('response_type'), 'code');
